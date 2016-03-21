@@ -61,6 +61,7 @@ draw_cb (GtkWidget *widget,
 std::list<Object*> *Window::getObjects() {
   if (Window::objects == NULL) {
     Window::objects = new std::list<Object*>();
+    objects->push_back(new Line(1000,1000,1100,1100));
   }
   return Window::objects;
 }
@@ -212,7 +213,7 @@ void Window::init(){
 	label = gtk_label_new("Viewport");
 	gtk_grid_attach(GTK_GRID(inGrid), label, 0,0,1,1);
 	da = gtk_drawing_area_new();
-	gtk_widget_set_size_request(da, 600, 600);
+	gtk_widget_set_size_request(da, Viewport::ViewportX, Viewport::ViewportY);
 	gtk_grid_attach(GTK_GRID(inGrid), da, 0, 1, 1, 1);
 	g_signal_connect (da, "draw", G_CALLBACK (draw_cb), NULL);
   	g_signal_connect (da,"configure-event", G_CALLBACK (configure_event_cb), NULL);

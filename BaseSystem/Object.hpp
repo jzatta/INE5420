@@ -2,6 +2,7 @@
 #define _CG_OBJECT_HPP_
 
 #include <gtk/gtk.h>
+#include "Viewport.hpp"
 
 class Object {
 public:

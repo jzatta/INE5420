@@ -5,10 +5,10 @@
 void Polygon::draw(cairo_t *cr) {
   std::list<Point*>::iterator it=pointsList->begin();
   // Fazer transformada de Viewport
-  cairo_move_to(cr, (*it)->getX(), (*it)->getY());
+  cairo_move_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
   ++it;
   for (; it != pointsList->end(); ++it) {
-    cairo_line_to(cr, (*it)->getX(), (*it)->getY());
+    cairo_line_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
   }
   return;
 }
@@ -35,5 +35,9 @@ void Polygon::add(int x, int y) {
 }
 
 Polygon::~Polygon() {
-  // Dellocate all points
+  std::list<Point*>::iterator it=pointsList->begin();
+  for (; it != pointsList->end(); ++it) {
+    delete *it;
+  }
+  delete pointsList;
 }

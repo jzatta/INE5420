@@ -5,6 +5,7 @@
 #include <list>
 #include "Object.hpp"
 #include "Line.hpp"
+#include "Viewport.hpp"
 
 static cairo_surface_t *surface = NULL;
 

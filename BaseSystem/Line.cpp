@@ -4,8 +4,8 @@
 
 void Line::draw(cairo_t *cr) {
   // Fazer transformada de Viewport
-  cairo_move_to(cr, a->getX(), a->getY());
-  cairo_line_to(cr, b->getX(), b->getY());
+  cairo_move_to(cr, Viewport::transformX(a->getX()), Viewport::transformY(a->getY()));
+  cairo_line_to(cr, Viewport::transformX(b->getX()), Viewport::transformY(b->getY()));
   return;
 }
 
@@ -20,5 +20,6 @@ Line::Line(int xa, int ya, int xb, int yb) {
 }
 
 Line::~Line() {
-
+  delete a;
+  delete b;
 }

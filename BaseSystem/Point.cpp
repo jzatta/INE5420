@@ -4,7 +4,7 @@
 
 void Point::draw(cairo_t *cr) {
   // Fazer transformada de Viewport
-  cairo_rectangle(cr, x, y, 1, 1);
+  cairo_rectangle(cr, Viewport::transformX(x), Viewport::transformY(y), 1, 1);
   return;
 }
 
