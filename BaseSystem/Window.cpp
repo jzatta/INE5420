@@ -1,6 +1,25 @@
+
+#include <iostream>
 #include "Window.hpp"
 
 std::list<Object*> *Window::objects;
+
+typedef struct {
+	GtkWidget *nome;
+	GtkWidget *x;
+	GtkWidget *y;
+} ParamsPonto;
+ParamsPonto paramsP;
+
+typedef struct {
+	GtkWidget *nome;
+	GtkWidget *xi;
+	GtkWidget *yi;
+	GtkWidget *xf;
+	GtkWidget *yf;
+} ParamsLinha;
+ParamsLinha paramsL;
+
 
 Window::Window() {
 
@@ -61,12 +80,60 @@ draw_cb (GtkWidget *widget,
 std::list<Object*> *Window::getObjects() {
   if (Window::objects == NULL) {
     Window::objects = new std::list<Object*>();
-    objects->push_back(new Line(1000,1000,1100,1100));
+    objects->push_back(new Line(0,0,20,20));
   }
   return Window::objects;
 }
 
-static void addPointWindow(GtkWidget *widget, gpointer   data) {
+static void moveUp(GtkWidget *widget, gpointer data) {
+  Viewport::moveVertical(0.1);
+}
+
+static void moveLeft(GtkWidget *widget, gpointer data) {
+  Viewport::moveHorizontal(-0.1);
+}
+
+static void moveRight(GtkWidget *widget, gpointer data) {
+  Viewport::moveHorizontal(0.1);
+}
+
+static void moveDown(GtkWidget *widget, gpointer data) {
+  Viewport::moveVertical(-0.1);
+}
+
+static void ZoomOut(GtkWidget *widget, gpointer data) {
+  Viewport::zoom(0.5);
+}
+
+static void ZoomIn(GtkWidget *widget, gpointer data) {
+  Viewport::zoom(2);
+}
+
+static void addPoint(GtkWidget* widget, gpointer data){
+	const char* nome = gtk_entry_get_text((GtkEntry*)paramsP.nome);
+	std::cout << nome << std::endl;
+	const char* x = gtk_entry_get_text((GtkEntry*)paramsP.x);
+	std::cout << x << std::endl;
+	const char* y = gtk_entry_get_text((GtkEntry*)paramsP.y);
+	std::cout << y << std::endl;
+}
+
+static void addLine(GtkWidget* widget, gpointer data){
+	const char* nome = gtk_entry_get_text((GtkEntry*)paramsL.nome);
+	std::cout << nome << std::endl;
+	const char* xi = gtk_entry_get_text((GtkEntry*)paramsL.xi);
+	std::cout << xi << std::endl;
+	const char* yi = gtk_entry_get_text((GtkEntry*)paramsL.yi);
+	std::cout << yi << std::endl;
+	const char* xf = gtk_entry_get_text((GtkEntry*)paramsL.xf);
+	std::cout << xf << std::endl;
+	const char* yf = gtk_entry_get_text((GtkEntry*)paramsL.yf);
+	std::cout << yf << std::endl;
+}
+
+
+static void addPointWindow(GtkWidget *widget, gpointer data) {
+
 	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 300, 100);
 	gtk_window_set_title(GTK_WINDOW(auxWindow), "Incluir Ponto");
@@ -82,25 +149,27 @@ static void addPointWindow(GtkWidget *widget, gpointer   data) {
 	gtk_label_set_text(GTK_LABEL(label), "Nome: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
 
-	GtkWidget* input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 0, 1, 1);
+	paramsP.nome = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsP.nome, 1, 0, 1, 1);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_text(GTK_LABEL(label), "x: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
 
-	input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 1, 1, 1);
+	paramsP.x = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsP.x, 1, 1, 1, 1);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_text(GTK_LABEL(label), " y: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 2, 1, 1);
 
-	input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 2, 1, 1);
+	paramsP.y = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsP.y, 1, 2, 1, 1);
 
 	GtkWidget* button = gtk_button_new_with_label("Add");
-	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(addPoint), NULL);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+
 	gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 3, 2, 2);
 
 	gtk_widget_show_all(auxWindow);
@@ -122,39 +191,40 @@ static void addLineWindow(GtkWidget *widget, gpointer   data) {
 	gtk_label_set_text(GTK_LABEL(label), "Nome: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
 
-	GtkWidget* input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 0, 1, 1);
+	paramsL.nome = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsL.nome, 1, 0, 1, 1);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_text(GTK_LABEL(label), "x1: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
 
-	input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 1, 1, 1);
+	paramsL.xi = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsL.xi, 1, 1, 1, 1);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_text(GTK_LABEL(label), " y1: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 2, 1, 1);
 
-	input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 2, 1, 1);
+	paramsL.yi = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsL.yi, 1, 2, 1, 1);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_text(GTK_LABEL(label), " x2: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 3, 1, 1);
 
-	input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 3, 1, 1);
+	paramsL.xf = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsL.xf, 1, 3, 1, 1);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_text(GTK_LABEL(label), " y2: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 4, 1, 1);
 
-	input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 4, 1, 1);
+	paramsL.yf = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsL.yf, 1, 4, 1, 1);
 
 	GtkWidget* button = gtk_button_new_with_label("Add");
-	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(addLine), NULL);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
 	gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 5, 2, 2);
 
 	gtk_widget_show_all(auxWindow);
@@ -229,27 +299,27 @@ void Window::init(){
   	gtk_container_add(GTK_CONTAINER(frame), inGrid);
 
   	button = gtk_button_new_with_label("Up");
-	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(moveUp), NULL);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 1, 1, 1, 1);
 
 	button = gtk_button_new_with_label("Left");
-	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(moveLeft), NULL);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 2, 1, 1);
 
 	button = gtk_button_new_with_label("Right");
-	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(moveRight), NULL);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 2, 2, 1, 1);
 
 	button = gtk_button_new_with_label("Down");
-	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(moveDown), NULL);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 1, 3, 1, 1);
 
 	button = gtk_button_new_with_label("Zoom-");
-	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(ZoomOut), NULL);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 4, 1, 1);
 
 	button = gtk_button_new_with_label("Zoom+");
-	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(ZoomIn), NULL);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 2, 4, 1, 1);
 
 

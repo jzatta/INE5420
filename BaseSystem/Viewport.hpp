@@ -21,10 +21,8 @@ public:
 
   static void zoom(float factor);
 
-  static void moveRight(int pixels);
-  static void moveLeft(int pixels);
-  static void moveUp(int pixels);
-  static void moveDown(int pixels);
+  static void moveHorizontal(float factor);
+  static void moveVertical(float factor);
 };
 
 

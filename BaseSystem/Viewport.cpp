@@ -2,7 +2,7 @@
 #include "Viewport.hpp"
 
 int Viewport::windowX = 0, Viewport::windowY = 0;
-int Viewport::windowW = 6000, Viewport::windowH = 6000;
+int Viewport::windowW = 600, Viewport::windowH = 600;
 
 int Viewport::transformX(int xw) {
   return (((float)xw - (float)windowX)/(float)windowW ) * (float)ViewportX;
@@ -29,22 +29,14 @@ void Viewport::setWindowHeight(int height) {
 }
 
 void Viewport::zoom(float factor) {
-  windowW = windowW * factor;
-  windowX = windowX * factor;
+  windowW /= factor;
+  windowH /= factor;
 }
 
-void Viewport::moveRight(int pixels) {
-  windowX += pixels;
+void Viewport::moveHorizontal(float factor) {
+  windowX += factor * windowW;
 }
 
-void Viewport::moveLeft(int pixels)  {
-  windowX -= pixels;
-}
-
-void Viewport::moveUp(int pixels)  {
-  windowY += pixels;
-}
-
-void Viewport::moveDown(int pixels)  {
-  windowY -= pixels;
+void Viewport::moveVertical(float factor) {
+  windowY += factor * windowH;
 }
