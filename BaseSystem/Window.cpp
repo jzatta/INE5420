@@ -1,7 +1,7 @@
 #include "Window.hpp"
 
 Window::Window() {
-	
+
 }
 
 static void
@@ -11,7 +11,7 @@ clear_surface (void)
 
   cr = cairo_create (surface);
 
-  cairo_set_source_rgb (cr, 1, 1, 1);
+  cairo_set_source_rgb (cr, 0, 0, 0);
   cairo_paint (cr);
 
   cairo_destroy (cr);
@@ -41,10 +41,15 @@ draw_cb (GtkWidget *widget,
  gpointer   data)
 {
   GdkRGBA color;
-  
-  cairo_set_source_surface (cr, surface, 0, 0);
-  cairo_arc(cr, 0, 0, 20, 0.0, 6.28);
-  cairo_fill(cr);
+  cairo_set_source_rgb (cr, 0, 0, 0);
+  cairo_paint (cr);
+//   cairo_set_source_surface (cr, surface, 0, 0);
+  cairo_set_source_rgb (cr, 1, 1, 1);
+  cairo_set_line_width(cr, 1);
+  cairo_move_to(cr, 50, 50);
+  cairo_line_to(cr, 100, 100);
+  cairo_rectangle(cr, 200, 200, 1, 1);
+  cairo_stroke(cr);
 
   return FALSE;
 }
@@ -56,7 +61,7 @@ static void addPointWindow(GtkWidget *widget, gpointer   data) {
 	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
 
-	
+
 	GtkWidget* auxGrid = gtk_grid_new();
 	gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
 	gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
@@ -96,7 +101,7 @@ static void addLineWindow(GtkWidget *widget, gpointer   data) {
 	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
 
-	
+
 	GtkWidget* auxGrid = gtk_grid_new();
 	gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
 	gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
@@ -127,7 +132,7 @@ static void addLineWindow(GtkWidget *widget, gpointer   data) {
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 3, 1, 1);
 
 	input = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 3, 1, 1);	
+	gtk_grid_attach(GTK_GRID(auxGrid), input, 1, 3, 1, 1);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_text(GTK_LABEL(label), " y2: ");
@@ -166,7 +171,7 @@ void Window::init(){
 	gtk_widget_get_allocation(oList, &alloc);
 	gtk_widget_set_size_request(oList, alloc.width, 200);
 	//TODO connect
-	
+
 	frame = gtk_frame_new("Add");
 	gtk_grid_attach(GTK_GRID(grid), frame, 0,2,1,1);
 
@@ -177,13 +182,13 @@ void Window::init(){
 	button = gtk_button_new_with_label("Point");
 	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 1, 1, 1);
 	//TODO connect
-		
+
 	g_signal_connect(button, "clicked", G_CALLBACK(addPointWindow), NULL);
 
 	button = gtk_button_new_with_label("Line");
 	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 2, 1, 1);
 	//TODO connect
-	
+
 	g_signal_connect(button, "clicked", G_CALLBACK(addLineWindow), NULL);
 
 	button = gtk_button_new_with_label("Polygon");
@@ -202,7 +207,7 @@ void Window::init(){
   	g_signal_connect (da,"configure-event", G_CALLBACK (configure_event_cb), NULL);
 
 	//TODO connect
-  	
+
 
   	frame = gtk_frame_new("View Control");
 	gtk_grid_attach(GTK_GRID(grid), frame, 0,3,2,1);
@@ -229,7 +234,7 @@ void Window::init(){
 
 	button = gtk_button_new_with_label("Zoom-");
 	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
-	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 4, 1, 1);		
+	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 4, 1, 1);
 
 	button = gtk_button_new_with_label("Zoom+");
 	//g_signal_connect(button, "clicked", G_CALLBACK(TODO), NULL);
