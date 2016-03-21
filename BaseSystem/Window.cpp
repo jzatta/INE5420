@@ -1,5 +1,7 @@
 #include "Window.hpp"
 
+std::list<Object*> *Window::objects;
+
 Window::Window() {
 
 }
@@ -45,13 +47,22 @@ draw_cb (GtkWidget *widget,
   cairo_paint (cr);
 //   cairo_set_source_surface (cr, surface, 0, 0);
   cairo_set_source_rgb (cr, 1, 1, 1);
-  cairo_set_line_width(cr, 1);
-  cairo_move_to(cr, 50, 50);
-  cairo_line_to(cr, 100, 100);
-  cairo_rectangle(cr, 200, 200, 1, 1);
+  cairo_set_line_width(cr, 0.5);
+
+  std::list<Object*>::iterator it=Window::getObjects()->begin();
+  for (; it != Window::getObjects()->end(); ++it) {
+    (*it)->draw(cr);
+  }
   cairo_stroke(cr);
 
   return FALSE;
+}
+
+std::list<Object*> *Window::getObjects() {
+  if (Window::objects == NULL) {
+    Window::objects = new std::list<Object*>();
+  }
+  return Window::objects;
 }
 
 static void addPointWindow(GtkWidget *widget, gpointer   data) {

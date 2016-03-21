@@ -2,6 +2,9 @@
 #define _CG_WINDOW_HPP_
 
 #include <gtk/gtk.h>
+#include <list>
+#include "Object.hpp"
+#include "Line.hpp"
 
 static cairo_surface_t *surface = NULL;
 
@@ -12,10 +15,12 @@ private:
 	GtkWidget* da;
 	GtkWidget* oList;
 
+  static std::list<Object*> *objects;
+
 public:
 	Window();
 	void init();
-    
+  static std::list<Object*> *getObjects();
 
 };
 

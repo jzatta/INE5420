@@ -3,6 +3,20 @@
 #include "Point.hpp"
 
 void Point::draw(cairo_t *cr) {
-    
-    return;
+  // Fazer transformada de Viewport
+  cairo_rectangle(cr, x, y, 1, 1);
+  return;
+}
+
+int Point::getX() {
+  return x;
+}
+
+int Point::getY() {
+  return y;
+}
+
+Point::Point(int _x, int _y) {
+  x = _x;
+  y = _y;
 }
