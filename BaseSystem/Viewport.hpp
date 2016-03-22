@@ -5,19 +5,19 @@
 
 class Viewport {
 private:
-  static int windowX, windowY;
-  static int windowW, windowH;
+  static float windowX, windowY;
+  static float windowW, windowH;
 
 public:
   const static int ViewportX = 600, ViewportY = 600;
 
-  static int transformX(int xw);
-  static int transformY(int yw);
+  static float transformX(float xw);
+  static float transformY(float yw);
 
-  static void setWindowX(int x);
-  static void setWindowY(int y);
-  static void setWindowWidth(int width);
-  static void setWindowHeight(int height);
+  static void setWindowX(float x);
+  static void setWindowY(float y);
+  static void setWindowWidth(float width);
+  static void setWindowHeight(float height);
 
   static void defaultSize();
 

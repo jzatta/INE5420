@@ -9,7 +9,7 @@ void Line::draw(cairo_t *cr) {
   return;
 }
 
-Line::Line(const char *name, int xa, int ya, int xb, int yb) : Object(name) {
+Line::Line(const char *name, float xa, float ya, float xb, float yb) : Object(name) {
   this->xa = xa;
   this->ya = ya;
   this->xb = xb;

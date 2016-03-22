@@ -5,6 +5,7 @@
 #include <list>
 #include "Object.hpp"
 #include "Line.hpp"
+#include "Polygon.hpp"
 #include "Viewport.hpp"
 
 static cairo_surface_t *surface = NULL;
@@ -29,7 +30,7 @@ struct ParamsPoligon{
 	GtkWidget *nome;
 	GtkWidget *x;
 	GtkWidget *y;
-	std::list<std::pair<int,int>> pointsList;
+	std::list<std::pair<float,float>> pointsList;
 };
 private:
 	GtkWidget* window;
@@ -63,7 +64,10 @@ public:
   	static void addLine(GtkWidget* widget, gpointer data);
   	static void addPointWindow(GtkWidget *widget, gpointer data);
   	static void addLineWindow(GtkWidget *widget, gpointer   data);
-  	static void addPoligonWindowName(GtkWidget *widget, gpointer   data);
+  	static void addPoligonWindow(GtkWidget *widget, gpointer   data);
+    static void buildPoligon(GtkWidget *widget, gpointer   data);
+    static void addPoligonWindowName(GtkWidget *widget, gpointer data);
+    static void addPoligon(GtkWidget *widget, gpointer data);
 
 
 };

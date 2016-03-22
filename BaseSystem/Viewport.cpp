@@ -1,42 +1,47 @@
 
 #include "Viewport.hpp"
 
-int Viewport::windowX = -300, Viewport::windowY = -300;
-int Viewport::windowW = 600, Viewport::windowH = 600;
+#define PIXEL_AREA_MIN 1000
 
-int Viewport::transformX(int xw) {
+float Viewport::windowX = -300, Viewport::windowY = -300;
+float Viewport::windowW = 600, Viewport::windowH = 600;
+
+float Viewport::transformX(float xw) {
   return (((float)xw - (float)windowX)/(float)windowW ) * (float)ViewportX;
 }
 
-int Viewport::transformY(int yw) {
+float Viewport::transformY(float yw) {
   return (1 - (((float)yw - (float)windowY)/(float)windowH)) * (float)ViewportY;
 }
 
 void Viewport::defaultSize() {
-  windowX = -300;
-  windowY = -300;
-  windowW = ViewportX;
-  windowH = ViewportY;
+//   windowW = ViewportX;
+//   windowH = ViewportY;
+  windowX = windowW / -2;
+  windowY = windowH / -2;
 }
 
-void Viewport::setWindowX(int x) {
+void Viewport::setWindowX(float x) {
   windowX = x;
 }
 
-void Viewport::setWindowY(int y) {
+void Viewport::setWindowY(float y) {
   windowY = y;
 }
 
-void Viewport::setWindowWidth(int width) {
+void Viewport::setWindowWidth(float width) {
   windowW = width;
 }
 
-void Viewport::setWindowHeight(int height) {
+void Viewport::setWindowHeight(float height) {
   windowH = height;
 }
 
 void Viewport::zoom(float factor) {
-  int cX, cY;
+  float cX, cY;
+  if (((windowW * windowH) / (factor * factor)) <= PIXEL_AREA_MIN) {
+    return;
+  }
   cX = windowW / 2 + windowX;
   cY = windowH / 2 + windowY;
   windowW /= factor;

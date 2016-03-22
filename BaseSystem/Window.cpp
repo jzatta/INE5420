@@ -110,7 +110,7 @@ void Window::addPoint(GtkWidget* widget, gpointer data){
 	const char* name = gtk_entry_get_text((GtkEntry*)paramsP->nome);
 	const char* x = gtk_entry_get_text((GtkEntry*)paramsP->x);
 	const char* y = gtk_entry_get_text((GtkEntry*)paramsP->y);
-  Window::getObjects()->push_back(new Point(name, atoi(x), atoi(y)));
+  Window::getObjects()->push_back(new Point(name, atof(x), atof(y)));
   gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }
 
@@ -121,8 +121,8 @@ void Window::addLine(GtkWidget* widget, gpointer data){
 	const char* yi = gtk_entry_get_text((GtkEntry*)paramsL->yi);
 	const char* xf = gtk_entry_get_text((GtkEntry*)paramsL->xf);
 	const char* yf = gtk_entry_get_text((GtkEntry*)paramsL->yf);
-
-  Window::getObjects()->push_back(new Line(name, atoi(xi), atoi(yi), atoi(yf), atoi(yf)));
+  
+  Window::getObjects()->push_back(new Line(name, atof(xi), atof(yi), atof(xf), atof(yf)));
   gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }
 
@@ -178,7 +178,7 @@ void Window::addLineWindow(GtkWidget *widget, gpointer   data) {
 
 	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 300, 100);
-	gtk_window_set_title(GTK_WINDOW(auxWindow), "Incluir Ponto");
+	gtk_window_set_title(GTK_WINDOW(auxWindow), "Incluir Linha");
 	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
 
@@ -229,11 +229,87 @@ void Window::addLineWindow(GtkWidget *widget, gpointer   data) {
 
 	gtk_widget_show_all(auxWindow);
 }
-void Window::addPoligonWindowName(GtkWidget *widget, gpointer   data) {
-gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
-	/*GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+void Window::addPoligonWindow(GtkWidget *widget, gpointer data) {
+	ParamsPoligon * params;
+	if(data == NULL){
+		params = new ParamsPoligon();
+	} else {
+		params = (ParamsPoligon*) data;
+	}
+
+	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 300, 100);
-	gtk_window_set_title(GTK_WINDOW(auxWindow), "Incluir Ponto");
+	gtk_window_set_title(GTK_WINDOW(auxWindow), "Incluir Poligono");
+	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
+
+	GtkWidget* auxGrid = gtk_grid_new();
+	gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
+	gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
+
+	GtkWidget* label = gtk_label_new(NULL);
+	gtk_label_set_text(GTK_LABEL(label), "x: ");
+	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
+
+	params->x = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), params->x, 1, 0, 1, 1);
+
+	label = gtk_label_new(NULL);
+	gtk_label_set_text(GTK_LABEL(label), " y: ");
+	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
+
+	params->y = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), params->y, 1, 1, 1, 1);
+
+
+	GtkWidget* button = gtk_button_new_with_label("Add More");
+	//TODO connect
+	g_signal_connect(button, "clicked", G_CALLBACK(buildPoligon), (gpointer) params);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 1, 2);
+
+	button = gtk_button_new_with_label("Finish");
+	g_signal_connect(button, "clicked", G_CALLBACK(addPoligonWindowName), (gpointer) params);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 2, 1, 2);
+
+	gtk_widget_show_all(auxWindow);
+
+}
+
+void Window::buildPoligon(GtkWidget *widget, gpointer data){
+	ParamsPoligon * params = (ParamsPoligon*) data;
+	const char* x = gtk_entry_get_text((GtkEntry*)params->x);
+	float xi = atof(x);
+	std::cout << xi << std::endl;
+	const char* y = gtk_entry_get_text((GtkEntry*)params->y);
+	float yi = atof(y);
+	std::cout << y << std::endl;
+
+	std::pair<float,float> test;
+	test.first = xi;
+	test.second = yi;
+
+	params->pointsList.push_back(test);
+	addPoligonWindow(widget, (gpointer)params);
+}
+
+void Window::addPoligonWindowName(GtkWidget *widget, gpointer data){
+	ParamsPoligon * params = (ParamsPoligon*) data;
+	const char* x = gtk_entry_get_text((GtkEntry*)params->x);
+	float xi = atof(x);
+	const char* y = gtk_entry_get_text((GtkEntry*)params->y);
+	float yi = atof(y);
+
+	std::pair<float,float> test;
+	test.first = xi;
+	test.second = yi;
+
+	params->pointsList.push_back(test);
+
+	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 300, 100);
+	gtk_window_set_title(GTK_WINDOW(auxWindow), "Incluir Poligono");
 	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
 
@@ -245,29 +321,23 @@ gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 	gtk_label_set_text(GTK_LABEL(label), "Nome: ");
 	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
 
-	paramsPol.nome = gtk_entry_new();
-	gtk_grid_attach(GTK_GRID(auxGrid), paramsPol.nome, 1, 0, 1, 1);
+	params->nome = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), params->nome, 1, 0, 1, 1);
 
-	GtkWidget* button = gtk_button_new_with_label("Next");
-	//TODO connect
+	GtkWidget* button = gtk_button_new_with_label("Add");
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 1, 2, 1);
+	g_signal_connect(button, "clicked", G_CALLBACK(addPoligon), (gpointer) params);
 	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-	gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 1, 2, 2);
+	
+	gtk_widget_show_all(auxWindow);
 
-	gtk_widget_show_all(auxWindow);*/
-        
-        
-        
-// Instancia quando tiver o nome        // tambem pode ser para o primeiro ponto
-Polygon *poly = new Polygon(name);      Polygon *poly = new Polygon(name, atoi(x), atoi(y));
-// adiciona no displayFile
-Window::getObjects()->push_back(poly);
-// Adiciona os pontos no poligono
-poly->add(atoi(x), atoi(y));
-// atualiza a tela
+}
 
-
-
-
+void Window::addPoligon(GtkWidget *widget, gpointer data) {
+	ParamsPoligon * params = (ParamsPoligon*) data;
+	const char* name = gtk_entry_get_text((GtkEntry*)params->nome);
+  Polygon(name, &(params->pointsList));
+  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }
 
 void Window::init(){
@@ -311,7 +381,7 @@ void Window::init(){
 
 	button = gtk_button_new_with_label("Poligon");
 	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 3, 1, 1);
-	g_signal_connect(button, "clicked", G_CALLBACK(addPoligonWindowName), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(addPoligonWindow), NULL);
 
 	inGrid = gtk_grid_new();
 	gtk_container_set_border_width(GTK_CONTAINER(inGrid), 5);

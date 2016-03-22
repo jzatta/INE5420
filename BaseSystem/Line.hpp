@@ -7,9 +7,9 @@
 
 class Line : public Object {
 private:
-    int xa, ya, xb, yb;
+    float xa, ya, xb, yb;
 public:
-  Line(const char *name, int xa, int ya, int xb, int yb);
+  Line(const char *name, float xa, float ya, float xb, float yb);
   void draw(cairo_t *cr);
 };
 

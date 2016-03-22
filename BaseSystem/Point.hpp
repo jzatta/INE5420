@@ -7,12 +7,12 @@
 
 class Point : public Object {
 private:
-  int x, y;
+  float x, y;
 public:
-  Point(const char *name, int _x, int _y);
+  Point(const char *name, float _x, float _y);
   void draw(cairo_t *cr);
-  int getX();
-  int getY();
+  float getX();
+  float getY();
 };
 
 #endif

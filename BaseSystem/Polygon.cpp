@@ -3,38 +3,22 @@
 #include "Polygon.hpp"
 
 void Polygon::draw(cairo_t *cr) {
-  int xi, yi;
-  std::list<Point*>::iterator it=pointsList->begin();
-  xi = (*it)->getX();
-  yi = (*it)->getY();
+  float xi, yi;
+  std::list<std::pair<float,float>>::iterator it=pointsList->begin();
+  xi = (*it).first;
+  yi = (*it).second;
   cairo_move_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
   ++it;
   for (; it != pointsList->end(); ++it) {
-    cairo_line_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
+    cairo_line_to(cr, Viewport::transformX((*it).first), Viewport::transformY((*it).second));
   }
   cairo_line_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
   return;
 }
 
-Polygon::Polygon(const char *name, int x, int y) : Object(name) {
-  Point *pt = new Point("", x, y);
-  pointsList = new std::list<Point*>();
-  pointsList->push_back(pt);
-}
-
-Polygon::Polygon(const char *name) : Object(name) {
-  pointsList = new std::list<Point*>();
-}
-
-void Polygon::add(int x, int y) {
-  Point *pt = new Point("", x, y);
-  pointsList->push_back(pt);
+Polygon::Polygon(const char *name, std::list<std::pair<float,float>> *list) : Object(name) {
+  pointsList = list;
 }
 
 Polygon::~Polygon() {
-  std::list<Point*>::iterator it=pointsList->begin();
-  for (; it != pointsList->end(); ++it) {
-    delete *it;
-  }
-  delete pointsList;
 }
