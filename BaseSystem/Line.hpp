@@ -7,12 +7,10 @@
 
 class Line : public Object {
 private:
-    Point *a, *b;
+    int xa, ya, xb, yb;
 public:
-  Line(Point *_a, Point *_b);
-  Line(int xa, int ya, int xb, int yb);
+  Line(const char *name, int xa, int ya, int xb, int yb);
   void draw(cairo_t *cr);
-  ~Line();
 };
 
 

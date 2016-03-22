@@ -6,10 +6,13 @@
 
 class Object {
 private:
-  char *name;
+  const char *name;
 public:
+  Object(const char *name) {
+    this->name = name;
+  }
   virtual void draw(cairo_t *cr) = 0;
-  char *getName() {
+  const char *getName() {
     return name;
   }
 };

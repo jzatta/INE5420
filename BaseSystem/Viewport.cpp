@@ -1,7 +1,7 @@
 
 #include "Viewport.hpp"
 
-int Viewport::windowX = 0, Viewport::windowY = 0;
+int Viewport::windowX = -300, Viewport::windowY = -300;
 int Viewport::windowW = 600, Viewport::windowH = 600;
 
 int Viewport::transformX(int xw) {
@@ -13,8 +13,8 @@ int Viewport::transformY(int yw) {
 }
 
 void Viewport::defaultSize() {
-  windowX = 0;
-  windowY = 0;
+  windowX = -300;
+  windowY = -300;
   windowW = ViewportX;
   windowH = ViewportY;
 }
@@ -36,8 +36,13 @@ void Viewport::setWindowHeight(int height) {
 }
 
 void Viewport::zoom(float factor) {
+  int cX, cY;
+  cX = windowW / 2 + windowX;
+  cY = windowH / 2 + windowY;
   windowW /= factor;
   windowH /= factor;
+  windowX = cX - (windowW / 2);
+  windowY = cY - (windowH / 2);
 }
 
 void Viewport::moveHorizontal(float factor) {

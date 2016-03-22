@@ -9,7 +9,7 @@ class Point : public Object {
 private:
   int x, y;
 public:
-  Point(int _x, int _y);
+  Point(const char *name, int _x, int _y);
   void draw(cairo_t *cr);
   int getX();
   int getY();

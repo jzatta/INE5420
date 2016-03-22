@@ -16,7 +16,7 @@ int Point::getY() {
   return y;
 }
 
-Point::Point(int _x, int _y) {
+Point::Point(const char *name, int _x, int _y) : Object(name) {
   x = _x;
   y = _y;
 }

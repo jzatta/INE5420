@@ -10,9 +10,8 @@ class Polygon : public Object {
 private:
   std::list<Point*> *pointsList;
 public:
-  Polygon();
-  Polygon(Point *pt);
-  Polygon(int x, int y);
+  Polygon(const char *name);
+  Polygon(const char *name, int x, int y);
   void draw(cairo_t *cr);
   void add(int x, int y);
   ~Polygon();

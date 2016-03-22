@@ -13,24 +13,18 @@ void Polygon::draw(cairo_t *cr) {
   return;
 }
 
-
-Polygon::Polygon(Point *pt) {
+Polygon::Polygon(const char *name, int x, int y) : Object(name) {
+  Point *pt = new Point("", x, y);
   pointsList = new std::list<Point*>();
   pointsList->push_back(pt);
 }
 
-Polygon::Polygon(int x, int y) {
-  Point *pt = new Point(x, y);
-  pointsList = new std::list<Point*>();
-  pointsList->push_back(pt);
-}
-
-Polygon::Polygon() {
+Polygon::Polygon(const char *name) : Object(name) {
   pointsList = new std::list<Point*>();
 }
 
 void Polygon::add(int x, int y) {
-  Point *pt = new Point(x, y);
+  Point *pt = new Point("", x, y);
   pointsList->push_back(pt);
 }
 
