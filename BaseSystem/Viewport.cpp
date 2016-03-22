@@ -12,6 +12,13 @@ int Viewport::transformY(int yw) {
   return (1 - (((float)yw - (float)windowY)/(float)windowH)) * (float)ViewportY;
 }
 
+void Viewport::defaultSize() {
+  windowX = 0;
+  windowY = 0;
+  windowW = ViewportX;
+  windowH = ViewportY;
+}
+
 void Viewport::setWindowX(int x) {
   windowX = x;
 }
@@ -34,9 +41,9 @@ void Viewport::zoom(float factor) {
 }
 
 void Viewport::moveHorizontal(float factor) {
-  windowX += factor * windowW;
+  windowX += factor * 100;
 }
 
 void Viewport::moveVertical(float factor) {
-  windowY += factor * windowH;
+  windowY += factor * 100;
 }

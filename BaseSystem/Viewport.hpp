@@ -19,6 +19,8 @@ public:
   static void setWindowWidth(int width);
   static void setWindowHeight(int height);
 
+  static void defaultSize();
+
   static void zoom(float factor);
 
   static void moveHorizontal(float factor);
