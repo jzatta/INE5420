@@ -86,27 +86,38 @@ std::list<Object*> *Window::getObjects() {
 }
 
 static void moveUp(GtkWidget *widget, gpointer data) {
-  Viewport::moveVertical(0.1);
+  Viewport::moveVertical(-0.1);
+  gtk_widget_queue_draw(GTK_WIDGET(data));
 }
 
 static void moveLeft(GtkWidget *widget, gpointer data) {
-  Viewport::moveHorizontal(-0.1);
+  Viewport::moveHorizontal(0.1);
+  gtk_widget_queue_draw(GTK_WIDGET(data));
 }
 
 static void moveRight(GtkWidget *widget, gpointer data) {
-  Viewport::moveHorizontal(0.1);
+  Viewport::moveHorizontal(-0.1);
+  gtk_widget_queue_draw(GTK_WIDGET(data));
 }
 
 static void moveDown(GtkWidget *widget, gpointer data) {
-  Viewport::moveVertical(-0.1);
+  Viewport::moveVertical(0.1);
+  gtk_widget_queue_draw(GTK_WIDGET(data));
 }
 
 static void ZoomOut(GtkWidget *widget, gpointer data) {
-  Viewport::zoom(0.5);
+  Viewport::zoom(0.8);
+  gtk_widget_queue_draw(GTK_WIDGET(data));
 }
 
 static void ZoomIn(GtkWidget *widget, gpointer data) {
-  Viewport::zoom(2);
+  Viewport::zoom(1.25);
+  gtk_widget_queue_draw(GTK_WIDGET(data));
+}
+
+static void Center(GtkWidget *widget, gpointer data) {
+  Viewport::defaultSize();
+  gtk_widget_queue_draw(GTK_WIDGET(data));
 }
 
 static void addPoint(GtkWidget* widget, gpointer data){
@@ -286,7 +297,7 @@ void Window::init(){
 	gtk_widget_set_size_request(da, Viewport::ViewportX, Viewport::ViewportY);
 	gtk_grid_attach(GTK_GRID(inGrid), da, 0, 1, 1, 1);
 	g_signal_connect (da, "draw", G_CALLBACK (draw_cb), NULL);
-  	g_signal_connect (da,"configure-event", G_CALLBACK (configure_event_cb), NULL);
+  g_signal_connect (da,"configure-event", G_CALLBACK (configure_event_cb), NULL);
 
 	//TODO connect
 
@@ -299,28 +310,32 @@ void Window::init(){
   	gtk_container_add(GTK_CONTAINER(frame), inGrid);
 
   	button = gtk_button_new_with_label("Up");
-	g_signal_connect(button, "clicked", G_CALLBACK(moveUp), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(moveUp), da);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 1, 1, 1, 1);
 
 	button = gtk_button_new_with_label("Left");
-	g_signal_connect(button, "clicked", G_CALLBACK(moveLeft), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(moveLeft), da);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 2, 1, 1);
 
 	button = gtk_button_new_with_label("Right");
-	g_signal_connect(button, "clicked", G_CALLBACK(moveRight), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(moveRight), da);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 2, 2, 1, 1);
 
 	button = gtk_button_new_with_label("Down");
-	g_signal_connect(button, "clicked", G_CALLBACK(moveDown), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(moveDown), da);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 1, 3, 1, 1);
 
 	button = gtk_button_new_with_label("Zoom-");
-	g_signal_connect(button, "clicked", G_CALLBACK(ZoomOut), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(ZoomOut), da);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 0, 4, 1, 1);
 
 	button = gtk_button_new_with_label("Zoom+");
-	g_signal_connect(button, "clicked", G_CALLBACK(ZoomIn), NULL);
+	g_signal_connect(button, "clicked", G_CALLBACK(ZoomIn), da);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 2, 4, 1, 1);
+
+  button = gtk_button_new_with_label("Center");
+	g_signal_connect(button, "clicked", G_CALLBACK(Center), da);
+	gtk_grid_attach(GTK_GRID(inGrid), button, 1, 2, 1, 1);
 
 
 	gtk_widget_show_all(window);
