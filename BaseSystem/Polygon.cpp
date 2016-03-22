@@ -3,13 +3,16 @@
 #include "Polygon.hpp"
 
 void Polygon::draw(cairo_t *cr) {
+  int xi, yi;
   std::list<Point*>::iterator it=pointsList->begin();
-  // Fazer transformada de Viewport
-  cairo_move_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
+  xi = (*it)->getX();
+  yi = (*it)->getY();
+  cairo_move_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
   ++it;
   for (; it != pointsList->end(); ++it) {
     cairo_line_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
   }
+  cairo_line_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
   return;
 }
 
