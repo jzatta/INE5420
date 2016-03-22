@@ -4,10 +4,15 @@
 
 std::list<Object*> *Window::objects;
 GtkWidget* Window::da;
+GtkWidget* Window::oList;
 
 
 Window::Window() {
 
+}
+
+GtkWidget * Window::getOlist(){
+	return oList;
 }
 
 void Window::clear_surface (void)
@@ -110,6 +115,10 @@ void Window::addPoint(GtkWidget* widget, gpointer data){
 	const char* name = gtk_entry_get_text((GtkEntry*)paramsP->nome);
 	const char* x = gtk_entry_get_text((GtkEntry*)paramsP->x);
 	const char* y = gtk_entry_get_text((GtkEntry*)paramsP->y);
+
+	GtkWidget* label = gtk_label_new(name);
+	gtk_list_box_prepend((GtkListBox*)oList, label);
+	gtk_widget_show(label);
   Window::getObjects()->push_back(new Point(name, atof(x), atof(y)));
   gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }
@@ -121,6 +130,10 @@ void Window::addLine(GtkWidget* widget, gpointer data){
 	const char* yi = gtk_entry_get_text((GtkEntry*)paramsL->yi);
 	const char* xf = gtk_entry_get_text((GtkEntry*)paramsL->xf);
 	const char* yf = gtk_entry_get_text((GtkEntry*)paramsL->yf);
+
+	GtkWidget* label = gtk_label_new(name);
+	gtk_list_box_prepend((GtkListBox*)oList, label);
+	gtk_widget_show(label);
   
   Window::getObjects()->push_back(new Line(name, atof(xi), atof(yi), atof(xf), atof(yf)));
   gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
@@ -336,8 +349,14 @@ void Window::addPoligonWindowName(GtkWidget *widget, gpointer data){
 void Window::addPoligon(GtkWidget *widget, gpointer data) {
 	ParamsPoligon * params = (ParamsPoligon*) data;
 	const char* name = gtk_entry_get_text((GtkEntry*)params->nome);
-  Polygon(name, &(params->pointsList));
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+	
+	GtkWidget* label = gtk_label_new(name);
+	gtk_list_box_prepend((GtkListBox*)oList, label);
+	gtk_widget_show(label);
+
+  	//Polygon(name, &(params->pointsList));
+  	Window::getObjects()->push_back(new Polygon(name, &(params->pointsList)));
+  	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }
 
 void Window::init(){
@@ -357,11 +376,29 @@ void Window::init(){
 
 	frame = gtk_frame_new("Objects");
 	gtk_grid_attach(GTK_GRID(grid), frame, 0, 0, 2, 1);
+  
+  GtkWidget* sw;
+  sw = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(frame), sw);
+  gtk_widget_show(sw);
+  
 	oList = gtk_list_box_new();
-	gtk_container_add(GTK_CONTAINER(frame), oList);
 	GtkAllocation alloc;
 	gtk_widget_get_allocation(oList, &alloc);
 	gtk_widget_set_size_request(oList, alloc.width, 200);
+  
+  GtkWidget* viewport; GtkRequisition size;
+  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), oList);
+  viewport = gtk_widget_get_ancestor(oList, GTK_TYPE_VIEWPORT);
+  gtk_widget_size_request(viewport, &size);
+  gtk_widget_set_size_request(sw, size.width, 200);
+  
+// 	gtk_container_add(GTK_CONTAINER(frame), oList);
+	//label = gtk_label_new("TESTE");
+	//gtk_list_box_prepend((GtkListBox*)oList, label);
+	//label = gtk_label_new("TESTE2");
+	//gtk_list_box_prepend((GtkListBox*)oList, label);
 	//TODO connect
 
 	frame = gtk_frame_new("Add");
@@ -392,7 +429,7 @@ void Window::init(){
 	gtk_widget_set_size_request(da, Viewport::ViewportX, Viewport::ViewportY);
 	gtk_grid_attach(GTK_GRID(inGrid), da, 0, 1, 1, 1);
 	g_signal_connect (da, "draw", G_CALLBACK (draw_cb), NULL);
-  g_signal_connect (da,"configure-event", G_CALLBACK (configure_event_cb), NULL);
+ 	g_signal_connect (da,"configure-event", G_CALLBACK (configure_event_cb), NULL);
 
 	//TODO connect
 
@@ -428,7 +465,7 @@ void Window::init(){
 	g_signal_connect(button, "clicked", G_CALLBACK(ZoomIn), da);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 2, 4, 1, 1);
 
-  button = gtk_button_new_with_label("Center");
+ 	button = gtk_button_new_with_label("Center");
 	g_signal_connect(button, "clicked", G_CALLBACK(Center), da);
 	gtk_grid_attach(GTK_GRID(inGrid), button, 1, 2, 1, 1);
 

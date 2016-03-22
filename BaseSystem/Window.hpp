@@ -32,11 +32,11 @@ struct ParamsPoligon{
 	GtkWidget *y;
 	std::list<std::pair<float,float>> pointsList;
 };
-private:
+protected:
 	GtkWidget* window;
 	GtkWidget* grid;
 	static GtkWidget* da;
-	GtkWidget* oList;
+	static GtkWidget* oList;
 
 
   static std::list<Object*> *objects;
@@ -45,15 +45,12 @@ public:
 	Window();
 	void init();
   	static std::list<Object*> *getObjects();
-        static GtkWidget* getDA();
+    static GtkWidget* getDA();
+    static GtkWidget* getOlist();
   	static void clear_surface (void);
   	static void addPoint(GtkWidget* widget, gpointer data);
-  	static gboolean configure_event_cb (GtkWidget         *widget,
-            GdkEventConfigure *event,
-            gpointer           data);
-  	static gboolean draw_cb (GtkWidget *widget,
- cairo_t   *cr,
- gpointer   data);
+  	static gboolean configure_event_cb (GtkWidget *widget, GdkEventConfigure *event, gpointer data);
+  	static gboolean draw_cb (GtkWidget *widget, cairo_t *cr, gpointer data);
   	static void moveDown(GtkWidget *widget, gpointer data);
   	static void moveRight(GtkWidget *widget, gpointer data);
   	static void moveLeft(GtkWidget *widget, gpointer data);
