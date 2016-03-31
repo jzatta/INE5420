@@ -5,9 +5,6 @@
 #include <algorithm>
 #include "Matrix.hpp"
 #include <utility>
-#include <math.h>
-
-#define PI 3.14159265
 
 std::list<Object*> *GUI::objects;
 GtkWidget* GUI::da;
@@ -369,20 +366,36 @@ void GUI::init(){
 	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+
+
 	grid = gtk_grid_new();
 	gtk_container_add(GTK_CONTAINER(window), grid);
 
 	inGrid = gtk_grid_new();
 	gtk_grid_attach(GTK_GRID(grid), inGrid, 0, 0, 2, 1);
 	frame = gtk_frame_new("Objects");
-	gtk_grid_attach(GTK_GRID(inGrid), frame, 0,0,2,1);
+	gtk_grid_attach(GTK_GRID(inGrid), frame, 0, 0, 2, 1);
+
+	GtkWidget* sw;
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(frame), sw);
+	gtk_widget_show(sw);
+
 	oList = gtk_list_box_new();
 	GtkAllocation alloc;
 	gtk_widget_get_allocation(oList, &alloc);
-	gtk_widget_set_size_request(oList, alloc.width, 200);
+	gtk_widget_set_size_request(oList, 180, 200);
+
+	GtkWidget* viewport; GtkRequisition size;
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), oList);
+	viewport = gtk_widget_get_ancestor(oList, GTK_TYPE_VIEWPORT);
+	gtk_widget_size_request(viewport, &size);
+	gtk_widget_set_size_request(sw, 180, 200);
+
 	gtk_container_add(GTK_CONTAINER(frame), oList);
 	gtk_list_box_set_selection_mode((GtkListBox*)oList, GTK_SELECTION_SINGLE);
-	
+
 	button = gtk_button_new_with_label("Edit");
 	gtk_grid_attach(GTK_GRID(inGrid), button, 0,1,2,1);
 	g_signal_connect(button, "clicked", G_CALLBACK(editWindow), NULL);
@@ -391,6 +404,7 @@ void GUI::init(){
 	gtk_grid_attach(GTK_GRID(grid), frame, 0,2,1,1);
 
 	inGrid = gtk_grid_new();
+
 	gtk_container_set_border_width(GTK_CONTAINER(inGrid), 5);
 	gtk_container_add(GTK_CONTAINER(frame), inGrid);
 
