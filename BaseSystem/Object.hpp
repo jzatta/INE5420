@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 #include "Viewport.hpp"
+#include <utility>
+#include <list>
 
 class Object {
 private:
@@ -12,10 +14,11 @@ public:
     this->name = name;
   }
   virtual void draw(cairo_t *cr) = 0;
-  const char *getName() {
+  const char *getName() const {
     return name;
   }
+  virtual void transform(float matrix[3][3]) = 0;
+  virtual std::pair<float,float> getCenter() = 0;
 };
-
 
 #endif

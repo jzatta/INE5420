@@ -1,6 +1,13 @@
 
 #include <iostream>
 #include "Window.hpp"
+#include <string>
+#include <algorithm>
+#include "Matrix.hpp"
+#include <utility>
+#include <math.h>
+
+#define PI 3.14159265
 
 std::list<Object*> *Window::objects;
 GtkWidget* Window::da;
@@ -51,7 +58,6 @@ gboolean Window::draw_cb (GtkWidget *widget,
   GdkRGBA color;
   cairo_set_source_rgb (cr, 0, 0, 0);
   cairo_paint (cr);
-//   cairo_set_source_surface (cr, surface, 0, 0);
   cairo_set_source_rgb (cr, 1, 1, 1);
   cairo_set_line_width(cr, 0.5);
 
@@ -112,30 +118,30 @@ void Window::Center(GtkWidget *widget, gpointer data) {
 
 void Window::addPoint(GtkWidget* widget, gpointer data){
 	ParamsPonto * paramsP = (ParamsPonto*) data;
-	const char* name = gtk_entry_get_text((GtkEntry*)paramsP->nome);
+	std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)paramsP->nome));
 	const char* x = gtk_entry_get_text((GtkEntry*)paramsP->x);
 	const char* y = gtk_entry_get_text((GtkEntry*)paramsP->y);
 
-	GtkWidget* label = gtk_label_new(name);
+	GtkWidget* label = gtk_label_new(name->c_str());
 	gtk_list_box_prepend((GtkListBox*)oList, label);
 	gtk_widget_show(label);
-  Window::getObjects()->push_back(new Point(name, atof(x), atof(y)));
+  Window::getObjects()->push_back(new Point(name->c_str(), atof(x), atof(y)));
   gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }
 
 void Window::addLine(GtkWidget* widget, gpointer data){
 	ParamsLinha * paramsL = (ParamsLinha*) data;
-	const char* name = gtk_entry_get_text((GtkEntry*)paramsL->nome);
+	std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)paramsL->nome));
 	const char* xi = gtk_entry_get_text((GtkEntry*)paramsL->xi);
 	const char* yi = gtk_entry_get_text((GtkEntry*)paramsL->yi);
 	const char* xf = gtk_entry_get_text((GtkEntry*)paramsL->xf);
 	const char* yf = gtk_entry_get_text((GtkEntry*)paramsL->yf);
 
-	GtkWidget* label = gtk_label_new(name);
+	GtkWidget* label = gtk_label_new(name->c_str());
 	gtk_list_box_prepend((GtkListBox*)oList, label);
 	gtk_widget_show(label);
   
-  Window::getObjects()->push_back(new Line(name, atof(xi), atof(yi), atof(xf), atof(yf)));
+  Window::getObjects()->push_back(new Line(name->c_str(), atof(xi), atof(yi), atof(xf), atof(yf)));
   gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }
 
@@ -276,7 +282,6 @@ void Window::addPoligonWindow(GtkWidget *widget, gpointer data) {
 
 
 	GtkWidget* button = gtk_button_new_with_label("Add More");
-	//TODO connect
 	g_signal_connect(button, "clicked", G_CALLBACK(buildPoligon), (gpointer) params);
 	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
 	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 1, 2);
@@ -294,16 +299,12 @@ void Window::buildPoligon(GtkWidget *widget, gpointer data){
 	ParamsPoligon * params = (ParamsPoligon*) data;
 	const char* x = gtk_entry_get_text((GtkEntry*)params->x);
 	float xi = atof(x);
-	std::cout << xi << std::endl;
 	const char* y = gtk_entry_get_text((GtkEntry*)params->y);
 	float yi = atof(y);
-	std::cout << y << std::endl;
 
-	std::pair<float,float> test;
-	test.first = xi;
-	test.second = yi;
+	Point p("PontoPoligono",xi, yi);
 
-	params->pointsList.push_back(test);
+	params->pointsList.push_back(p);
 	addPoligonWindow(widget, (gpointer)params);
 }
 
@@ -314,11 +315,9 @@ void Window::addPoligonWindowName(GtkWidget *widget, gpointer data){
 	const char* y = gtk_entry_get_text((GtkEntry*)params->y);
 	float yi = atof(y);
 
-	std::pair<float,float> test;
-	test.first = xi;
-	test.second = yi;
+	Point p("PontoPoligono",xi, yi);
 
-	params->pointsList.push_back(test);
+	params->pointsList.push_back(p);
 
 	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 300, 100);
@@ -348,14 +347,13 @@ void Window::addPoligonWindowName(GtkWidget *widget, gpointer data){
 
 void Window::addPoligon(GtkWidget *widget, gpointer data) {
 	ParamsPoligon * params = (ParamsPoligon*) data;
-	const char* name = gtk_entry_get_text((GtkEntry*)params->nome);
+	std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)params->nome));
 	
-	GtkWidget* label = gtk_label_new(name);
+	GtkWidget* label = gtk_label_new(name->c_str());
 	gtk_list_box_prepend((GtkListBox*)oList, label);
 	gtk_widget_show(label);
 
-  	//Polygon(name, &(params->pointsList));
-  	Window::getObjects()->push_back(new Polygon(name, &(params->pointsList)));
+  	Window::getObjects()->push_back(new Polygon(name->c_str(), params->pointsList));
   	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }
 
@@ -374,34 +372,22 @@ void Window::init(){
 	grid = gtk_grid_new();
 	gtk_container_add(GTK_CONTAINER(window), grid);
 
+	inGrid = gtk_grid_new();
+	gtk_grid_attach(GTK_GRID(grid), inGrid, 0, 0, 2, 1);
 	frame = gtk_frame_new("Objects");
-	gtk_grid_attach(GTK_GRID(grid), frame, 0, 0, 2, 1);
-  
-  GtkWidget* sw;
-  sw = gtk_scrolled_window_new(NULL, NULL);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_container_add(GTK_CONTAINER(frame), sw);
-  gtk_widget_show(sw);
-  
+	gtk_grid_attach(GTK_GRID(inGrid), frame, 0,0,2,1);
 	oList = gtk_list_box_new();
 	GtkAllocation alloc;
 	gtk_widget_get_allocation(oList, &alloc);
 	gtk_widget_set_size_request(oList, alloc.width, 200);
-  
-  GtkWidget* viewport; GtkRequisition size;
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), oList);
-  viewport = gtk_widget_get_ancestor(oList, GTK_TYPE_VIEWPORT);
-  gtk_widget_size_request(viewport, &size);
-  gtk_widget_set_size_request(sw, size.width, 200);
-  
-// 	gtk_container_add(GTK_CONTAINER(frame), oList);
-	//label = gtk_label_new("TESTE");
-	//gtk_list_box_prepend((GtkListBox*)oList, label);
-	//label = gtk_label_new("TESTE2");
-	//gtk_list_box_prepend((GtkListBox*)oList, label);
-	//TODO connect
+	gtk_container_add(GTK_CONTAINER(frame), oList);
+	gtk_list_box_set_selection_mode((GtkListBox*)oList, GTK_SELECTION_SINGLE);
+	
+	button = gtk_button_new_with_label("Edit");
+	gtk_grid_attach(GTK_GRID(inGrid), button, 0,1,2,1);
+	g_signal_connect(button, "clicked", G_CALLBACK(editWindow), NULL);
 
-	frame = gtk_frame_new("Add");
+	frame = gtk_frame_new("Drawn");
 	gtk_grid_attach(GTK_GRID(grid), frame, 0,2,1,1);
 
 	inGrid = gtk_grid_new();
@@ -430,8 +416,6 @@ void Window::init(){
 	gtk_grid_attach(GTK_GRID(inGrid), da, 0, 1, 1, 1);
 	g_signal_connect (da, "draw", G_CALLBACK (draw_cb), NULL);
  	g_signal_connect (da,"configure-event", G_CALLBACK (configure_event_cb), NULL);
-
-	//TODO connect
 
 
   	frame = gtk_frame_new("View Control");
@@ -471,4 +455,299 @@ void Window::init(){
 
 
 	gtk_widget_show_all(window);
+}
+
+void Window::editWindow(GtkWidget *widget, gpointer data){
+	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
+	gtk_window_set_title(GTK_WINDOW(auxWindow), "Editar");
+	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
+
+	GtkWidget* auxGrid = gtk_grid_new();
+	gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
+	gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
+
+	GtkWidget* button;
+	button = gtk_button_new_with_label("Deletar");
+	g_signal_connect(button, "clicked", G_CALLBACK(deleteObject), NULL);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 1, 1, 1);
+
+	button = gtk_button_new_with_label("Transladar");
+	g_signal_connect(button, "clicked", G_CALLBACK(transObjectWindow), NULL);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 1, 1);
+
+	button = gtk_button_new_with_label("Escalonar");
+	g_signal_connect(button, "clicked", G_CALLBACK(escObjectWindow), NULL);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 3, 1, 1);
+
+	button = gtk_button_new_with_label("Rotacionar");
+	g_signal_connect(button, "clicked", G_CALLBACK(rotObjectWindow), NULL);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 4, 1, 1);
+
+	gtk_widget_show_all(auxWindow);
+}
+
+void Window::deleteObject(GtkWidget *widget, gpointer data){
+	GtkListBoxRow * obj;
+	obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+	GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
+	const gchar* name = gtk_label_get_text ((GtkLabel*)test);
+	std::string name2(name);
+
+	objects->remove_if([name2](Object* obj){
+		return std::string(obj->getName()) == name2; 
+	});
+	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+
+	gtk_container_remove((GtkContainer*)oList, (GtkWidget*) obj);
+}
+
+void Window::transObjectWindow(GtkWidget *widget, gpointer data){
+	
+	ParamsPonto * paramsP = new ParamsPonto();
+
+	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
+	gtk_window_set_title(GTK_WINDOW(auxWindow), "Transladar");
+	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
+
+	GtkWidget* auxGrid = gtk_grid_new();
+	gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
+	gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
+
+	GtkWidget* label = gtk_label_new(NULL);
+	gtk_label_set_text(GTK_LABEL(label), "x: ");
+	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
+
+	paramsP->x = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsP->x, 1, 0, 1, 1);
+
+	label = gtk_label_new(NULL);
+	gtk_label_set_text(GTK_LABEL(label), " y: ");
+	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
+
+	paramsP->y = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsP->y, 1, 1, 1, 1);
+
+	GtkWidget* button = gtk_button_new_with_label("Transladar");
+	g_signal_connect(button, "clicked", G_CALLBACK(transObject), (gpointer) paramsP);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 2, 2);
+
+	gtk_widget_show_all(auxWindow);
+}
+
+void Window::transObject(GtkWidget *widget, gpointer data){
+	ParamsPonto * paramsP = (ParamsPonto*) data;
+	float x = atof(gtk_entry_get_text((GtkEntry*)paramsP->x));
+	float y = atof(gtk_entry_get_text((GtkEntry*)paramsP->y));
+
+	GtkListBoxRow * obj;
+	obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+	GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
+	const gchar* name = gtk_label_get_text ((GtkLabel*)test);
+	std::string name2(name);
+
+	std::list<Object*>::iterator it = std::find_if(objects->begin(), objects->end(), [name2](Object* obj){
+		return std::string(obj->getName()) == name2; 
+	});
+
+	float matrix[3][3] = {{1,0,0},{0,1,0},{x,y,1}};
+	(*it)->transform(matrix);
+	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+}
+
+void Window::escObjectWindow(GtkWidget *widget, gpointer data){
+
+	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
+	gtk_window_set_title(GTK_WINDOW(auxWindow), "Escalonar");
+	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
+
+	GtkWidget* auxGrid = gtk_grid_new();
+	gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
+	gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
+
+	GtkWidget* label = gtk_label_new(NULL);
+	gtk_label_set_text(GTK_LABEL(label), "Escalar: ");
+	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
+
+	GtkWidget* escalar = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), escalar, 1, 0, 1, 1);
+
+	GtkWidget* button = gtk_button_new_with_label("Escalonar");
+	g_signal_connect(button, "clicked", G_CALLBACK(escObject), (gpointer) escalar);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 1, 2, 2);
+
+	gtk_widget_show_all(auxWindow);
+}
+
+void Window::escObject(GtkWidget *widget, gpointer data){
+	float escalar = atof(gtk_entry_get_text((GtkEntry*)data));
+
+	GtkListBoxRow * obj;
+	obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+	GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
+	const gchar* name = gtk_label_get_text ((GtkLabel*)test);
+	std::string name2(name);
+
+	std::list<Object*>::iterator it = std::find_if(objects->begin(), objects->end(), [name2](Object* obj){
+		return std::string(obj->getName()) == name2;
+	});
+	
+	float matrix[3][3];
+	Matrix::constructScalonateMatrix(matrix, escalar, (*it)->getCenter());
+	(*it)->transform(matrix);
+	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+
+}
+
+void Window::rotObjectWindow(GtkWidget *widget, gpointer data){
+
+	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
+	gtk_window_set_title(GTK_WINDOW(auxWindow), "Rotacionar");
+	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
+
+	GtkWidget* auxGrid = gtk_grid_new();
+	gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
+	gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
+
+	GtkWidget* label = gtk_label_new(NULL);
+	gtk_label_set_text(GTK_LABEL(label), "Angulo: ");
+	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
+
+	GtkWidget* angulo = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), angulo, 1, 0, 1, 1);
+
+	GtkWidget* button = gtk_button_new_with_label("Rotacionar(Centro Objeto)");
+	g_signal_connect(button, "clicked", G_CALLBACK(rotObjectCenter), (gpointer) angulo);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 1, 2, 1);
+
+	button = gtk_button_new_with_label("Rotacionar(Origem)");
+	g_signal_connect(button, "clicked", G_CALLBACK(rotObjectOrigin), (gpointer) angulo);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 2, 1);
+
+	button = gtk_button_new_with_label("Rotacionar(Ponto)");
+	g_signal_connect(button, "clicked", G_CALLBACK(rotObjectPointWindow), (gpointer) angulo);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 3, 2, 1);
+
+	gtk_widget_show_all(auxWindow);
+}
+
+void Window::rotObjectCenter(GtkWidget *widget, gpointer data){
+	float angulo = atof(gtk_entry_get_text((GtkEntry*)data));
+
+	GtkListBoxRow * obj;
+	obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+	GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
+	const gchar* name = gtk_label_get_text ((GtkLabel*)test);
+	std::string name2(name);
+
+	std::list<Object*>::iterator it = std::find_if(objects->begin(), objects->end(), [name2](Object* obj){
+		return std::string(obj->getName()) == name2;
+	});
+	
+	float matrix[3][3];
+	Matrix::constructRotateMatrix(matrix, angulo, (*it)->getCenter());
+	(*it)->transform(matrix);
+	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+
+}
+
+void Window::rotObjectOrigin(GtkWidget *widget, gpointer data){
+	//TODO juntar com o de cima
+	double angulo = atof(gtk_entry_get_text((GtkEntry*)data));
+
+	GtkListBoxRow * obj;
+	obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+	GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
+	const gchar* name = gtk_label_get_text ((GtkLabel*)test);
+	std::string name2(name);
+
+	std::list<Object*>::iterator it = std::find_if(objects->begin(), objects->end(), [name2](Object* obj){
+		return std::string(obj->getName()) == name2;
+	});
+	//double rad = (angulo*PI)/180;
+	float matrix[3][3];// = {{cos(rad), -sin(rad), 0}, {sin(rad), cos(rad), 0}, {0,0,1}};
+	std::pair<float,float> origin;
+	origin.first = 0;
+	origin.second = 0;
+	Matrix::constructRotateMatrix(matrix, angulo, origin);
+	(*it)->transform(matrix);
+	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+
+}
+
+void Window::rotObjectPointWindow(GtkWidget *widget, gpointer data){
+	//juntar com janela de transladar
+	ParamsRotation * paramsR = new ParamsRotation();
+	paramsR->angulo = atof(gtk_entry_get_text((GtkEntry*)data));
+
+	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
+	gtk_window_set_title(GTK_WINDOW(auxWindow), "Rotacionar : Ponto");
+	g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+	gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
+
+	GtkWidget* auxGrid = gtk_grid_new();
+	gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
+	gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
+
+	GtkWidget* label = gtk_label_new(NULL);
+	gtk_label_set_text(GTK_LABEL(label), "x: ");
+	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
+
+	paramsR->x = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsR->x, 1, 0, 1, 1);
+
+	label = gtk_label_new(NULL);
+	gtk_label_set_text(GTK_LABEL(label), " y: ");
+	gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
+
+	paramsR->y = gtk_entry_new();
+	gtk_grid_attach(GTK_GRID(auxGrid), paramsR->y, 1, 1, 1, 1);
+
+	GtkWidget* button = gtk_button_new_with_label("Rotacionar");
+	g_signal_connect(button, "clicked", G_CALLBACK(rotObjectPoint), (gpointer) paramsR);
+	g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+
+	gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 2, 2);
+
+	gtk_widget_show_all(auxWindow);
+}
+
+void Window::rotObjectPoint(GtkWidget *widget, gpointer data){
+	ParamsRotation * paramsR = (ParamsRotation*) data;
+	std::pair<float,float> origin;
+	origin.first = atof(gtk_entry_get_text((GtkEntry*)paramsR->x));
+	origin.second = atof(gtk_entry_get_text((GtkEntry*)paramsR->y));
+
+	GtkListBoxRow * obj;
+	obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+	GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
+	const gchar* name = gtk_label_get_text ((GtkLabel*)test);
+	std::string name2(name);
+
+	std::list<Object*>::iterator it = std::find_if(objects->begin(), objects->end(), [name2](Object* obj){
+		return std::string(obj->getName()) == name2;
+	});
+	float matrix[3][3];
+	Matrix::constructRotateMatrix(matrix, paramsR->angulo, origin);
+	(*it)->transform(matrix);
+	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
 }

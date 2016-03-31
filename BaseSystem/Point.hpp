@@ -13,6 +13,9 @@ public:
   void draw(cairo_t *cr);
   float getX();
   float getY();
+  void transform(float matrix[3][3]);
+  void setCords(float _x, float _y);
+  std::pair<float,float> getCenter();
 };
 
 #endif

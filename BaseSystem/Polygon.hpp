@@ -8,10 +8,12 @@
 
 class Polygon : public Object {
 private:
-  std::list<std::pair<float,float>> *pointsList;
+  std::list<Point> pointsList;
 public:
-  Polygon(const char *name, std::list<std::pair<float,float>> *list);
+  Polygon(const char *name, std::list<Point> list);
   void draw(cairo_t *cr);
+  void transform(float matrix[3][3]);
+  std::pair<float,float> getCenter();
   ~Polygon();
 };
 
