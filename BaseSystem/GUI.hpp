@@ -10,7 +10,7 @@
 
 static cairo_surface_t *surface = NULL;
 
-class Window {
+class GUI {
 
 struct ParamsPonto {
 	GtkWidget *nome;
@@ -48,7 +48,7 @@ protected:
   static std::list<Object*> *objects;
 
 public:
-	Window();
+	GUI();
 	void init();
   static void editWindow(GtkWidget *widget, gpointer data);
   static std::list<Object*> *getObjects();

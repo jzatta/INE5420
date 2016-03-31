@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "Window.hpp"
+#include "GUI.hpp"
 #include <string>
 #include <algorithm>
 #include "Matrix.hpp"
@@ -9,20 +9,20 @@
 
 #define PI 3.14159265
 
-std::list<Object*> *Window::objects;
-GtkWidget* Window::da;
-GtkWidget* Window::oList;
+std::list<Object*> *GUI::objects;
+GtkWidget* GUI::da;
+GtkWidget* GUI::oList;
 
 
-Window::Window() {
+GUI::GUI() {
 
 }
 
-GtkWidget * Window::getOlist(){
+GtkWidget * GUI::getOlist(){
 	return oList;
 }
 
-void Window::clear_surface (void)
+void GUI::clear_surface (void)
 {
   cairo_t *cr;
 
@@ -34,7 +34,7 @@ void Window::clear_surface (void)
   cairo_destroy (cr);
 }
 
-gboolean Window::configure_event_cb (GtkWidget         *widget,
+gboolean GUI::configure_event_cb (GtkWidget         *widget,
             GdkEventConfigure *event,
             gpointer           data)
 {
@@ -51,7 +51,7 @@ gboolean Window::configure_event_cb (GtkWidget         *widget,
   return TRUE;
 }
 
-gboolean Window::draw_cb (GtkWidget *widget,
+gboolean GUI::draw_cb (GtkWidget *widget,
  cairo_t   *cr,
  gpointer   data)
 {
@@ -61,8 +61,8 @@ gboolean Window::draw_cb (GtkWidget *widget,
   cairo_set_source_rgb (cr, 1, 1, 1);
   cairo_set_line_width(cr, 0.5);
 
-  std::list<Object*>::iterator it=Window::getObjects()->begin();
-  for (; it != Window::getObjects()->end(); ++it) {
+  std::list<Object*>::iterator it=GUI::getObjects()->begin();
+  for (; it != GUI::getObjects()->end(); ++it) {
     (*it)->draw(cr);
   }
   cairo_stroke(cr);
@@ -70,53 +70,53 @@ gboolean Window::draw_cb (GtkWidget *widget,
   return FALSE;
 }
 
-std::list<Object*> *Window::getObjects() {
-  if (Window::objects == NULL) {
-    Window::objects = new std::list<Object*>();
+std::list<Object*> *GUI::getObjects() {
+  if (GUI::objects == NULL) {
+    GUI::objects = new std::list<Object*>();
   }
-  return Window::objects;
+  return GUI::objects;
 }
 
-GtkWidget* Window::getDA() {
+GtkWidget* GUI::getDA() {
   return da;
 }
 
-void Window::moveDown(GtkWidget *widget, gpointer data) {
+void GUI::moveDown(GtkWidget *widget, gpointer data) {
   Viewport::moveVertical(-0.1);
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::moveRight(GtkWidget *widget, gpointer data) {
+void GUI::moveRight(GtkWidget *widget, gpointer data) {
   Viewport::moveHorizontal(0.1);
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::moveLeft(GtkWidget *widget, gpointer data) {
+void GUI::moveLeft(GtkWidget *widget, gpointer data) {
   Viewport::moveHorizontal(-0.1);
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::moveUp(GtkWidget *widget, gpointer data) {
+void GUI::moveUp(GtkWidget *widget, gpointer data) {
   Viewport::moveVertical(0.1);
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::ZoomOut(GtkWidget *widget, gpointer data) {
+void GUI::ZoomOut(GtkWidget *widget, gpointer data) {
   Viewport::zoom(0.8);
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::ZoomIn(GtkWidget *widget, gpointer data) {
+void GUI::ZoomIn(GtkWidget *widget, gpointer data) {
   Viewport::zoom(1.25);
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::Center(GtkWidget *widget, gpointer data) {
+void GUI::Center(GtkWidget *widget, gpointer data) {
   Viewport::defaultSize();
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::addPoint(GtkWidget* widget, gpointer data){
+void GUI::addPoint(GtkWidget* widget, gpointer data){
 	ParamsPonto * paramsP = (ParamsPonto*) data;
 	std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)paramsP->nome));
 	const char* x = gtk_entry_get_text((GtkEntry*)paramsP->x);
@@ -125,11 +125,11 @@ void Window::addPoint(GtkWidget* widget, gpointer data){
 	GtkWidget* label = gtk_label_new(name->c_str());
 	gtk_list_box_prepend((GtkListBox*)oList, label);
 	gtk_widget_show(label);
-  Window::getObjects()->push_back(new Point(name->c_str(), atof(x), atof(y)));
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  GUI::getObjects()->push_back(new Point(name->c_str(), atof(x), atof(y)));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::addLine(GtkWidget* widget, gpointer data){
+void GUI::addLine(GtkWidget* widget, gpointer data){
 	ParamsLinha * paramsL = (ParamsLinha*) data;
 	std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)paramsL->nome));
 	const char* xi = gtk_entry_get_text((GtkEntry*)paramsL->xi);
@@ -141,12 +141,12 @@ void Window::addLine(GtkWidget* widget, gpointer data){
 	gtk_list_box_prepend((GtkListBox*)oList, label);
 	gtk_widget_show(label);
   
-  Window::getObjects()->push_back(new Line(name->c_str(), atof(xi), atof(yi), atof(xf), atof(yf)));
-  gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  GUI::getObjects()->push_back(new Line(name->c_str(), atof(xi), atof(yi), atof(xf), atof(yf)));
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 
-void Window::addPointWindow(GtkWidget *widget, gpointer data) {
+void GUI::addPointWindow(GtkWidget *widget, gpointer data) {
 	
 	ParamsPonto * paramsP = new ParamsPonto();
 
@@ -191,7 +191,7 @@ void Window::addPointWindow(GtkWidget *widget, gpointer data) {
 	gtk_widget_show_all(auxWindow);
 }
 
-void Window::addLineWindow(GtkWidget *widget, gpointer   data) {
+void GUI::addLineWindow(GtkWidget *widget, gpointer   data) {
 
 	ParamsLinha * paramsL = new ParamsLinha();
 
@@ -248,7 +248,7 @@ void Window::addLineWindow(GtkWidget *widget, gpointer   data) {
 
 	gtk_widget_show_all(auxWindow);
 }
-void Window::addPoligonWindow(GtkWidget *widget, gpointer data) {
+void GUI::addPoligonWindow(GtkWidget *widget, gpointer data) {
 	ParamsPoligon * params;
 	if(data == NULL){
 		params = new ParamsPoligon();
@@ -295,7 +295,7 @@ void Window::addPoligonWindow(GtkWidget *widget, gpointer data) {
 
 }
 
-void Window::buildPoligon(GtkWidget *widget, gpointer data){
+void GUI::buildPoligon(GtkWidget *widget, gpointer data){
 	ParamsPoligon * params = (ParamsPoligon*) data;
 	const char* x = gtk_entry_get_text((GtkEntry*)params->x);
 	float xi = atof(x);
@@ -308,7 +308,7 @@ void Window::buildPoligon(GtkWidget *widget, gpointer data){
 	addPoligonWindow(widget, (gpointer)params);
 }
 
-void Window::addPoligonWindowName(GtkWidget *widget, gpointer data){
+void GUI::addPoligonWindowName(GtkWidget *widget, gpointer data){
 	ParamsPoligon * params = (ParamsPoligon*) data;
 	const char* x = gtk_entry_get_text((GtkEntry*)params->x);
 	float xi = atof(x);
@@ -345,7 +345,7 @@ void Window::addPoligonWindowName(GtkWidget *widget, gpointer data){
 
 }
 
-void Window::addPoligon(GtkWidget *widget, gpointer data) {
+void GUI::addPoligon(GtkWidget *widget, gpointer data) {
 	ParamsPoligon * params = (ParamsPoligon*) data;
 	std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)params->nome));
 	
@@ -353,11 +353,11 @@ void Window::addPoligon(GtkWidget *widget, gpointer data) {
 	gtk_list_box_prepend((GtkListBox*)oList, label);
 	gtk_widget_show(label);
 
-  	Window::getObjects()->push_back(new Polygon(name->c_str(), params->pointsList));
-  	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+  	GUI::getObjects()->push_back(new Polygon(name->c_str(), params->pointsList));
+  	gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::init(){
+void GUI::init(){
 	GtkWidget* frame;
 	GtkWidget* inGrid;
 	GtkWidget* button;
@@ -457,7 +457,7 @@ void Window::init(){
 	gtk_widget_show_all(window);
 }
 
-void Window::editWindow(GtkWidget *widget, gpointer data){
+void GUI::editWindow(GtkWidget *widget, gpointer data){
 	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
 	gtk_window_set_title(GTK_WINDOW(auxWindow), "Editar");
@@ -492,7 +492,7 @@ void Window::editWindow(GtkWidget *widget, gpointer data){
 	gtk_widget_show_all(auxWindow);
 }
 
-void Window::deleteObject(GtkWidget *widget, gpointer data){
+void GUI::deleteObject(GtkWidget *widget, gpointer data){
 	GtkListBoxRow * obj;
 	obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
 	GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
@@ -502,12 +502,12 @@ void Window::deleteObject(GtkWidget *widget, gpointer data){
 	objects->remove_if([name2](Object* obj){
 		return std::string(obj->getName()) == name2; 
 	});
-	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+	gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 
 	gtk_container_remove((GtkContainer*)oList, (GtkWidget*) obj);
 }
 
-void Window::transObjectWindow(GtkWidget *widget, gpointer data){
+void GUI::transObjectWindow(GtkWidget *widget, gpointer data){
 	
 	ParamsPonto * paramsP = new ParamsPonto();
 
@@ -544,7 +544,7 @@ void Window::transObjectWindow(GtkWidget *widget, gpointer data){
 	gtk_widget_show_all(auxWindow);
 }
 
-void Window::transObject(GtkWidget *widget, gpointer data){
+void GUI::transObject(GtkWidget *widget, gpointer data){
 	ParamsPonto * paramsP = (ParamsPonto*) data;
 	float x = atof(gtk_entry_get_text((GtkEntry*)paramsP->x));
 	float y = atof(gtk_entry_get_text((GtkEntry*)paramsP->y));
@@ -561,10 +561,10 @@ void Window::transObject(GtkWidget *widget, gpointer data){
 
 	float matrix[3][3] = {{1,0,0},{0,1,0},{x,y,1}};
 	(*it)->transform(matrix);
-	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+	gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void Window::escObjectWindow(GtkWidget *widget, gpointer data){
+void GUI::escObjectWindow(GtkWidget *widget, gpointer data){
 
 	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
@@ -592,7 +592,7 @@ void Window::escObjectWindow(GtkWidget *widget, gpointer data){
 	gtk_widget_show_all(auxWindow);
 }
 
-void Window::escObject(GtkWidget *widget, gpointer data){
+void GUI::escObject(GtkWidget *widget, gpointer data){
 	float escalar = atof(gtk_entry_get_text((GtkEntry*)data));
 
 	GtkListBoxRow * obj;
@@ -608,11 +608,11 @@ void Window::escObject(GtkWidget *widget, gpointer data){
 	float matrix[3][3];
 	Matrix::constructScalonateMatrix(matrix, escalar, (*it)->getCenter());
 	(*it)->transform(matrix);
-	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+	gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 
 }
 
-void Window::rotObjectWindow(GtkWidget *widget, gpointer data){
+void GUI::rotObjectWindow(GtkWidget *widget, gpointer data){
 
 	GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
@@ -649,7 +649,7 @@ void Window::rotObjectWindow(GtkWidget *widget, gpointer data){
 	gtk_widget_show_all(auxWindow);
 }
 
-void Window::rotObjectCenter(GtkWidget *widget, gpointer data){
+void GUI::rotObjectCenter(GtkWidget *widget, gpointer data){
 	float angulo = atof(gtk_entry_get_text((GtkEntry*)data));
 
 	GtkListBoxRow * obj;
@@ -665,11 +665,11 @@ void Window::rotObjectCenter(GtkWidget *widget, gpointer data){
 	float matrix[3][3];
 	Matrix::constructRotateMatrix(matrix, angulo, (*it)->getCenter());
 	(*it)->transform(matrix);
-	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+	gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 
 }
 
-void Window::rotObjectOrigin(GtkWidget *widget, gpointer data){
+void GUI::rotObjectOrigin(GtkWidget *widget, gpointer data){
 	//TODO juntar com o de cima
 	double angulo = atof(gtk_entry_get_text((GtkEntry*)data));
 
@@ -689,11 +689,11 @@ void Window::rotObjectOrigin(GtkWidget *widget, gpointer data){
 	origin.second = 0;
 	Matrix::constructRotateMatrix(matrix, angulo, origin);
 	(*it)->transform(matrix);
-	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+	gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 
 }
 
-void Window::rotObjectPointWindow(GtkWidget *widget, gpointer data){
+void GUI::rotObjectPointWindow(GtkWidget *widget, gpointer data){
 	//juntar com janela de transladar
 	ParamsRotation * paramsR = new ParamsRotation();
 	paramsR->angulo = atof(gtk_entry_get_text((GtkEntry*)data));
@@ -731,7 +731,7 @@ void Window::rotObjectPointWindow(GtkWidget *widget, gpointer data){
 	gtk_widget_show_all(auxWindow);
 }
 
-void Window::rotObjectPoint(GtkWidget *widget, gpointer data){
+void GUI::rotObjectPoint(GtkWidget *widget, gpointer data){
 	ParamsRotation * paramsR = (ParamsRotation*) data;
 	std::pair<float,float> origin;
 	origin.first = atof(gtk_entry_get_text((GtkEntry*)paramsR->x));
@@ -749,5 +749,5 @@ void Window::rotObjectPoint(GtkWidget *widget, gpointer data){
 	float matrix[3][3];
 	Matrix::constructRotateMatrix(matrix, paramsR->angulo, origin);
 	(*it)->transform(matrix);
-	gtk_widget_queue_draw(GTK_WIDGET(Window::getDA()));
+	gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }

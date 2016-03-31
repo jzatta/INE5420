@@ -1,13 +1,11 @@
 
 #include <gtk/gtk.h>
-#include "Window.hpp"
-//#include "Navigation.hpp"
-//#include "DisplayFile.hpp"
+#include "GUI.hpp"
 
 int main(int argc, char** argv) {
 	gtk_init(&argc, &argv);
 	
-	Window interface;
+	GUI interface;
 	interface.init();
 
 	gtk_main();
