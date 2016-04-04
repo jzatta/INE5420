@@ -23,21 +23,34 @@ Point::Point(const char *name, float _x, float _y) : Object(name) {
   y = _y;
 }
 
-void Point::transform(float matrix[3][3]){
-	float _x = x*matrix[0][0] + y*matrix[1][0] + matrix[2][0];
-	float _y = x*matrix[0][1] + y*matrix[1][1] + matrix[2][1];
-	x = _x;
-	y = _y;
+Point::Point(std::string *name, float _x, float _y) : Object(name) {
+  x = _x;
+  y = _y;
+}
+
+void Point::transform(Matrix *_m) {
+  float tmpPoints[3] = {x, y, 1};
+  _m->getTransPoint(tmpPoints);
+  x = tmpPoints[0];
+  y = tmpPoints[1];
 }
 
 void Point::setCords(float _x, float _y) {
-	x = _x;
-	y = _y;
+  x = _x;
+  y = _y;
 }
 
-std::pair<float,float> Point::getCenter(){
-	std::pair<float,float> center;
-	center.first = x;
-	center.second = y;
-	return center;
+Object* Point::clone() {
+  std::string *newName = getName();
+  if (newName != NULL) {
+    newName = new std::string(*newName);
+  }
+  return new Point(newName, this->getX(), this->getY());
+}
+
+std::pair<float,float> Point::getCenter() {
+  std::pair<float,float> center;
+  center.first = x;
+  center.second = y;
+  return center;
 }

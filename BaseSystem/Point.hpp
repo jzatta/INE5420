@@ -3,19 +3,20 @@
 
 #include <gtk/gtk.h>
 #include "Object.hpp"
-#include "Point.hpp"
 
 class Point : public Object {
 private:
   float x, y;
 public:
   Point(const char *name, float _x, float _y);
-  void draw(cairo_t *cr);
+  Point(std::string *name, float _x, float _y);
   float getX();
   float getY();
-  void transform(float matrix[3][3]);
   void setCords(float _x, float _y);
-  std::pair<float,float> getCenter();
+  virtual void draw(cairo_t *cr);
+  virtual Object* clone();
+  virtual void transform(Matrix *_m);
+  virtual std::pair<float,float> getCenter();
 };
 
 #endif

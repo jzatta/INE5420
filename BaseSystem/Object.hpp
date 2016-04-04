@@ -3,22 +3,42 @@
 
 #include <gtk/gtk.h>
 #include "Viewport.hpp"
-#include <utility>
+#include "Matrix.hpp"
+#include "Drawable.hpp"
+#include "Matrix.hpp"
 #include <list>
+#include <string>
 
-class Object {
+class Object: public Drawable {
 private:
-  const char *name;
+  std::string *name;
 public:
   Object(const char *name) {
+    if (name == NULL) {
+      this->name = NULL;
+    } else {
+      this->name = new std::string(name);
+    }
+  }
+  Object(std::string *name) {
     this->name = name;
   }
-  virtual void draw(cairo_t *cr) = 0;
-  const char *getName() const {
+  
+  std::string *getName() const {
     return name;
   }
-  virtual void transform(float matrix[3][3]) = 0;
+  
+  virtual void draw(cairo_t *cr) = 0;
+  virtual void transform(Matrix *_m) = 0;
+  
+  virtual Object* clone() = 0;
   virtual std::pair<float,float> getCenter() = 0;
+  
+  virtual ~Object() {
+    if (name != NULL) {
+      delete name;
+    }
+  }
 };
 
 #endif

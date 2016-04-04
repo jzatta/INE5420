@@ -15,8 +15,8 @@ float Viewport::transformY(float yw) {
 }
 
 void Viewport::defaultSize() {
-//   windowW = ViewportX;
-//   windowH = ViewportY;
+  //   windowW = ViewportX;
+  //   windowH = ViewportY;
   windowX = windowW / -2;
   windowY = windowH / -2;
 }

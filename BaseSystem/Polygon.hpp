@@ -8,12 +8,14 @@
 
 class Polygon : public Object {
 private:
-  std::list<Point> pointsList;
+  std::list<Point*> *pointsList;
 public:
-  Polygon(const char *name, std::list<Point> list);
-  void draw(cairo_t *cr);
-  void transform(float matrix[3][3]);
-  std::pair<float,float> getCenter();
+  Polygon(const char *name, std::list<Point*> *list);
+  Polygon(std::string *name, std::list<Point*> *list);
+  virtual void draw(cairo_t *cr);
+  virtual Object* clone();
+  virtual void transform(Matrix *_m);
+  virtual std::pair<float,float> getCenter();
   ~Polygon();
 };
 
