@@ -1,14 +1,17 @@
 #ifndef _CG_DISPLAYFILE_HPP_
 #define _CG_DISPLAYFILE_HPP_
 
+class DisplayFile;
+
 #include <gtk/gtk.h>
 #include <list>
 #include <string>
 #include "Object.hpp"
 #include "Point.hpp"
-#include "Viewport.hpp"
 #include "Drawable.hpp"
 #include "Matrix.hpp"
+#include "Window.hpp"
+#include "Viewport.hpp"
 
 class DisplayFile: public Drawable {
 private:
@@ -31,7 +34,7 @@ public:
   void rotateObjCenter(std::string *name, float angle);
   
   virtual void draw(cairo_t *cr);
-  virtual void transform(Matrix *_m);
+  virtual void transform();
   
   virtual ~DisplayFile();
 };

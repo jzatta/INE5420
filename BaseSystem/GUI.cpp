@@ -80,37 +80,52 @@ GtkWidget * GUI::getOlist() {
 
 // Navigation routines
 void GUI::moveDown(GtkWidget *widget, gpointer data) {
-  Viewport::moveVertical(-0.1);
+  Window::moveVertical(-10);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveRight(GtkWidget *widget, gpointer data) {
-  Viewport::moveHorizontal(0.1);
+  Window::moveHorizontal(10);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveLeft(GtkWidget *widget, gpointer data) {
-  Viewport::moveHorizontal(-0.1);
+  Window::moveHorizontal(-10);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveUp(GtkWidget *widget, gpointer data) {
-  Viewport::moveVertical(0.1);
+  Window::moveVertical(10);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::ZoomOut(GtkWidget *widget, gpointer data) {
-  Viewport::zoom(0.8);
+  Window::zoom(1.25);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::ZoomIn(GtkWidget *widget, gpointer data) {
-  Viewport::zoom(1.25);
+  Window::zoom(0.8);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::Center(GtkWidget *widget, gpointer data) {
-  Viewport::defaultSize();
+  Window::center();
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::rotateLeft(GtkWidget *widget, gpointer data) {
+  Window::rotate(-15);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::rotateRight(GtkWidget *widget, gpointer data) {
+  Window::rotate(15);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::Reset(GtkWidget *widget, gpointer data) {
+  Window::reset();
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
@@ -471,9 +486,21 @@ void GUI::init() {
   g_signal_connect(button, "clicked", G_CALLBACK(ZoomIn), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 2, 4, 1, 1);
   
+  button = gtk_button_new_with_label("RoL");
+  g_signal_connect(button, "clicked", G_CALLBACK(rotateLeft), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 0, 5, 1, 1);
+  
+  button = gtk_button_new_with_label("RoR");
+  g_signal_connect(button, "clicked", G_CALLBACK(rotateRight), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 2, 5, 1, 1);
+  
   button = gtk_button_new_with_label("Center");
   g_signal_connect(button, "clicked", G_CALLBACK(Center), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 1, 2, 1, 1);
+  
+  button = gtk_button_new_with_label("RESET");
+  g_signal_connect(button, "clicked", G_CALLBACK(Reset), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 1, 6, 1, 1);
   
   
   gtk_widget_show_all(window);

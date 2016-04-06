@@ -6,7 +6,6 @@
 class Drawable {
 public:
   virtual void draw(cairo_t *cr) = 0;
-  virtual void transform(Matrix *_m) = 0;
 };
 
 #endif

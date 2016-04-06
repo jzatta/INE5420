@@ -1,10 +1,13 @@
 #ifndef _CG_POLYGON_HPP_
 #define _CG_POLYGON_HPP_
 
+class Polygon;
+
 #include <gtk/gtk.h>
 #include <list>
 #include "Object.hpp"
 #include "Point.hpp"
+#include "Viewport.hpp"
 
 class Polygon : public Object {
 private:

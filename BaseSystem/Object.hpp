@@ -1,11 +1,11 @@
 #ifndef _CG_OBJECT_HPP_
 #define _CG_OBJECT_HPP_
 
+class Object;
+
 #include <gtk/gtk.h>
-#include "Viewport.hpp"
 #include "Matrix.hpp"
 #include "Drawable.hpp"
-#include "Matrix.hpp"
 #include <list>
 #include <string>
 

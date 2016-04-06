@@ -1,5 +1,6 @@
 
 #include <gtk/gtk.h>
+#include <math.h>
 #include "Line.hpp"
 
 void Line::draw(cairo_t *cr) {
@@ -24,6 +25,12 @@ Line::Line(std::string *name, Point *a, Point *b) : Object(name) {
   this->pointsList = new std::list<Point*>();
   pointsList->push_back(a);
   pointsList->push_back(b);
+}
+
+float Line::lenght() {
+  Point *a = pointsList->front();
+  Point *b = pointsList->back();
+  return sqrt( pow(a->getX() - b->getX(),2) + pow(a->getY() - b->getY(),2) );
 }
 
 void Line::transform(Matrix *_m) {

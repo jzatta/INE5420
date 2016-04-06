@@ -1,6 +1,8 @@
 #ifndef _CG_MATRIX_HPP_
 #define _CG_MATRIX_HPP_
 
+class Matrix;
+
 #include <utility>
 
 class Matrix {

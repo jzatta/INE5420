@@ -52,7 +52,7 @@ void DisplayFile::translateObj(std::string *name, float x, float y) {
   Matrix *mTrans = Matrix::constructTranslateMatrix(x, y);
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform(transformMatrix);
+  this->transform();
 }
 
 void DisplayFile::escalonateObj(std::string *name, float scalar) {
@@ -62,7 +62,7 @@ void DisplayFile::escalonateObj(std::string *name, float scalar) {
   mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(chObj->getCenter().first, chObj->getCenter().second));
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform(transformMatrix);
+  this->transform();
 }
 
 void DisplayFile::rotateObjOrigin(std::string *name, float angle) {
@@ -70,7 +70,7 @@ void DisplayFile::rotateObjOrigin(std::string *name, float angle) {
   Matrix *mTrans = Matrix::constructRotateMatrix(angle);
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform(transformMatrix);
+  this->transform();
 }
 
 void DisplayFile::rotateObjPoint(std::string *name, float angle, Point *p) {
@@ -80,7 +80,7 @@ void DisplayFile::rotateObjPoint(std::string *name, float angle, Point *p) {
   mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(p->getX(), p->getY()));
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform(transformMatrix);
+  this->transform();
 }
 
 void DisplayFile::rotateObjCenter(std::string *name, float angle) {
@@ -90,19 +90,22 @@ void DisplayFile::rotateObjCenter(std::string *name, float angle) {
   mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(chObj->getCenter().first, chObj->getCenter().second));
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform(transformMatrix);
+  this->transform();
 }
 
 void DisplayFile::draw(cairo_t *cr) {
+  this->transform();
   std::list<Object*>::iterator it=this->objectsTransformed->begin();
   for (; it != this->objectsTransformed->end(); ++it) {
     (*it)->draw(cr);
   }
 }
 
-void DisplayFile::transform(Matrix *_m) {
+void DisplayFile::transform() {
   Object *tmpObj;
   std::list<Object*>::iterator it;
+  delete transformMatrix;
+  transformMatrix = Window::getTransform();
   objectsTransformed->clear();
   it=objectsWorld->begin();
   for (; it != objectsWorld->end(); ++it) {

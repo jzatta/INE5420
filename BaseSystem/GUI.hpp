@@ -1,6 +1,8 @@
 #ifndef _CG_GUI_HPP_
 #define _CG_GUI_HPP_
 
+class GUI;
+
 #include <gtk/gtk.h>
 #include <list>
 #include "Object.hpp"
@@ -66,6 +68,9 @@ public:
   static void ZoomOut(GtkWidget *widget, gpointer data);
   static void ZoomIn(GtkWidget *widget, gpointer data);
   static void Center(GtkWidget *widget, gpointer data);
+  static void rotateLeft(GtkWidget *widget, gpointer data);
+  static void rotateRight(GtkWidget *widget, gpointer data);
+  static void Reset(GtkWidget *widget, gpointer data);
   static void addLine(GtkWidget* widget, gpointer data);
   static void addPointWindow(GtkWidget *widget, gpointer data);
   static void addLineWindow(GtkWidget *widget, gpointer   data);
@@ -83,7 +88,6 @@ public:
   static void rotObjectOrigin(GtkWidget *widget, gpointer data);
   static void rotObjectPointWindow(GtkWidget *widget, gpointer data);
   static void rotObjectPoint(GtkWidget *widget, gpointer data);
-  
 };
 
 

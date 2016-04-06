@@ -1,8 +1,11 @@
 #ifndef _CG_POINT_HPP_
 #define _CG_POINT_HPP_
 
+class Point;
+
 #include <gtk/gtk.h>
 #include "Object.hpp"
+#include "Viewport.hpp"
 
 class Point : public Object {
 private:

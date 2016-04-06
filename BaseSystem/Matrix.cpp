@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include "Matrix.hpp"
+#include <stdio.h>
 
 #define PI 3.14159265
 
