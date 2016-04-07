@@ -65,7 +65,7 @@ void Window::moveHorizontal(float pixel) {
 
 void Window::moveVertical(float pixel) {
   float rad = (wAngle*M_PI)/180;
-  Matrix *mTrans = Matrix::constructTranslateMatrix(pixel * sinf(rad), pixel * cosf(rad));
+  Matrix *mTrans = Matrix::constructTranslateMatrix(pixel * sinf(-rad), pixel * cosf(rad));
 //   Matrix *mTrans = Matrix::constructTranslateMatrix(0, pixel);
   wc->transform(mTrans);
   vup->transform(mTrans);
