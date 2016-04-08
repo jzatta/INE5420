@@ -54,3 +54,9 @@ std::pair<float,float> Point::getCenter() {
   center.second = y;
   return center;
 }
+
+void Point::save(FILE *stream) {
+  fprintf(stream, "\n#Add Point\ng %s\n", getName()->c_str());
+  fprintf(stream, "v %f %f 0.0 0.0\n",  x, y);
+  fprintf(stream, "p 1\n");
+}

@@ -7,6 +7,61 @@ DisplayFile::DisplayFile() {
   transformMatrix = new Matrix();
 }
 
+DisplayFile::DisplayFile(FILE *obj) {
+  this->objectsWorld = new std::list<Object*>;
+  this->objectsTransformed = new std::list<Object*>;
+  std::list<Point*> *pointsList= new std::list<Point*>;
+  Object *tmpObj;
+  char name[100];
+  int ch;
+  while ( (ch = fgetc(obj) ) != EOF) {
+    if (ch == '#') {
+      printf("#\n");
+      while (ch = fgetc(obj) != '\n');
+    }
+    if (ch == 'g') {
+      printf("g");
+      fscanf(obj, " %s\n", name);
+      printf("::%s\n",name);
+    }
+    if (ch == 'v') {
+      float x, y, nil;
+      printf("v");
+      fscanf(obj, " %f %f %f %f\n", &x, &y, &nil, &nil);
+      pointsList->push_back(new Point((std::string*) NULL, x, y));
+      printf("::%f\t%f\n", x, y);
+    }
+    if (ch == 'p') {
+      tmpObj = new Point(name, pointsList->front()->getX(), pointsList->front()->getY());
+      this->objectsWorld->push_back(tmpObj);
+      tmpObj = tmpObj->clone();
+      tmpObj->transform(transformMatrix);
+      this->objectsTransformed->push_back(tmpObj);
+      pointsList->clear();
+    }
+    if (ch == 'l') {
+      tmpObj = new Line(name, pointsList->front(), pointsList->back());
+      pointsList->pop_back();
+      pointsList->pop_front();
+      this->objectsWorld->push_back(tmpObj);
+      tmpObj = tmpObj->clone();
+      tmpObj->transform(transformMatrix);
+      this->objectsTransformed->push_back(tmpObj);
+      pointsList->clear();
+    }
+    if (ch  == 'f') {
+      tmpObj = new Polygon(name, pointsList);
+      this->objectsWorld->push_back(tmpObj);
+      tmpObj = tmpObj->clone();
+      tmpObj->transform(transformMatrix);
+      this->objectsTransformed->push_back(tmpObj);
+      pointsList = new std::list<Point*>;
+    }
+  }
+  delete pointsList;
+  transformMatrix = new Matrix();
+}
+
 std::list<Object*>::iterator DisplayFile::getObjIt(std::string *name) {
 }
 
@@ -114,6 +169,13 @@ void DisplayFile::transform() {
     objectsTransformed->push_back(tmpObj);
   }
   return;
+}
+
+void DisplayFile::save(FILE *obj) {
+  std::list<Object*>::iterator it=objectsWorld->begin();
+  for (; it != objectsWorld->end(); ++it) {
+    (*it)->save(obj);
+  }
 }
 
 DisplayFile::~DisplayFile() {

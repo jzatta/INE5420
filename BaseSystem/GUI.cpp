@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include "Matrix.hpp"
+#include "DescriptorOBJ.hpp"
 #include <utility>
 
 DisplayFile *GUI::displayFile;
@@ -65,7 +66,7 @@ gboolean GUI::draw_cb (GtkWidget *widget,
 // GUI getters -----------------------------------------------------------------
 DisplayFile *GUI::getDisplayFile() {
   if (GUI::displayFile == NULL) {
-    GUI::displayFile = new DisplayFile();
+    GUI::displayFile = DescriptorOBJ::load();
   }
   return GUI::displayFile;
 }
@@ -126,6 +127,7 @@ void GUI::rotateRight(GtkWidget *widget, gpointer data) {
 
 void GUI::Reset(GtkWidget *widget, gpointer data) {
   Window::reset();
+  DescriptorOBJ::save(GUI::getDisplayFile());
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 

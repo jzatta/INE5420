@@ -19,6 +19,7 @@ public:
   virtual void draw(cairo_t *cr);
   virtual Object* clone();
   virtual void transform(Matrix *_m);
+  virtual void save(FILE *stream);
   virtual std::pair<float,float> getCenter();
 };
 

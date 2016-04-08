@@ -8,6 +8,8 @@ class DisplayFile;
 #include <string>
 #include "Object.hpp"
 #include "Point.hpp"
+#include "Line.hpp"
+#include "Polygon.hpp"
 #include "Drawable.hpp"
 #include "Matrix.hpp"
 #include "Window.hpp"
@@ -23,6 +25,7 @@ private:
 
 public:
   DisplayFile();
+  DisplayFile(FILE *obj);
   
   void addObject(Object *_obj);
   void deleteObj(std::string *name);
@@ -35,6 +38,8 @@ public:
   
   virtual void draw(cairo_t *cr);
   virtual void transform();
+  
+  virtual void save(FILE *obj);
   
   virtual ~DisplayFile();
 };

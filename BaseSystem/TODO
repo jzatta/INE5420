@@ -1,4 +1,4 @@
-Read File
+Put elements loaded from file in object list in window
+Make buttons to save/load and call correct functions
 draw subcanvas
 implement clipping
-save file

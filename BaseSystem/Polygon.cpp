@@ -58,6 +58,21 @@ std::pair<float,float> Polygon::getCenter() {
   return center;
 }
 
+void Polygon::save(FILE *stream) {
+  int added = 0;
+  std::list<Point*>::iterator it=pointsList->begin();
+  fprintf(stream, "\n#Add polygon\ng %s\n", getName()->c_str());
+  for (; it != pointsList->end(); ++it) {
+    fprintf(stream, "v %f %f 0.0 0.0\n", (*it)->getX(), (*it)->getY());
+    added++;
+  }
+  fprintf(stream, "f 1");
+  for (; added > 0; added--) {
+    fprintf(stream, " %d", added);
+  }
+  fprintf(stream, "\n");
+}
+
 Polygon::~Polygon() {
   pointsList->clear();
   delete pointsList;

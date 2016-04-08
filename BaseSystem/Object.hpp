@@ -29,10 +29,11 @@ public:
   }
   
   virtual void draw(cairo_t *cr) = 0;
-  virtual void transform(Matrix *_m) = 0;
   
+  virtual void transform(Matrix *_m) = 0;
   virtual Object* clone() = 0;
   virtual std::pair<float,float> getCenter() = 0;
+  virtual void save(FILE *stream) = 0;
   
   virtual ~Object() {
     if (name != NULL) {

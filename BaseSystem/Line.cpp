@@ -21,6 +21,12 @@ Line::Line(std::string *name, float xa, float ya, float xb, float yb) : Object(n
   pointsList->push_back(new Point(name, xb, yb));
 }
 
+Line::Line(const char *name, Point *a, Point *b) : Object(name) {
+  this->pointsList = new std::list<Point*>();
+  pointsList->push_back(a);
+  pointsList->push_back(b);
+}
+
 Line::Line(std::string *name, Point *a, Point *b) : Object(name) {
   this->pointsList = new std::list<Point*>();
   pointsList->push_back(a);
@@ -51,6 +57,15 @@ std::pair<float,float> Line::getCenter() {
   center.first = (pointsList->front()->getX() + pointsList->back()->getX())/2;
   center.second = (pointsList->front()->getY() + pointsList->back()->getY())/2;
   return center;
+}
+
+void Line::save(FILE *stream) {
+  fprintf(stream, "\n#Add Line\ng %s\n", getName()->c_str());
+  fprintf(stream, "v %f %f 0.0 0.0\n",  pointsList->front()->getX(),
+                                        pointsList->front()->getY());
+  fprintf(stream, "v %f %f 0.0 0.0\n",  pointsList->back()->getX(),
+                                        pointsList->back()->getY());
+  fprintf(stream, "l 1 2\n");
 }
 
 Line::~Line() {
