@@ -17,6 +17,9 @@ public:
   
   static DisplayFile *load() {
     FILE *file = fopen("teste.obj","r");
+    if (file == NULL) {
+      return new DisplayFile();
+    }
     DisplayFile *df = new DisplayFile(file);
     fclose(file);
     return df;

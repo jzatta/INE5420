@@ -12,24 +12,25 @@ DisplayFile::DisplayFile(FILE *obj) {
   this->objectsTransformed = new std::list<Object*>;
   std::list<Point*> *pointsList= new std::list<Point*>;
   Object *tmpObj;
-  char name[100];
+  char name[150];
   int ch;
+  transformMatrix = new Matrix();
   while ( (ch = fgetc(obj) ) != EOF) {
     if (ch == '#') {
-      printf("#\n");
-      while (ch = fgetc(obj) != '\n');
+      while (ch != '\n') {
+        ch = fgetc(obj);
+        if (ch == EOF) {
+          break;
+        }
+      }
     }
     if (ch == 'g') {
-      printf("g");
       fscanf(obj, " %s\n", name);
-      printf("::%s\n",name);
     }
     if (ch == 'v') {
       float x, y, nil;
-      printf("v");
       fscanf(obj, " %f %f %f %f\n", &x, &y, &nil, &nil);
       pointsList->push_back(new Point((std::string*) NULL, x, y));
-      printf("::%f\t%f\n", x, y);
     }
     if (ch == 'p') {
       tmpObj = new Point(name, pointsList->front()->getX(), pointsList->front()->getY());
@@ -38,6 +39,7 @@ DisplayFile::DisplayFile(FILE *obj) {
       tmpObj->transform(transformMatrix);
       this->objectsTransformed->push_back(tmpObj);
       pointsList->clear();
+      ch = fgetc(obj);
     }
     if (ch == 'l') {
       tmpObj = new Line(name, pointsList->front(), pointsList->back());
@@ -48,6 +50,7 @@ DisplayFile::DisplayFile(FILE *obj) {
       tmpObj->transform(transformMatrix);
       this->objectsTransformed->push_back(tmpObj);
       pointsList->clear();
+      ch = fgetc(obj);
     }
     if (ch  == 'f') {
       tmpObj = new Polygon(name, pointsList);
@@ -56,10 +59,10 @@ DisplayFile::DisplayFile(FILE *obj) {
       tmpObj->transform(transformMatrix);
       this->objectsTransformed->push_back(tmpObj);
       pointsList = new std::list<Point*>;
+      ch = fgetc(obj);
     }
   }
   delete pointsList;
-  transformMatrix = new Matrix();
 }
 
 std::list<Object*>::iterator DisplayFile::getObjIt(std::string *name) {
