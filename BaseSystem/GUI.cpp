@@ -66,7 +66,8 @@ gboolean GUI::draw_cb (GtkWidget *widget,
 // GUI getters -----------------------------------------------------------------
 DisplayFile *GUI::getDisplayFile() {
   if (GUI::displayFile == NULL) {
-    GUI::displayFile = DescriptorOBJ::load();
+    //GUI::displayFile = DescriptorOBJ::load();
+    GUI::displayFile = new DisplayFile();
   }
   return GUI::displayFile;
 }
@@ -138,9 +139,10 @@ void GUI::addPoint(GtkWidget* widget, gpointer data) {
   const char* x = gtk_entry_get_text((GtkEntry*)paramsP->x);
   const char* y = gtk_entry_get_text((GtkEntry*)paramsP->y);
   
-  GtkWidget* label = gtk_label_new(name->c_str());
-  gtk_list_box_prepend((GtkListBox*)oList, label);
-  gtk_widget_show(label);
+  //GtkWidget* label = gtk_label_new(name->c_str());
+  //gtk_list_box_prepend((GtkListBox*)oList, label);
+  //gtk_widget_show(label);
+  GUI::addToListBox(*name);
   
   GUI::getDisplayFile()->addObject(new Point(name, atof(x), atof(y)));
   
@@ -200,10 +202,11 @@ void GUI::addLine(GtkWidget* widget, gpointer data) {
   const char* xf = gtk_entry_get_text((GtkEntry*)paramsL->xf);
   const char* yf = gtk_entry_get_text((GtkEntry*)paramsL->yf);
   
-  GtkWidget* label = gtk_label_new(name->c_str());
-  gtk_list_box_prepend((GtkListBox*)oList, label);
-  gtk_widget_show(label);
-  
+  //GtkWidget* label = gtk_label_new(name->c_str());
+  //gtk_list_box_prepend((GtkListBox*)oList, label);
+  //gtk_widget_show(label);
+  GUI::addToListBox(*name);
+
   GUI::getDisplayFile()->addObject(new Line(name, atof(xi), atof(yi), atof(xf), atof(yf)));
   
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
@@ -368,9 +371,11 @@ void GUI::addPolygon(GtkWidget *widget, gpointer data) {
   ParamsPolygon *params = (ParamsPolygon*) data;
   std::string *name =  new std::string(gtk_entry_get_text((GtkEntry*)params->nome));
   
-  GtkWidget* label = gtk_label_new(name->c_str());
-  gtk_list_box_prepend((GtkListBox*)oList, label);
-  gtk_widget_show(label);
+  //GtkWidget* label = gtk_label_new(name->c_str());
+  //gtk_list_box_prepend((GtkListBox*)oList, label);
+  //gtk_widget_show(label);
+  GUI::addToListBox(*name);
+
   
   GUI::getDisplayFile()->addObject(new Polygon(name, params->pointsList));
   delete params;
@@ -456,7 +461,6 @@ void GUI::init() {
   g_signal_connect (da, "draw", G_CALLBACK (draw_cb), NULL);
   g_signal_connect (da,"configure-event", G_CALLBACK (configure_event_cb), NULL);
   
-  
   frame = gtk_frame_new("View Control");
   gtk_grid_attach(GTK_GRID(grid), frame, 0,3,2,1);
   
@@ -501,11 +505,28 @@ void GUI::init() {
   gtk_grid_attach(GTK_GRID(inGrid), button, 1, 2, 1, 1);
   
   button = gtk_button_new_with_label("RESET");
-  g_signal_connect(button, "clicked", G_CALLBACK(Reset), da);
+  //g_signal_connect(button, "clicked", G_CALLBACK(Reset), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 1, 6, 1, 1);
+
+  frame = gtk_frame_new("File");
+  gtk_grid_attach(GTK_GRID(grid), frame, 0,4,2,1);
+
+  GtkWidget * fileGrid = gtk_grid_new();
+  gtk_container_set_border_width(GTK_CONTAINER(fileGrid), 5);
+  gtk_container_add(GTK_CONTAINER(frame), fileGrid);
+
+  button = gtk_button_new_with_label("Save");
+  g_signal_connect(button, "clicked", G_CALLBACK(saveFile), da);
+  gtk_grid_attach(GTK_GRID(fileGrid), button, 0, 0, 2, 1);
+
+  button = gtk_button_new_with_label("Load");
+  g_signal_connect(button, "clicked", G_CALLBACK(loadFile), da);
+  gtk_grid_attach(GTK_GRID(fileGrid), button, 2, 0, 2, 1);
+
   
   
   gtk_widget_show_all(window);
+
 }
 
 // Edit objects ----------------------------------------------------------------
@@ -774,4 +795,33 @@ void GUI::rotObjectPoint(GtkWidget *widget, gpointer data) {
   delete name;
   
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::saveFile(GtkWidget *widget, gpointer data) {
+  DescriptorOBJ::save(GUI::getDisplayFile());
+}
+
+void GUI::loadFile(GtkWidget *widget, gpointer data) {
+  GList *children, *iter;
+
+  children = gtk_container_get_children(GTK_CONTAINER(oList));
+  for(iter = children; iter != NULL; iter = g_list_next(iter)){
+    gtk_widget_destroy(GTK_WIDGET(iter->data));
+  }
+  g_list_free(children);
+
+  DisplayFile * auxDisplay = DescriptorOBJ::load();
+
+  if (auxDisplay) {
+    GUI::displayFile = auxDisplay;
+    gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+  }
+
+  gtk_widget_show(oList);
+}
+
+void GUI::addToListBox(std::string name) {
+  GtkWidget * label = gtk_label_new(name.c_str());
+  gtk_list_box_prepend((GtkListBox*)oList, label);
+  gtk_widget_show(label);
 }

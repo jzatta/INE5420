@@ -1,4 +1,3 @@
-
 #include "DisplayFile.hpp"
 
 DisplayFile::DisplayFile() {
@@ -34,6 +33,7 @@ DisplayFile::DisplayFile(FILE *obj) {
     }
     if (ch == 'p') {
       tmpObj = new Point(name, pointsList->front()->getX(), pointsList->front()->getY());
+      GUI::addToListBox(std::string(name));
       this->objectsWorld->push_back(tmpObj);
       tmpObj = tmpObj->clone();
       tmpObj->transform(transformMatrix);
@@ -43,6 +43,7 @@ DisplayFile::DisplayFile(FILE *obj) {
     }
     if (ch == 'l') {
       tmpObj = new Line(name, pointsList->front(), pointsList->back());
+      GUI::addToListBox(std::string(name));
       pointsList->pop_back();
       pointsList->pop_front();
       this->objectsWorld->push_back(tmpObj);
@@ -54,6 +55,7 @@ DisplayFile::DisplayFile(FILE *obj) {
     }
     if (ch  == 'f') {
       tmpObj = new Polygon(name, pointsList);
+      GUI::addToListBox(std::string(name));
       this->objectsWorld->push_back(tmpObj);
       tmpObj = tmpObj->clone();
       tmpObj->transform(transformMatrix);
