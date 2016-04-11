@@ -14,6 +14,7 @@ class DisplayFile;
 #include "Matrix.hpp"
 #include "Window.hpp"
 #include "Viewport.hpp"
+#include "GUI.hpp"
 
 class DisplayFile: public Drawable {
 private:

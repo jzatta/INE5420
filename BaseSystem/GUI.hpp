@@ -88,6 +88,9 @@ public:
   static void rotObjectOrigin(GtkWidget *widget, gpointer data);
   static void rotObjectPointWindow(GtkWidget *widget, gpointer data);
   static void rotObjectPoint(GtkWidget *widget, gpointer data);
+  static void saveFile(GtkWidget *widget, gpointer data);
+  static void loadFile(GtkWidget *widget, gpointer data);
+  static void addToListBox(std::string name);
 };
 
 
