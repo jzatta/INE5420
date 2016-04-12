@@ -6,15 +6,15 @@ class DisplayFile;
 #include <gtk/gtk.h>
 #include <list>
 #include <string>
+#include "Drawable.hpp"
+#include "GUI.hpp"
+#include "Line.hpp"
+#include "Matrix.hpp"
 #include "Object.hpp"
 #include "Point.hpp"
-#include "Line.hpp"
 #include "Polygon.hpp"
-#include "Drawable.hpp"
-#include "Matrix.hpp"
-#include "Window.hpp"
 #include "Viewport.hpp"
-#include "GUI.hpp"
+#include "Window.hpp"
 
 class DisplayFile: public Drawable {
 private:

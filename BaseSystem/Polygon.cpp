@@ -1,5 +1,4 @@
 
-#include <gtk/gtk.h>
 #include "Polygon.hpp"
 
 void Polygon::draw(cairo_t *cr) {
@@ -71,6 +70,10 @@ void Polygon::save(FILE *stream) {
     fprintf(stream, " %d", added);
   }
   fprintf(stream, "\n");
+}
+
+void Polygon::clip(void) {
+  this->show = true;
 }
 
 Polygon::~Polygon() {

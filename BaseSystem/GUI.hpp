@@ -5,11 +5,11 @@ class GUI;
 
 #include <gtk/gtk.h>
 #include <list>
-#include "Object.hpp"
+#include "DisplayFile.hpp"
 #include "Line.hpp"
+#include "Object.hpp"
 #include "Polygon.hpp"
 #include "Viewport.hpp"
-#include "DisplayFile.hpp"
 
 static cairo_surface_t *surface = NULL;
 

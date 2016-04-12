@@ -4,6 +4,7 @@
 class Line;
 
 #include <gtk/gtk.h>
+#include "Clipping.hpp"
 #include "Object.hpp"
 #include "Point.hpp"
 #include "Viewport.hpp"
@@ -23,6 +24,7 @@ public:
   virtual void transform(Matrix *_m);
   virtual std::pair<float,float> getCenter();
   virtual void save(FILE *stream);
+  virtual void clip(void);
   virtual ~Line();
 };
 

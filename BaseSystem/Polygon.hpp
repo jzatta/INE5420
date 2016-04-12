@@ -19,6 +19,7 @@ public:
   virtual Object* clone();
   virtual void transform(Matrix *_m);
   virtual void save(FILE *stream);
+  virtual void clip(void);
   virtual std::pair<float,float> getCenter();
   ~Polygon();
 };
