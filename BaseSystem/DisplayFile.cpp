@@ -171,7 +171,9 @@ void DisplayFile::transform() {
   for (; it != objectsWorld->end(); ++it) {
     tmpObj = (*it)->clone();
     tmpObj->transform(transformMatrix);
+#if 0
     tmpObj->clip();
+#endif
     objectsTransformed->push_back(tmpObj);
   }
   return;

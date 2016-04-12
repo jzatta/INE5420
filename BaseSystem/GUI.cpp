@@ -55,12 +55,14 @@ gboolean GUI::draw_cb (GtkWidget *widget,
   cairo_paint (cr);
   cairo_set_source_rgb (cr, 1, 0, 0);
   cairo_set_line_width(cr, 0.5);
+#if 0
   cairo_move_to(cr, 20, 20);
   cairo_line_to(cr, Viewport::ViewportX - 20, 20);
   cairo_line_to(cr, Viewport::ViewportX - 20, Viewport::ViewportY - 20);
   cairo_line_to(cr, 20, Viewport::ViewportY - 20);
   cairo_line_to(cr, 20, 20);
   cairo_stroke(cr);
+#endif
   cairo_set_source_rgb (cr, 1, 1, 1);
   cairo_set_line_width(cr, 0.5);
 

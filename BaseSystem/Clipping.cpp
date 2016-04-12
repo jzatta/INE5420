@@ -106,18 +106,15 @@ bool Clipping::clipLineLB(Point *p1, Point *p2) {
     return false;
   }
   
-  printf("MIN::%f\tMAX::%f\n", minP, maxP);
   
   // Inside Window
   if (minP < 1) {
     p2->setX(p1->getX() + (minP*dx) );
     p2->setY(p1->getY() + (minP*dy) );
-    printf("NALTEROU::%f:: %f\t%f\n", minP, p2->getX(), p2->getY());
   }
   if (maxP > 0) {
     p1->setX(p1->getX() + (maxP*dx) );
     p1->setY(p1->getY() + (maxP*dy) );
-    printf("XALTEROU::%f:: %f\t%f\n", maxP, p2->getX(), p2->getY());
   }
   return true;
 }

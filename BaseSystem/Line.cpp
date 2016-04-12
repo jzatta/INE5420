@@ -71,7 +71,6 @@ void Line::save(FILE *stream) {
 }
 
 void Line::clip(void) {
-  printf("::%d::\t%f\t%f\t\t%f\t%f\n", show, pointsList->front()->getX(), pointsList->front()->getY(), pointsList->back()->getX(), pointsList->back()->getY());
   this->show = Clipping::clipLineLB(pointsList->front(), pointsList->back());
 }
 
