@@ -118,3 +118,187 @@ bool Clipping::clipLineLB(Point *p1, Point *p2) {
   }
   return true;
 }
+
+short Clipping::getCode(Point p) {
+  short code;
+
+  code = INSIDE;          
+
+  if (p.getX() < -1){       
+    if (p.getY() > 1){
+      code |= LEFTTOP;
+    } else if(p.getY() < -1) {
+      code |= LEFTBOTTOM;
+
+    } else {
+      code |= LEFT;;
+    }
+  } else if (p.getX() > 1) {     
+    if (p.getY() > 1){
+      code |= RIGHTTOP;
+    } else if(p.getY() < -1) {
+      code |= RIGHTBOTTOM;
+    } else {
+      code |= RIGHT;
+    }
+  } 
+  if (p.getY() < -1) {           
+    code |= BOTTOM;
+  } else if (p.getY() > 1) {     
+    code |= TOP;
+  }
+
+  return code;
+}
+
+void Clipping::calculateCS(short codeP, Point * p1, Point * p2, bool k){
+   Point * p;
+   if(k){
+    p = p1;
+   } else {
+    p = p2;
+   }
+   double xAux;
+   double yAux;
+
+   switch (codeP) {
+    case TOP : p->setX(p1->getX() + (p2->getX() - p1->getX()) * (1 - p1->getY()) / (p2->getY() - p1->getY()));
+               p->setY(1);
+               break;
+    case BOTTOM : p->setX(p1->getX() + (p2->getX() - p1->getX()) * (-1 - p1->getY()) / (p2->getY() - p1->getY()));
+                  p->setY(-1);
+                  break;
+    case RIGHT: p->setY(p1->getY() + (p2->getY() - p1->getY()) * (1 - p1->getX()) / (p2->getX() - p1->getX()));
+                p->setX(1);
+                break;
+    case LEFT: p->setY(p1->getY() + (p2->getY() - p1->getY()) * (-1 - p1->getX()) / (p2->getX() - p1->getX()));
+                p->setX(-1);
+                break;
+    case RIGHTTOP : xAux = p1->getX() + (p2->getX() - p1->getX()) * (1 - p1->getY()) / (p2->getY() - p1->getY());
+                    if (xAux <= 1){
+                      p->setX(xAux);
+                      p->setY(1);
+                    } else {
+                      p->setY(p1->getY() + (p2->getY() - p1->getY()) * (1 - p1->getX()) / (p2->getX() - p1->getX()));
+                      p->setX(1);
+                    }
+                    break;
+    case RIGHTBOTTOM : xAux = p1->getX() + (p2->getX() - p1->getX()) * (-1 - p1->getY()) / (p2->getY() - p1->getY());
+                      if (xAux <= 1){
+                      p->setX(xAux);
+                      p->setY(-1);
+                    } else {
+                      p->setY(p1->getY() + (p2->getY() - p1->getY()) * (1 - p1->getX()) / (p2->getX() - p1->getX()));
+                      p->setX(1);
+                    }
+                    break;
+    case LEFTTOP : xAux = p1->getX() + (p2->getX() - p1->getX()) * (1 - p1->getY()) / (p2->getY() - p1->getY());
+                      if (xAux >= -1){
+                      p->setX(xAux);
+                      p->setY(1);
+                    } else {
+                      p->setY(p1->getY() + (p2->getY() - p1->getY()) * (-1 - p1->getX()) / (p2->getX() - p1->getX()));
+                      p->setX(-1);
+                    }
+                    break;
+    case LEFTBOTTOM : xAux = p1->getX() + (p2->getX() - p1->getX()) * (-1 - p1->getY()) / (p2->getY() - p1->getY());
+                      if (xAux >= -1){
+                      p->setX(xAux);
+                      p->setY(-1);
+                    } else {
+                      p->setY(p1->getY() + (p2->getY() - p1->getY()) * (-1 - p1->getX()) / (p2->getX() - p1->getX()));
+                      p->setX(-1);
+                    }
+  }
+}
+
+bool Clipping::clipLineCS(Point *p1, Point *p2){
+  short codeP1 = Clipping::getCode(*p1);
+  short codeP2 = Clipping::getCode(*p2);
+
+  if(!(codeP1 | codeP2)){
+    return true;
+  } else if (codeP1 & codeP2) {
+    return false;
+  }
+  calculateCS(codeP1, p1, p2, true);
+  calculateCS(codeP2, p1, p2, false);
+  return true;
+
+}
+
+bool Clipping::clipPolygon(Polygon * polygon) {
+  int i;
+  int j;
+
+ std::list<Point*>* newList; // = new std::list<Point*>();
+  
+  for(j = 1; j < 5; j++){
+    newList = new std::list<Point*>();
+    for (i = 0; i < polygon->getSize(); i++){
+      
+      Point * p1 = polygon->getPoint(i);
+      Point * p2 = polygon->getPoint((i+1)%(polygon->getSize()));
+      
+      if (verifyPoint(p1->getX(), p1->getY(), j)) {
+        if (verifyPoint(p2->getX(), p2->getY(), j)){
+          newList->push_back(p2);
+        } else {
+          newList->push_back(Clipping::intersection(p1, p2, j));
+        }
+      } else {
+        if (verifyPoint(p2->getX(), p2->getY(), j)){
+          newList->push_back(Clipping::intersection(p1, p2, j));
+          newList->push_back(p2);
+        }
+      }
+    }
+    polygon->setList(newList);
+  }
+  return true;
+}
+
+Point* Clipping::intersection(Point * p1, Point * p2, int index){
+  float m;
+  float c;
+
+  m = (p2->getY() - p1->getY()) / (p2->getX() - p1->getX());
+  c = p1->getY() - m * p1->getX();
+
+float x;
+float y;
+  switch (index){
+    case 1: y = 1;
+            if (p2->getX() != p1->getX()){
+              x = (y - c) / m;
+            } else {
+              x = p1->getX();
+            } 
+          break;
+    case 2: x = 1;
+            y = x*m + c;
+          break;
+    case 3: y = -1;
+          if (p2->getX() != p1->getX()){
+            x = (y - c) / m;
+          } else {
+            x = p1->getX();
+          } 
+          break;
+    case 4: x = -1;
+          y = x*m + c;
+          break;
+  }
+
+  Point * intersec = new Point("", x, y);
+  return intersec;
+}
+
+bool Clipping::verifyPoint(float x, float y, int index){
+  switch(index){
+    case 1: return (y < 1);
+    case 2: return (x < 1);
+    case 3: return (y > -1);
+    case 4: return (x > -1);
+  }
+}

@@ -1,5 +1,6 @@
 
 #include "Polygon.hpp"
+#include <assert.h>
 
 void Polygon::draw(cairo_t *cr) {
   float xi, yi;
@@ -73,7 +74,27 @@ void Polygon::save(FILE *stream) {
 }
 
 void Polygon::clip(void) {
-  this->show = true;
+  this->show = Clipping::clipPolygon(this);
+}
+
+Point * Polygon::getPoint(int index) {
+  assert(index >= 0);
+  assert(index < pointsList->size());
+  std::list<Point*>::iterator it = pointsList->begin();
+  int i;
+  for (i = 1; i <= index; i++){
+    it++;
+  }
+  Point * ret = (*it);
+  return ret;
+}
+
+int Polygon::getSize() {
+  return pointsList->size();
+}
+
+void Polygon::setList(std::list<Point*>* list) {
+  pointsList = list;
 }
 
 Polygon::~Polygon() {

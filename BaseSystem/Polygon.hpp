@@ -9,6 +9,8 @@ class Polygon;
 #include "Point.hpp"
 #include "Viewport.hpp"
 
+#include <iostream>
+
 class Polygon : public Object {
 private:
   std::list<Point*> *pointsList;
@@ -21,6 +23,10 @@ public:
   virtual void save(FILE *stream);
   virtual void clip(void);
   virtual std::pair<float,float> getCenter();
+  Point * getPoint(int index);
+  int getSize();
+
+  void setList(std::list<Point*>* list);
   ~Polygon();
 };
 
