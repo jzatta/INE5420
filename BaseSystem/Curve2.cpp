@@ -2,21 +2,16 @@
 #include <assert.h>
 
 void Curve::draw(cairo_t *cr) {
-  /*float xi, yi;
-  std::list<Point*>::iterator it=pointsList->begin();
+  float xi, yi;
+  std::list<Point*>::iterator it=curvePoints->begin();
   xi = (*it)->getX();
   yi = (*it)->getY();
   cairo_move_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
   ++it;
-  for (; it != pointsList->end(); ++it) {
+  for (; it != curvePoints->end(); ++it) {
     cairo_line_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
   }
-  cairo_line_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
-  return; */
-  std::list<Point*>::iterator it=curvePoints->begin();
-  for (; it != curvePoints->end(); ++it) {
-    (*it)->draw(cr);
-  }
+  return;
 }
 
 Curve::Curve(const char *name, std::list<Point*> *list) : Object(name) {
@@ -121,7 +116,7 @@ void Curve::calculateCurve(){
 
 
   float t[4];
-  for (double i = 0; i < 1; i += 0.001) {
+  for (double i = 0; i < 1; i += 0.0001) {
     t[0] = pow(i, 3);
     t[1] = pow(i, 2);
     t[2] = pow(i, 1);

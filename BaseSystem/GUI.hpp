@@ -42,6 +42,11 @@ class GUI {
     GtkWidget *x;
     GtkWidget *y;
   };
+
+  struct ParamsCurveB {
+    GtkWidget *nome;
+    GtkWidget *x1, *x2, *x3, *x4, *y1, *y2, *y3, *y4;
+  };
 protected:
   GtkWidget* window;
   GtkWidget* grid;
@@ -94,8 +99,6 @@ public:
   static void addToListBox(std::string name);
 
   static void addCurveWindow(GtkWidget *widget, gpointer   data);
-  static void buildCurve(GtkWidget *widget, gpointer   data);
-  static void addCurveWindowName(GtkWidget *widget, gpointer data);
   static void addCurve(GtkWidget *widget, gpointer data);
 };
 
