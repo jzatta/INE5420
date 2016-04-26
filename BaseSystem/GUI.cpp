@@ -455,9 +455,13 @@ void GUI::init() {
   gtk_grid_attach(GTK_GRID(inGrid), button, 0, 2, 1, 1);
   g_signal_connect(button, "clicked", G_CALLBACK(addLineWindow), NULL);
 
-  button = gtk_button_new_with_label("Poligono");
+  button = gtk_button_new_with_label("Polygon");
   gtk_grid_attach(GTK_GRID(inGrid), button, 0, 3, 1, 1);
   g_signal_connect(button, "clicked", G_CALLBACK(addPolygonWindow), NULL);
+
+  button = gtk_button_new_with_label("Curve");
+  gtk_grid_attach(GTK_GRID(inGrid), button, 2, 1, 1, 1);
+  g_signal_connect(button, "clicked", G_CALLBACK(addCurveWindow), NULL);
 
   inGrid = gtk_grid_new();
   gtk_container_set_border_width(GTK_CONTAINER(inGrid), 5);
@@ -833,4 +837,118 @@ void GUI::addToListBox(std::string name) {
   GtkWidget * label = gtk_label_new(name.c_str());
   gtk_list_box_prepend((GtkListBox*)oList, label);
   gtk_widget_show(label);
+}
+
+
+// Add Curves -------------------------------------------------
+void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
+  ParamsPolygon * params;
+  if(data == NULL) {
+    params = new ParamsPolygon();
+    params->pointsList = new std::list<Point*>();
+  } else {
+    params = (ParamsPolygon*) data;
+  }
+
+  GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_default_size(GTK_WINDOW(auxWindow), 300, 100);
+  gtk_window_set_title(GTK_WINDOW(auxWindow), "Incluir Curva");
+  g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+  gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
+
+  GtkWidget* auxGrid = gtk_grid_new();
+  gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
+  gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
+
+  GtkWidget* label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), "x: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
+
+  params->x = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), params->x, 1, 0, 1, 1);
+
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " y: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
+
+  params->y = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), params->y, 1, 1, 1, 1);
+
+
+  GtkWidget* button = gtk_button_new_with_label("Add More");
+  g_signal_connect(button, "clicked", G_CALLBACK(buildCurve), (gpointer) params);
+  g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 1, 2);
+
+  button = gtk_button_new_with_label("Finish");
+  g_signal_connect(button, "clicked", G_CALLBACK(addCurveWindowName), (gpointer) params);
+  g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 2, 1, 2);
+
+  gtk_widget_show_all(auxWindow);
+}
+
+void GUI::buildCurve(GtkWidget *widget, gpointer data) {
+  ParamsPolygon *params = (ParamsPolygon*) data;
+  const char *x = gtk_entry_get_text((GtkEntry*)params->x);
+  float xi = atof(x);
+  const char *y = gtk_entry_get_text((GtkEntry*)params->y);
+  float yi = atof(y);
+
+  Point *p = new Point("CurvePoint",xi, yi);
+  params->pointsList->push_back(p);
+
+  addCurveWindow(widget, (gpointer)params);
+}
+
+void GUI::addCurveWindowName(GtkWidget *widget, gpointer data) {
+  ParamsPolygon * params = (ParamsPolygon*) data;
+  const char* x = gtk_entry_get_text((GtkEntry*)params->x);
+  float xi = atof(x);
+  const char* y = gtk_entry_get_text((GtkEntry*)params->y);
+  float yi = atof(y);
+
+  Point *p = new Point("polygonPoint",xi, yi);
+  params->pointsList->push_back(p);
+
+  GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_default_size(GTK_WINDOW(auxWindow), 300, 100);
+  gtk_window_set_title(GTK_WINDOW(auxWindow), "Incluir Curva");
+  g_signal_connect(auxWindow, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+  gtk_container_set_border_width(GTK_CONTAINER(auxWindow), 10);
+
+  GtkWidget* auxGrid = gtk_grid_new();
+  gtk_container_set_border_width(GTK_CONTAINER(auxGrid), 5);
+  gtk_container_add(GTK_CONTAINER(auxWindow), auxGrid);
+
+  GtkWidget* label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), "Nome: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
+
+  params->nome = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), params->nome, 1, 0, 1, 1);
+
+  GtkWidget* button = gtk_button_new_with_label("Add");
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 1, 2, 1);
+  g_signal_connect(button, "clicked", G_CALLBACK(addCurve), (gpointer) params);
+  g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+
+  gtk_widget_show_all(auxWindow);
+
+}
+
+void GUI::addCurve(GtkWidget *widget, gpointer data) {
+  ParamsPolygon *params = (ParamsPolygon*) data;
+  std::string *name =  new std::string(gtk_entry_get_text((GtkEntry*)params->nome));
+
+  //GtkWidget* label = gtk_label_new(name->c_str());
+  //gtk_list_box_prepend((GtkListBox*)oList, label);
+  //gtk_widget_show(label);
+  GUI::addToListBox(*name);
+
+
+  GUI::getDisplayFile()->addObject(new Curve(name, params->pointsList));
+  delete params;
+
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }

@@ -10,6 +10,7 @@ class GUI;
 #include "Object.hpp"
 #include "Polygon.hpp"
 #include "Viewport.hpp"
+#include "Curve2.hpp"
 
 static cairo_surface_t *surface = NULL;
 
@@ -91,6 +92,11 @@ public:
   static void saveFile(GtkWidget *widget, gpointer data);
   static void loadFile(GtkWidget *widget, gpointer data);
   static void addToListBox(std::string name);
+
+  static void addCurveWindow(GtkWidget *widget, gpointer   data);
+  static void buildCurve(GtkWidget *widget, gpointer   data);
+  static void addCurveWindowName(GtkWidget *widget, gpointer data);
+  static void addCurve(GtkWidget *widget, gpointer data);
 };
 
 
