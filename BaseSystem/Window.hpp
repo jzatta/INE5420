@@ -4,8 +4,8 @@
 class Window;
 
 #include <gtk/gtk.h>
-#include "Matrix.hpp"
 #include "Line.hpp"
+#include "Matrix.hpp"
 #include "Point.hpp"
 
 class Window {

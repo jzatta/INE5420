@@ -1,12 +1,13 @@
 
-#include "Window.hpp"
 #include <math.h>
 #include <string>
+#include "Window.hpp"
 
 #define PIXEL_AREA_MIN 1000
+#define HWSIZE 300
 
 Point *Window::wc = new Point((std::string*)NULL, 0, 0);
-Line *Window::vup = new Line((std::string*)NULL, -300,  -300, -300, 300);
+Line *Window::vup = new Line((std::string*)NULL, -HWSIZE,  -HWSIZE, -HWSIZE, HWSIZE);
 float Window::wAngle = 0;
 
 
@@ -16,9 +17,10 @@ void Window::center() {
 }
 
 void Window::reset() {
+  printf("RESET\n");
   Window::center();
   delete vup;
-  vup = new Line((std::string*)NULL, -300,  -300, -300, 300);
+  vup = new Line((std::string*)NULL, -HWSIZE,  -HWSIZE, -HWSIZE, HWSIZE);
   wAngle = 0;
 }
 

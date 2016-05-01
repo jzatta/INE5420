@@ -1,22 +1,24 @@
-#ifndef _CG_POLYGON_HPP_
-#define _CG_POLYGON_HPP_
+#ifndef _CG_CURVE_HPP_
+#define _CG_CURVE_HPP_
 
-class Polygon;
+class Curve;
 
 #include <gtk/gtk.h>
 #include <list>
 #include "Object.hpp"
 #include "Point.hpp"
 #include "Viewport.hpp"
+#include <math.h>
 
 #include <iostream>
 
-class Polygon : public Object {
+class Curve : public Object {
 private:
   std::list<Point*> *pointsList;
+  std::list<Point*> *curvePoints;
 public:
-  Polygon(const char *name, std::list<Point*> *list);
-  Polygon(std::string *name, std::list<Point*> *list);
+  Curve (const char *name, std::list<Point*> *list);
+  Curve (std::string *name, std::list<Point*> *list);
   virtual void draw(cairo_t *cr);
   virtual Object* clone();
   virtual void transform(Matrix *_m);
@@ -25,9 +27,10 @@ public:
   virtual std::pair<float,float> getCenter();
   Point * getPoint(int index);
   int getSize();
+  void calculateCurve();
 
   void setList(std::list<Point*>* list);
-  ~Polygon();
+  ~Curve ();
 };
 
 

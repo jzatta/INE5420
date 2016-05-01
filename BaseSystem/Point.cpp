@@ -5,8 +5,10 @@
 #include <iostream>
 
 void Point::draw(cairo_t *cr) {
-  cairo_move_to(cr, Viewport::transformX(x), Viewport::transformY(y));
-  cairo_arc(cr, Viewport::transformX(x), Viewport::transformY(y), 1, 0, 2*M_PI);
+  if (show) {
+    cairo_move_to(cr, Viewport::transformX(x), Viewport::transformY(y));
+    cairo_arc(cr, Viewport::transformX(x), Viewport::transformY(y), 1, 0, 2*M_PI);
+  }
   return;
 }
 
@@ -16,6 +18,13 @@ float Point::getX() {
 
 float Point::getY() {
   return y;
+}
+
+void Point::setX(float _x) {
+  x = _x;
+}
+void Point::setY(float _y) {
+  y = _y;
 }
 
 Point::Point(const char *name, float _x, float _y) : Object(name) {
@@ -59,4 +68,8 @@ void Point::save(FILE *stream) {
   fprintf(stream, "\n#Add Point\ng %s\n", getName()->c_str());
   fprintf(stream, "v %f %f 0.0 0.0\n",  x, y);
   fprintf(stream, "p 1\n");
+}
+
+void Point::clip(void) {
+  this->show = Clipping::clipPoint(x, y);
 }

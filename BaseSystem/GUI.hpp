@@ -5,11 +5,12 @@ class GUI;
 
 #include <gtk/gtk.h>
 #include <list>
-#include "Object.hpp"
+#include "DisplayFile.hpp"
 #include "Line.hpp"
+#include "Object.hpp"
 #include "Polygon.hpp"
 #include "Viewport.hpp"
-#include "DisplayFile.hpp"
+#include "Curve2.hpp"
 
 static cairo_surface_t *surface = NULL;
 
@@ -40,6 +41,11 @@ class GUI {
     double angulo;
     GtkWidget *x;
     GtkWidget *y;
+  };
+
+  struct ParamsCurveB {
+    GtkWidget *nome;
+    GtkWidget *x1, *x2, *x3, *x4, *y1, *y2, *y3, *y4;
   };
 protected:
   GtkWidget* window;
@@ -91,6 +97,9 @@ public:
   static void saveFile(GtkWidget *widget, gpointer data);
   static void loadFile(GtkWidget *widget, gpointer data);
   static void addToListBox(std::string name);
+
+  static void addCurveWindow(GtkWidget *widget, gpointer   data);
+  static void addCurve(GtkWidget *widget, gpointer data);
 };
 
 

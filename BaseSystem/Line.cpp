@@ -4,8 +4,10 @@
 #include "Line.hpp"
 
 void Line::draw(cairo_t *cr) {
-  cairo_move_to(cr, Viewport::transformX(pointsList->front()->getX()), Viewport::transformY(pointsList->front()->getY()));
-  cairo_line_to(cr, Viewport::transformX(pointsList->back()->getX()), Viewport::transformY(pointsList->back()->getY()));
+  if (show) {
+    cairo_move_to(cr, Viewport::transformX(pointsList->front()->getX()), Viewport::transformY(pointsList->front()->getY()));
+    cairo_line_to(cr, Viewport::transformX(pointsList->back()->getX()), Viewport::transformY(pointsList->back()->getY()));
+  }
   return;
 }
 
@@ -67,6 +69,11 @@ void Line::save(FILE *stream) {
                                         pointsList->back()->getY());
   fprintf(stream, "l 1 2\n");
 }
+
+void Line::clip(void) {
+  this->show = Clipping::clipLineCS(pointsList->front(), pointsList->back());
+}
+
 
 Line::~Line() {
   pointsList->clear();
