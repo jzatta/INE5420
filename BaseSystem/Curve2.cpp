@@ -3,13 +3,15 @@
 
 void Curve::draw(cairo_t *cr) {
   float xi, yi;
-  std::list<Point*>::iterator it=curvePoints->begin();
-  xi = (*it)->getX();
-  yi = (*it)->getY();
-  cairo_move_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
-  ++it;
-  for (; it != curvePoints->end(); ++it) {
-    cairo_line_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
+  if (this->show) {
+    std::list<Point*>::iterator it=curvePoints->begin();
+    xi = (*it)->getX();
+    yi = (*it)->getY();
+    cairo_move_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
+    ++it;
+    for (; it != curvePoints->end(); ++it) {
+      cairo_line_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
+    }
   }
   return;
 }
@@ -32,6 +34,7 @@ void Curve::transform(Matrix *_m) {
     (*it)->Point::transform(_m);
   }
   this->calculateCurve();
+  this->clip();
 }
 
 Object* Curve::clone() {
@@ -75,7 +78,18 @@ void Curve::save(FILE *stream) {
 }
 
 void Curve::clip(void) {
-  //this->show = Clipping::clipPolygon(this);
+  std::list<Point*>::iterator it=curvePoints->begin();
+  this->show = true;
+  for (; it != curvePoints->end();) {
+    if (!Clipping::clipPoint((*it)->getX(), (*it)->getY())) {
+      it = curvePoints->erase(it);
+      continue;
+    }
+    ++it;
+  }
+  if (curvePoints->empty()) {
+    this->show = false;
+  }
 }
 
 Point * Curve::getPoint(int index) {
@@ -98,7 +112,7 @@ void Curve::setList(std::list<Point*>* list) {
   pointsList = list;
 }
 
-void Curve::calculateCurve(){
+void Curve::calculateCurve() {
   curvePoints->clear();
   
   //por no Matrix
@@ -129,11 +143,11 @@ void Curve::calculateCurve(){
   }
 
   float t[4];
-  for (double i = 0; i <= 1; i += 0.0001) {
-    t[0] = pow(i, 3);
-    t[1] = pow(i, 2);
-    t[2] = pow(i, 1);
+  for (double i = 0; i <= 1; i += Window::getWidth()/60000) {
     t[3] = 1;
+    t[2] = i;
+    t[1] = t[2] * i;
+    t[0] = t[1] * i;
     
     float x = 0;
     float y = 0;

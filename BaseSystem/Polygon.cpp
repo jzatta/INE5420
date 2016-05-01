@@ -4,6 +4,9 @@
 
 void Polygon::draw(cairo_t *cr) {
   float xi, yi;
+  if (show == false) {
+    return;
+  }
   std::list<Point*>::iterator it=pointsList->begin();
   xi = (*it)->getX();
   yi = (*it)->getY();
