@@ -17,7 +17,6 @@ void Window::center() {
 }
 
 void Window::reset() {
-  printf("RESET\n");
   Window::center();
   delete vup;
   vup = new Line((std::string*)NULL, -HWSIZE,  -HWSIZE, -HWSIZE, HWSIZE);

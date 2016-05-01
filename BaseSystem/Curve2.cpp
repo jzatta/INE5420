@@ -67,7 +67,7 @@ void Curve::save(FILE *stream) {
     fprintf(stream, "v %f %f 0.0 0.0\n", (*it)->getX(), (*it)->getY());
     added++;
   }
-  fprintf(stream, "f 1");
+  fprintf(stream, "c 1");
   for (; added > 0; added--) {
     fprintf(stream, " %d", added);
   }
@@ -102,48 +102,48 @@ void Curve::calculateCurve(){
   curvePoints->clear();
   
   //por no Matrix
-  float matrix[][4] = { { -1, 3, -3, 1 }, { 3, -6, 3, 0 }, { -3, 3, 0, 0 }, { 1,
-      0, 0, 0 } };
+  float mB[4][4] = {{-1,  3, -3, 1},
+                    { 3, -6,  3, 0},
+                    {-3,  3,  0, 0},
+                    { 1,  0,  0, 0}};
   float vX[4];
   float vY[4];
-  int i = 0;
   std::list<Point*>::iterator it=pointsList->begin();
-  for (; it != pointsList->end(); ++it) {
+  for (int i = 0; it != pointsList->end(); ++it) {
     vX[i] = (*it)->getX();
     vY[i] = (*it)->getY();
     i++;
   }
-
+  
+  // points are constant to this object,
+  //                so multiply points to mB are constant too
+  float mBgBX[4];
+  float mBgBY[4];
+  for (int j = 0; j < 4; j++) {
+    mBgBX[j] = 0;
+    mBgBY[j] = 0;
+    for (int i = 0; i < 4; i++) {
+      mBgBX[j] += mB[j][i] * vX[i];
+      mBgBY[j] += mB[j][i] * vY[i];
+    }
+  }
 
   float t[4];
-  for (double i = 0; i < 1; i += 0.0001) {
+  for (double i = 0; i <= 1; i += 0.0001) {
     t[0] = pow(i, 3);
     t[1] = pow(i, 2);
     t[2] = pow(i, 1);
     t[3] = 1;
-
-    float tMb[4];
-   
-    for (int jb = 0; jb < 4; jb++) {
-      tMb[jb] = 0;
-      for (int ja = 0; ja < 4; ja++) {
-        tMb[jb] += t[ja] * matrix[ja][jb];
-      }
-    }
-
+    
     float x = 0;
-    for (int i = 0; i < 4; i++) {
-      x += tMb[i] * vX[i];
-    }
     float y = 0;
     for (int i = 0; i < 4; i++) {
-      y += tMb[i] * vY[i];
+      x += t[i] * mBgBX[i];
+      y += t[i] * mBgBY[i];
     }
-
+    
     curvePoints->push_back(new Point("CurvePoint", x, y));
   }
-
-
 }
 
 Curve::~Curve() {

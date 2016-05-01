@@ -82,7 +82,6 @@ void DisplayFile::deleteObj(std::string *name) {
   std::list<Object*>::iterator it=objectsWorld->begin();
   for (; it != objectsWorld->end(); ++it) {
     if (!(*it)->getName()->compare(*name)) {
-      delete *it;
       objectsWorld->erase(it);
       break;
     }
@@ -90,7 +89,6 @@ void DisplayFile::deleteObj(std::string *name) {
   it=objectsTransformed->begin();
   for (; it != objectsTransformed->end(); ++it) {
     if (!(*it)->getName()->compare(*name)) {
-      delete *it;
       objectsTransformed->erase(it);
       break;
     }
