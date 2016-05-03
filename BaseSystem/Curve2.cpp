@@ -13,17 +13,22 @@ void Curve::draw(cairo_t *cr) {
       cairo_line_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
     }
   }
+  if (this->next) {
+    this->next->draw(cr);
+  }
   return;
 }
 
 Curve::Curve(const char *name, std::list<Point*> *list) : Object(name) {
   pointsList = list;
   curvePoints = new std::list<Point*>();
+  this->next = NULL;
 }
 
 Curve::Curve(std::string *name, std::list<Point*> *list) : Object(name) {
   pointsList = list;
   curvePoints = new std::list<Point*>();
+  this->next = NULL;
 }
 
 void Curve::transform(Matrix *_m) {
@@ -35,19 +40,27 @@ void Curve::transform(Matrix *_m) {
   }
   this->calculateCurve();
   this->clip();
+  if (this->next) {
+    this->next->transform(_m);
+  }
 }
 
 Object* Curve::clone() {
   std::list<Point*> *newList = new std::list<Point*>();
   std::list<Point*>::iterator it=pointsList->begin();
   std::string *newName = getName();
+  Curve *clone;
   if (newName != NULL) {
     newName = new std::string(*newName);
   }
   for (; it != pointsList->end(); ++it) {
     newList->push_back((Point*)((*it)->clone()));
   }
-  return new Curve(newName, newList);
+  clone = new Curve(newName, newList);
+  if (this->next) {
+    clone->attach((Curve*)this->next->clone());
+  }
+  return clone;
 }
 
 std::pair<float,float> Curve::getCenter() {
@@ -75,6 +88,9 @@ void Curve::save(FILE *stream) {
     fprintf(stream, " %d", added);
   }
   fprintf(stream, "\n");
+  if (this->next) {
+    this->next->save(stream);
+  }
 }
 
 void Curve::clip(void) {
@@ -158,6 +174,10 @@ void Curve::calculateCurve() {
     
     curvePoints->push_back(new Point("CurvePoint", x, y));
   }
+}
+
+void Curve::attach(Curve *_next) {
+  this->next = _next;
 }
 
 Curve::~Curve() {

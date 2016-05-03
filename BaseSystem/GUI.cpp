@@ -842,8 +842,13 @@ void GUI::addToListBox(std::string name) {
 
 // Add Curves -------------------------------------------------
 void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
-
-  ParamsCurveB * paramsC = new ParamsCurveB();
+  ParamsCurveB * paramsC;
+  if (data == NULL) {
+    paramsC = new ParamsCurveB();
+    paramsC->first = NULL;
+  } else {
+    paramsC = (ParamsCurveB*)data;
+  }
 
   GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size(GTK_WINDOW(auxWindow), 300, 100);
@@ -859,23 +864,55 @@ void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
   GtkWidget* label = gtk_label_new(NULL);
   gtk_label_set_text(GTK_LABEL(label), "Nome: ");
   gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
+  
+  if (data != NULL) {
+    const char *name, *x1, *y1;
+    if (paramsC->first == paramsC->last) {
+      name = gtk_entry_get_text((GtkEntry*)paramsC->nome);
+    } else {
+      name = gtk_label_get_text((GtkLabel*)paramsC->nome);
+    }
+    x1 = gtk_entry_get_text((GtkEntry*)paramsC->x4);
+    y1 = gtk_entry_get_text((GtkEntry*)paramsC->y4);
+    
+    paramsC->nome = gtk_label_new(NULL);
+    gtk_label_set_text(GTK_LABEL(paramsC->nome), name);
+    gtk_grid_attach(GTK_GRID(auxGrid), paramsC->nome, 1, 0, 3, 1);
 
-  paramsC->nome = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->nome, 1, 0, 3, 1);
+    label = gtk_label_new(NULL);
+    gtk_label_set_text(GTK_LABEL(label), "x1: ");
+    gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
 
-  label = gtk_label_new(NULL);
-  gtk_label_set_text(GTK_LABEL(label), "x1: ");
-  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
+    paramsC->x1 = gtk_label_new(NULL);
+    gtk_label_set_text(GTK_LABEL(paramsC->x1), x1);
+    gtk_grid_attach(GTK_GRID(auxGrid), paramsC->x1, 1, 1, 1, 1);
+    
 
-  paramsC->x1 = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->x1, 1, 1, 1, 1);
+    label = gtk_label_new(NULL);
+    gtk_label_set_text(GTK_LABEL(label), " y1: ");
+    gtk_grid_attach(GTK_GRID(auxGrid), label, 2, 1, 1, 1);
 
-  label = gtk_label_new(NULL);
-  gtk_label_set_text(GTK_LABEL(label), " y1: ");
-  gtk_grid_attach(GTK_GRID(auxGrid), label, 2, 1, 1, 1);
+    paramsC->y1 = gtk_label_new(NULL);
+    gtk_label_set_text(GTK_LABEL(paramsC->y1), y1);
+    gtk_grid_attach(GTK_GRID(auxGrid), paramsC->y1, 3, 1, 1, 1);
+  } else {
+    paramsC->nome = gtk_entry_new();
+    gtk_grid_attach(GTK_GRID(auxGrid), paramsC->nome, 1, 0, 3, 1);
 
-  paramsC->y1 = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->y1, 3, 1, 1, 1);
+    label = gtk_label_new(NULL);
+    gtk_label_set_text(GTK_LABEL(label), "x1: ");
+    gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
+
+    paramsC->x1 = gtk_entry_new();
+    gtk_grid_attach(GTK_GRID(auxGrid), paramsC->x1, 1, 1, 1, 1);
+
+    label = gtk_label_new(NULL);
+    gtk_label_set_text(GTK_LABEL(label), " y1: ");
+    gtk_grid_attach(GTK_GRID(auxGrid), label, 2, 1, 1, 1);
+
+    paramsC->y1 = gtk_entry_new();
+    gtk_grid_attach(GTK_GRID(auxGrid), paramsC->y1, 3, 1, 1, 1);
+  }
 
   label = gtk_label_new(NULL);
   gtk_label_set_text(GTK_LABEL(label), " x2: ");
@@ -921,19 +958,63 @@ void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
 
 
 
-  GtkWidget* button = gtk_button_new_with_label("Add");
-  g_signal_connect(button, "clicked", G_CALLBACK(addCurve), (gpointer) paramsC);
+  GtkWidget* button = gtk_button_new_with_label("Add more");
+  g_signal_connect(button, "clicked", G_CALLBACK(addCurveMore), (gpointer) paramsC);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
   gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 5, 2, 2);
+  
+  button = gtk_button_new_with_label("Finish");
+  g_signal_connect(button, "clicked", G_CALLBACK(addCurveFinish), (gpointer) paramsC);
+  g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 2, 5, 2, 2);
+  
 
   gtk_widget_show_all(auxWindow);
 }
 
-void GUI::addCurve(GtkWidget* widget, gpointer data) {
+void GUI::addCurveMore(GtkWidget* widget, gpointer data) {
+  ParamsCurveB * paramsC = (ParamsCurveB*)data;
+  Curve *added = GUI::addCurve(widget, data);
+  if (paramsC->first == NULL) {
+    paramsC->first = added;
+    paramsC->last = added;
+  } else {
+    paramsC->last->attach(added);
+    paramsC->last = added;
+  }
+  GUI::addCurveWindow(widget, data);
+}
+
+void GUI::addCurveFinish(GtkWidget* widget, gpointer data) {
+  ParamsCurveB * paramsC = (ParamsCurveB*)data;
+  Curve *added = GUI::addCurve(widget, data);
+  if (paramsC->first == NULL) {
+    paramsC->first = added;
+  } else {
+    paramsC->last->attach(added);
+    paramsC->last = added;
+  }
+  GUI::addToListBox(paramsC->first->getName()->c_str());
+  
+  GUI::getDisplayFile()->addObject(paramsC->first);
+
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+Curve *GUI::addCurve(GtkWidget* widget, gpointer data) {
   ParamsCurveB * paramsC = (ParamsCurveB*) data;
-  std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)paramsC->nome));
-  const char* x1 = gtk_entry_get_text((GtkEntry*)paramsC->x1);
-  const char* y1 = gtk_entry_get_text((GtkEntry*)paramsC->y1);
+  std::string* name;
+  const char* x1;
+  const char* y1;
+  if (paramsC->first == NULL) {
+    name =  new std::string(gtk_entry_get_text((GtkEntry*)paramsC->nome));
+    x1 = gtk_entry_get_text((GtkEntry*)paramsC->x1);
+    y1 = gtk_entry_get_text((GtkEntry*)paramsC->y1);
+  } else {
+    name =  new std::string(gtk_label_get_text((GtkLabel*)paramsC->nome));
+    x1 = gtk_label_get_text((GtkLabel*)paramsC->x1);
+    y1 = gtk_label_get_text((GtkLabel*)paramsC->y1);
+  }
   const char* x2 = gtk_entry_get_text((GtkEntry*)paramsC->x2);
   const char* y2 = gtk_entry_get_text((GtkEntry*)paramsC->y2);
   const char* x3 = gtk_entry_get_text((GtkEntry*)paramsC->x3);
@@ -941,15 +1022,11 @@ void GUI::addCurve(GtkWidget* widget, gpointer data) {
   const char* x4 = gtk_entry_get_text((GtkEntry*)paramsC->x4);
   const char* y4 = gtk_entry_get_text((GtkEntry*)paramsC->y4);
 
-  GUI::addToListBox(*name);
-
   std::list<Point*> *pointsList = new std::list<Point*>();
   pointsList->push_back(new Point("CurvePoint", atof(x1), atof(y1)));
   pointsList->push_back(new Point("CurvePoint", atof(x2), atof(y2)));
   pointsList->push_back(new Point("CurvePoint", atof(x3), atof(y3)));
   pointsList->push_back(new Point("CurvePoint", atof(x4), atof(y4)));
 
-  GUI::getDisplayFile()->addObject(new Curve(name, pointsList));
-
-  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+  return new Curve(name, pointsList);
 }
