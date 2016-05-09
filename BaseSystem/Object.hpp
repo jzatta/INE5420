@@ -6,6 +6,7 @@ class Object;
 #include <gtk/gtk.h>
 #include <list>
 #include <string>
+#include <iostream>
 #include "Drawable.hpp"
 #include "Matrix.hpp"
 

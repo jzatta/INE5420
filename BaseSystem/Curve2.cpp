@@ -78,7 +78,7 @@ std::pair<float,float> Curve::getCenter() {
 void Curve::save(FILE *stream) {
   int added = 0;
   std::list<Point*>::iterator it=pointsList->begin();
-  fprintf(stream, "\n#Add polygon\ng %s\n", getName()->c_str());
+  fprintf(stream, "\n#Add Curve\ng %s\n", getName()->c_str());
   for (; it != pointsList->end(); ++it) {
     fprintf(stream, "v %f %f 0.0 0.0\n", (*it)->getX(), (*it)->getY());
     added++;
@@ -109,7 +109,7 @@ void Curve::clip(void) {
   }
 }
 
-Point * Curve::getPoint(int index) {
+Point *Curve::getPoint(int index) {
   assert(index >= 0);
   assert(index < pointsList->size());
   std::list<Point*>::iterator it = pointsList->begin();
@@ -130,6 +130,10 @@ void Curve::setList(std::list<Point*>* list) {
 }
 
 void Curve::calculateCurve() {
+  std::list<Point*>::iterator it=curvePoints->begin();
+  for (; it != curvePoints->end(); ++it) {
+    delete *it;
+  }
   curvePoints->clear();
   
   //por no Matrix
@@ -139,7 +143,7 @@ void Curve::calculateCurve() {
                     { 1,  0,  0, 0}};
   float vX[4];
   float vY[4];
-  std::list<Point*>::iterator it=pointsList->begin();
+  it=pointsList->begin();
   for (int i = 0; it != pointsList->end(); ++it) {
     vX[i] = (*it)->getX();
     vY[i] = (*it)->getY();
@@ -160,7 +164,11 @@ void Curve::calculateCurve() {
   }
 
   float t[4];
-  for (double i = 0; i <= 1; i += Window::getWidth()/6000) {
+  float step = Window::getWidth()/6000;
+  if (step < (0.01/6000)) {
+    step = 0.01;
+  }
+  for (double i = 0; i <= 1; i += step) {
     t[3] = 1;
     t[2] = i;
     t[1] = t[2] * i;
@@ -182,6 +190,14 @@ void Curve::attach(Curve *_next) {
 }
 
 Curve::~Curve() {
+  std::list<Point*>::iterator it=pointsList->begin();
+  for (; it != pointsList->end(); ++it) {
+    delete *it;
+  }
+  it=curvePoints->begin();
+  for (; it != curvePoints->end(); ++it) {
+    delete *it;
+  }
   pointsList->clear();
   curvePoints->clear();
   delete pointsList;

@@ -75,5 +75,4 @@ void Point::clip(void) {
 }
 
 Point::~Point() {
-  
 }

@@ -13,14 +13,14 @@ void Line::draw(cairo_t *cr) {
 
 Line::Line(const char *name, float xa, float ya, float xb, float yb) : Object(name) {
   this->pointsList = new std::list<Point*>();
-  pointsList->push_back(new Point(name, xa, ya));
-  pointsList->push_back(new Point(name, xb, yb));
+  pointsList->push_back(new Point((const char*)NULL, xa, ya));
+  pointsList->push_back(new Point((const char*)NULL, xb, yb));
 }
 
 Line::Line(std::string *name, float xa, float ya, float xb, float yb) : Object(name) {
   this->pointsList = new std::list<Point*>();
-  pointsList->push_back(new Point(name, xa, ya));
-  pointsList->push_back(new Point(name, xb, yb));
+  pointsList->push_back(new Point((const char*)NULL, xa, ya));
+  pointsList->push_back(new Point((const char*)NULL, xb, yb));
 }
 
 Line::Line(const char *name, Point *a, Point *b) : Object(name) {
@@ -76,6 +76,10 @@ void Line::clip(void) {
 
 
 Line::~Line() {
+  std::list<Point*>::iterator it=pointsList->begin();
+  for (; it != pointsList->end(); ++it) {
+    delete *it;
+  }
   pointsList->clear();
   delete pointsList;
 }
