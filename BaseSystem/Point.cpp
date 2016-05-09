@@ -73,3 +73,7 @@ void Point::save(FILE *stream) {
 void Point::clip(void) {
   this->show = Clipping::clipPoint(x, y);
 }
+
+Point::~Point() {
+  
+}

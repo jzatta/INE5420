@@ -32,7 +32,7 @@ public:
   void attach(Curve *next);
 
   void setList(std::list<Point*>* list);
-  ~Curve ();
+  virtual ~Curve ();
 };
 
 

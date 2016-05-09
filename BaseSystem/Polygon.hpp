@@ -27,7 +27,7 @@ public:
   int getSize();
 
   void setList(std::list<Point*>* list);
-  ~Polygon();
+  virtual ~Polygon();
 };
 
 

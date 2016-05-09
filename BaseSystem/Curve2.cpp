@@ -98,6 +98,7 @@ void Curve::clip(void) {
   this->show = true;
   for (; it != curvePoints->end();) {
     if (!Clipping::clipPoint((*it)->getX(), (*it)->getY())) {
+      delete *it;
       it = curvePoints->erase(it);
       continue;
     }
@@ -159,7 +160,7 @@ void Curve::calculateCurve() {
   }
 
   float t[4];
-  for (double i = 0; i <= 1; i += Window::getWidth()/60000) {
+  for (double i = 0; i <= 1; i += Window::getWidth()/6000) {
     t[3] = 1;
     t[2] = i;
     t[1] = t[2] * i;
@@ -182,5 +183,7 @@ void Curve::attach(Curve *_next) {
 
 Curve::~Curve() {
   pointsList->clear();
+  curvePoints->clear();
   delete pointsList;
+  delete curvePoints;
 }
