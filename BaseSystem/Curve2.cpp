@@ -13,22 +13,17 @@ void Curve::draw(cairo_t *cr) {
       cairo_line_to(cr, Viewport::transformX((*it)->getX()), Viewport::transformY((*it)->getY()));
     }
   }
-  if (this->next) {
-    this->next->draw(cr);
-  }
   return;
 }
 
 Curve::Curve(const char *name, std::list<Point*> *list) : Object(name) {
   pointsList = list;
   curvePoints = new std::list<Point*>();
-  this->next = NULL;
 }
 
 Curve::Curve(std::string *name, std::list<Point*> *list) : Object(name) {
   pointsList = list;
   curvePoints = new std::list<Point*>();
-  this->next = NULL;
 }
 
 void Curve::transform(Matrix *_m) {
@@ -40,27 +35,21 @@ void Curve::transform(Matrix *_m) {
   }
   this->calculateCurve();
   this->clip();
-  if (this->next) {
-    this->next->transform(_m);
-  }
 }
 
 Object* Curve::clone() {
   std::list<Point*> *newList = new std::list<Point*>();
   std::list<Point*>::iterator it=pointsList->begin();
   std::string *newName = getName();
-  Curve *clone;
+  Curve *oClone;
   if (newName != NULL) {
     newName = new std::string(*newName);
   }
   for (; it != pointsList->end(); ++it) {
     newList->push_back((Point*)((*it)->clone()));
   }
-  clone = new Curve(newName, newList);
-  if (this->next) {
-    clone->attach((Curve*)this->next->clone());
-  }
-  return clone;
+  oClone = new Curve(newName, newList);
+  return oClone;
 }
 
 std::pair<float,float> Curve::getCenter() {
@@ -78,7 +67,7 @@ std::pair<float,float> Curve::getCenter() {
 void Curve::save(FILE *stream) {
   int added = 0;
   std::list<Point*>::iterator it=pointsList->begin();
-  fprintf(stream, "\n#Add polygon\ng %s\n", getName()->c_str());
+  fprintf(stream, "\n#Add Curve\ng %s\n", getName()->c_str());
   for (; it != pointsList->end(); ++it) {
     fprintf(stream, "v %f %f 0.0 0.0\n", (*it)->getX(), (*it)->getY());
     added++;
@@ -87,10 +76,6 @@ void Curve::save(FILE *stream) {
   for (; added > 0; added--) {
     fprintf(stream, " %d", added);
   }
-  fprintf(stream, "\n");
-  if (this->next) {
-    this->next->save(stream);
-  }
 }
 
 void Curve::clip(void) {
@@ -98,6 +83,7 @@ void Curve::clip(void) {
   this->show = true;
   for (; it != curvePoints->end();) {
     if (!Clipping::clipPoint((*it)->getX(), (*it)->getY())) {
+      delete *it;
       it = curvePoints->erase(it);
       continue;
     }
@@ -108,7 +94,7 @@ void Curve::clip(void) {
   }
 }
 
-Point * Curve::getPoint(int index) {
+Point *Curve::getPoint(int index) {
   assert(index >= 0);
   assert(index < pointsList->size());
   std::list<Point*>::iterator it = pointsList->begin();
@@ -129,58 +115,81 @@ void Curve::setList(std::list<Point*>* list) {
 }
 
 void Curve::calculateCurve() {
+  std::list<Point*>::iterator it=curvePoints->begin();
+  for (; it != curvePoints->end(); ++it) {
+    delete *it;
+  }
   curvePoints->clear();
   
+#if 1
+  float mBS[4][4] = {{-1.0/6,  1.0/2, -1.0/2, 1.0/6},
+                    {  1.0/2, -1.0  ,  1.0/2, 0.0  },
+                    { -1.0/2,  0.0  ,  1.0/2, 0.0  },
+                    {  1.0/6,  2.0/3,  1.0/6, 0.0  }};
+#else
   //por no Matrix
-  float mB[4][4] = {{-1,  3, -3, 1},
+  float mBS[4][4] = {{-1,  3, -3, 1},
                     { 3, -6,  3, 0},
                     {-3,  3,  0, 0},
                     { 1,  0,  0, 0}};
-  float vX[4];
-  float vY[4];
-  std::list<Point*>::iterator it=pointsList->begin();
-  for (int i = 0; it != pointsList->end(); ++it) {
-    vX[i] = (*it)->getX();
-    vY[i] = (*it)->getY();
-    i++;
+
+#endif
+  
+  float gBSX[pointsList->size()];
+  float gBSY[pointsList->size()];
+  it=pointsList->begin();
+  for (int i = 0; it!=pointsList->end(); i++) {
+    gBSX[i] = (*it)->getX();
+    gBSY[i] = (*it)->getY();
+    it++;
   }
   
-  // points are constant to this object,
-  //                so multiply points to mB are constant too
-  float mBgBX[4];
-  float mBgBY[4];
-  for (int j = 0; j < 4; j++) {
-    mBgBX[j] = 0;
-    mBgBY[j] = 0;
-    for (int i = 0; i < 4; i++) {
-      mBgBX[j] += mB[j][i] * vX[i];
-      mBgBY[j] += mB[j][i] * vY[i];
+  for (int m = 3; m < pointsList->size(); m++) {
+    // points are constant to this object,
+    //                so multiply points to mBS are constant too
+    float mBSgBSX[4];
+    float mBSgBSY[4];
+    for (int j = 0; j < 4; j++) {
+      mBSgBSX[j] = 0;
+      mBSgBSY[j] = 0;
+      for (int i = 0; i < 4; i++) {
+        mBSgBSX[j] += mBS[j][i] * gBSX[i+m-3];
+        mBSgBSY[j] += mBS[j][i] * gBSY[i+m-3];
+      }
+    }
+    float t[4];
+    float step = Window::getWidth()/60000;
+    if (step < (0.01/60000)) {
+      step = 0.01;
+    }
+    for (float i = 0; i <= 1; i += step) {
+      t[3] = 1;
+      t[2] = i;
+      t[1] = t[2] * i;
+      t[0] = t[1] * i;
+      
+      float x = 0;
+      float y = 0;
+      for (int j = 0; j < 4; j++) {
+        x += t[j] * mBSgBSX[j];
+        y += t[j] * mBSgBSY[j];
+      }
+      curvePoints->push_back(new Point("CurvePoint", x, y));
     }
   }
-
-  float t[4];
-  for (double i = 0; i <= 1; i += Window::getWidth()/60000) {
-    t[3] = 1;
-    t[2] = i;
-    t[1] = t[2] * i;
-    t[0] = t[1] * i;
-    
-    float x = 0;
-    float y = 0;
-    for (int i = 0; i < 4; i++) {
-      x += t[i] * mBgBX[i];
-      y += t[i] * mBgBY[i];
-    }
-    
-    curvePoints->push_back(new Point("CurvePoint", x, y));
-  }
-}
-
-void Curve::attach(Curve *_next) {
-  this->next = _next;
 }
 
 Curve::~Curve() {
+  std::list<Point*>::iterator it=pointsList->begin();
+  for (; it != pointsList->end(); ++it) {
+    delete *it;
+  }
+  it=curvePoints->begin();
+  for (; it != curvePoints->end(); ++it) {
+    delete *it;
+  }
   pointsList->clear();
+  curvePoints->clear();
   delete pointsList;
+  delete curvePoints;
 }

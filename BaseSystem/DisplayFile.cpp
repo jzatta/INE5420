@@ -38,6 +38,10 @@ DisplayFile::DisplayFile(FILE *obj) {
       tmpObj = tmpObj->clone();
       tmpObj->transform(transformMatrix);
       this->objectsTransformed->push_back(tmpObj);
+      std::list<Point*>::iterator it=pointsList->begin();
+      for (; it != pointsList->end(); ++it) {
+        delete *it;
+      }
       pointsList->clear();
       ch = fgetc(obj);
     }
@@ -50,6 +54,10 @@ DisplayFile::DisplayFile(FILE *obj) {
       tmpObj = tmpObj->clone();
       tmpObj->transform(transformMatrix);
       this->objectsTransformed->push_back(tmpObj);
+      std::list<Point*>::iterator it=pointsList->begin();
+      for (; it != pointsList->end(); ++it) {
+        delete *it;
+      }
       pointsList->clear();
       ch = fgetc(obj);
     }
@@ -82,6 +90,7 @@ void DisplayFile::deleteObj(std::string *name) {
   std::list<Object*>::iterator it=objectsWorld->begin();
   for (; it != objectsWorld->end(); ++it) {
     if (!(*it)->getName()->compare(*name)) {
+      delete *it;
       objectsWorld->erase(it);
       break;
     }
@@ -89,6 +98,7 @@ void DisplayFile::deleteObj(std::string *name) {
   it=objectsTransformed->begin();
   for (; it != objectsTransformed->end(); ++it) {
     if (!(*it)->getName()->compare(*name)) {
+      delete *it;
       objectsTransformed->erase(it);
       break;
     }
@@ -164,6 +174,10 @@ void DisplayFile::transform() {
   std::list<Object*>::iterator it;
   delete transformMatrix;
   transformMatrix = Window::getTransform();
+  it=objectsTransformed->begin();
+  for (; it != objectsTransformed->end(); ++it) {
+    delete *it;
+  }
   objectsTransformed->clear();
   it=objectsWorld->begin();
   for (; it != objectsWorld->end(); ++it) {
@@ -183,6 +197,14 @@ void DisplayFile::save(FILE *obj) {
 }
 
 DisplayFile::~DisplayFile() {
+  std::list<Object*>::iterator it=objectsWorld->begin();
+  for (; it != objectsWorld->end(); ++it) {
+    delete *it;
+  }
+  it=objectsTransformed->begin();
+  for (; it != objectsTransformed->end(); ++it) {
+    delete *it;
+  }
   objectsWorld->clear();
   objectsTransformed->clear();
   delete this->objectsWorld;

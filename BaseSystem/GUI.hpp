@@ -46,8 +46,10 @@ class GUI {
   struct ParamsCurveB {
     GtkWidget *nome;
     GtkWidget *x1, *x2, *x3, *x4, *y1, *y2, *y3, *y4;
-    Curve *first, *last;
+    std::string *curveName;
+    std::list<Point*> *pointsList;
   };
+  
 protected:
   GtkWidget* window;
   GtkWidget* grid;
@@ -103,7 +105,7 @@ public:
   static void addCurveMore(GtkWidget* widget, gpointer data);
   static void addCurveFinish(GtkWidget* widget, gpointer data);
   
-  static Curve *addCurve(GtkWidget *widget, gpointer data);
+  static void addCurve(GtkWidget *widget, gpointer data);
 };
 
 

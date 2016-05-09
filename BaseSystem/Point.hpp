@@ -25,6 +25,7 @@ public:
   virtual void save(FILE *stream);
   virtual void clip(void);
   virtual std::pair<float,float> getCenter();
+  virtual ~Point();
 };
 
 #endif

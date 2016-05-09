@@ -101,6 +101,10 @@ void Polygon::setList(std::list<Point*>* list) {
 }
 
 Polygon::~Polygon() {
+  std::list<Point*>::iterator it=pointsList->begin();
+  for (; it != pointsList->end(); ++it) {
+    delete *it;
+  }
   pointsList->clear();
   delete pointsList;
 }
