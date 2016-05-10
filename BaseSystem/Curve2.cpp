@@ -120,41 +120,52 @@ void Curve::calculateCurve() {
     delete *it;
   }
   curvePoints->clear();
-  
 #if 1
-  float mBS[4][4] = {{-1.0/6,  1.0/2, -1.0/2, 1.0/6},
-                    {  1.0/2, -1.0  ,  1.0/2, 0.0  },
-                    { -1.0/2,  0.0  ,  1.0/2, 0.0  },
-                    {  1.0/6,  2.0/3,  1.0/6, 0.0  }};
-#else
-  //por no Matrix
-  float mBS[4][4] = {{-1,  3, -3, 1},
-                    { 3, -6,  3, 0},
-                    {-3,  3,  0, 0},
-                    { 1,  0,  0, 0}};
-
+  //matriz invertida de hermite
+  float mH[4][4] = {
+    { 2,-2, 1, 1},
+    {-3, 3,-2, 1},
+    { 0, 0, 1, 0},
+    { 1, 0, 0, 0}
+  };
+#endif
+#if 0
+  //matriz invertida de bezier //must complete
+  float mB[4][4] = {
+    { 0, 0, 0, 0},
+    { 0, 0, 0, 0},
+    { 0, 0, 0, 0},
+    { 0, 0, 0, 0}
+  };
+#endif
+#if 1
+  //matriz invertida da B-spline
+  float mBS[4][4] = {
+    {-1.0/6,  3.0/6, -3.0/6, 1.0/6},
+    { 3.0/6, -6.0/6,  3.0/6, 0.0/6},
+    {-3.0/6,  0.0/6,  3.0/6, 0.0/6},
+    { 1.0/6,  4.0/6,  1.0/6, 0.0/6}
+  };
 #endif
   
-  float gBSX[pointsList->size()];
-  float gBSY[pointsList->size()];
+  float gX[pointsList->size()];
+  float gY[pointsList->size()];
   it=pointsList->begin();
   for (int i = 0; it!=pointsList->end(); i++) {
-    gBSX[i] = (*it)->getX();
-    gBSY[i] = (*it)->getY();
+    gX[i] = (*it)->getX();
+    gY[i] = (*it)->getY();
     it++;
   }
   
   for (int m = 3; m < pointsList->size(); m++) {
-    // points are constant to this object,
-    //                so multiply points to mBS are constant too
-    float mBSgBSX[4];
-    float mBSgBSY[4];
+    // calc curve coeficients C
+    float Cx[4], Cy[4];
     for (int j = 0; j < 4; j++) {
-      mBSgBSX[j] = 0;
-      mBSgBSY[j] = 0;
+      Cx[j] = 0;
+      Cy[j] = 0;
       for (int i = 0; i < 4; i++) {
-        mBSgBSX[j] += mBS[j][i] * gBSX[i+m-3];
-        mBSgBSY[j] += mBS[j][i] * gBSY[i+m-3];
+        Cx[j] += mBS[j][i] * gX[i+m-3];
+        Cy[j] += mBS[j][i] * gY[i+m-3];
       }
     }
     float t[4];
@@ -162,20 +173,44 @@ void Curve::calculateCurve() {
     if (step < (0.01/60000)) {
       step = 0.01;
     }
-    for (float i = 0; i <= 1; i += step) {
-      t[3] = 1;
-      t[2] = i;
-      t[1] = t[2] * i;
-      t[0] = t[1] * i;
-      
-      float x = 0;
-      float y = 0;
-      for (int j = 0; j < 4; j++) {
-        x += t[j] * mBSgBSX[j];
-        y += t[j] * mBSgBSY[j];
+    t[0] = 1.0;
+    t[1] = t[0] * step;
+    t[2] = t[1] * step;
+    t[3] = t[2] * step;
+    
+    float mD[4][4] = {
+      {     0,      0,    0, t[0]},
+      {1*t[3], 1*t[2], t[1],    0},
+      {6*t[3], 2*t[2],    0,    0},
+      {6*t[3],      0,    0,    0}
+    };
+    
+    float f_x[4], f_y[4];
+    for (int j = 0; j < 4; j++) {
+      f_x[j] = 0;
+      f_y[j] = 0;
+      for (int i = 0; i < 4; i++) {
+        f_x[j] += mD[j][i] * Cx[i];
+        f_y[j] += mD[j][i] * Cy[i];
       }
-      curvePoints->push_back(new Point("CurvePoint", x, y));
     }
+    int n = 1/step + 1;
+    drawFwdDiff(n, f_x, f_y);
+  }
+}
+
+void Curve::drawFwdDiff(int n, float x[4], float y[4]) {
+  // f(x) = x[0] ___ df(x)/dx = x[1] ___ d^2f(x)/dx = x[2] ___ d^3f(x)/dx = x[3]  
+  curvePoints->push_back(new Point((const char*)NULL, x[0], y[0]));
+  for (int i = 0; i < n; i++) {
+    x[0] += x[1];
+    x[1] += x[2];
+    x[2] += x[3];
+    
+    y[0] += y[1];
+    y[1] += y[2];
+    y[2] += y[3];
+    curvePoints->push_back(new Point((const char*)NULL, x[0], y[0]));
   }
 }
 

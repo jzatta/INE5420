@@ -71,6 +71,16 @@ DisplayFile::DisplayFile(FILE *obj) {
       pointsList = new std::list<Point*>;
       ch = fgetc(obj);
     }
+    if (ch  == 'c') {
+      tmpObj = new Curve(name, pointsList);
+      GUI::addToListBox(std::string(name));
+      this->objectsWorld->push_back(tmpObj);
+      tmpObj = tmpObj->clone();
+      tmpObj->transform(transformMatrix);
+      this->objectsTransformed->push_back(tmpObj);
+      pointsList = new std::list<Point*>;
+      ch = fgetc(obj);
+    }
   }
   delete pointsList;
 }

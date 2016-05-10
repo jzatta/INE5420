@@ -28,6 +28,7 @@ public:
   Point * getPoint(int index);
   int getSize();
   void calculateCurve();
+  void drawFwdDiff(int n, float x[4], float y[4]);
 
   void setList(std::list<Point*>* list);
   virtual ~Curve ();
