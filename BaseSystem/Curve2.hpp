@@ -16,7 +16,6 @@ class Curve : public Object {
 private:
   std::list<Point*> *pointsList;
   std::list<Point*> *curvePoints;
-  Curve *next;
 public:
   Curve (const char *name, std::list<Point*> *list);
   Curve (std::string *name, std::list<Point*> *list);
@@ -29,7 +28,6 @@ public:
   Point * getPoint(int index);
   int getSize();
   void calculateCurve();
-  void attach(Curve *next);
 
   void setList(std::list<Point*>* list);
   virtual ~Curve ();
