@@ -10,15 +10,20 @@ class Point;
 
 class Point : public Object {
 private:
-  float x, y;
+  float x, y, z;
 public:
   Point(const char *name, float _x, float _y);
+  Point(const char *name, float _x, float _y, float _z);
   Point(std::string *name, float _x, float _y);
+  Point(std::string *name, float _x, float _y, float _z);
   float getX();
   float getY();
+  float getZ();
   void setX(float _x);
   void setY(float _y);
+  void setZ(float _z);
   void setCords(float _x, float _y);
+  void setCords(float _x, float _y, float _z);
   virtual void draw(cairo_t *cr);
   virtual Object* clone();
   virtual void transform(Matrix *_m);

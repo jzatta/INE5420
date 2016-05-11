@@ -147,13 +147,14 @@ void GUI::addPoint(GtkWidget* widget, gpointer data) {
   std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)paramsP->nome));
   const char* x = gtk_entry_get_text((GtkEntry*)paramsP->x);
   const char* y = gtk_entry_get_text((GtkEntry*)paramsP->y);
+  const char* z = gtk_entry_get_text((GtkEntry*)paramsP->z);
 
   //GtkWidget* label = gtk_label_new(name->c_str());
   //gtk_list_box_prepend((GtkListBox*)oList, label);
   //gtk_widget_show(label);
   GUI::addToListBox(*name);
 
-  GUI::getDisplayFile()->addObject(new Point(name, atof(x), atof(y)));
+  GUI::getDisplayFile()->addObject(new Point(name, atof(x), atof(y), atof(z)));
 
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
@@ -193,11 +194,18 @@ void GUI::addPointWindow(GtkWidget *widget, gpointer data) {
   paramsP->y = gtk_entry_new();
   gtk_grid_attach(GTK_GRID(auxGrid), paramsP->y, 1, 2, 1, 1);
 
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 3, 1, 1);
+
+  paramsP->z = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsP->z, 1, 3, 1, 1);
+
   GtkWidget* button = gtk_button_new_with_label("Add");
   g_signal_connect(button, "clicked", G_CALLBACK(addPoint), (gpointer) paramsP);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
 
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 3, 2, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 4, 2, 2);
 
   gtk_widget_show_all(auxWindow);
 }
@@ -208,14 +216,19 @@ void GUI::addLine(GtkWidget* widget, gpointer data) {
   std::string* name =  new std::string(gtk_entry_get_text((GtkEntry*)paramsL->nome));
   const char* xi = gtk_entry_get_text((GtkEntry*)paramsL->xi);
   const char* yi = gtk_entry_get_text((GtkEntry*)paramsL->yi);
+  const char* zi = gtk_entry_get_text((GtkEntry*)paramsL->zi);
   const char* xf = gtk_entry_get_text((GtkEntry*)paramsL->xf);
   const char* yf = gtk_entry_get_text((GtkEntry*)paramsL->yf);
+  const char* zf = gtk_entry_get_text((GtkEntry*)paramsL->zf);
 
   //GtkWidget* label = gtk_label_new(name->c_str());
   //gtk_list_box_prepend((GtkListBox*)oList, label);
   //gtk_widget_show(label);
   GUI::addToListBox(*name);
 
+  Point * a = new Point(name, atof(xi), atof(yi)), atof(zi));
+  Point * b = new Point(name, atof(xf), atof(yf)), atof(zf));
+  //segfault se usar o construtor de pontos
   GUI::getDisplayFile()->addObject(new Line(name, atof(xi), atof(yi), atof(xf), atof(yf)));
 
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
@@ -258,23 +271,37 @@ void GUI::addLineWindow(GtkWidget *widget, gpointer   data) {
   gtk_grid_attach(GTK_GRID(auxGrid), paramsL->yi, 1, 2, 1, 1);
 
   label = gtk_label_new(NULL);
-  gtk_label_set_text(GTK_LABEL(label), " x2: ");
+  gtk_label_set_text(GTK_LABEL(label), " z1: ");
   gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 3, 1, 1);
 
+  paramsL->zi = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsL->zi, 1, 3, 1, 1);
+
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " x2: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 4, 1, 1);
+
   paramsL->xf = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), paramsL->xf, 1, 3, 1, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsL->xf, 1, 4, 1, 1);
 
   label = gtk_label_new(NULL);
   gtk_label_set_text(GTK_LABEL(label), " y2: ");
-  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 4, 1, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 5, 1, 1);
 
   paramsL->yf = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), paramsL->yf, 1, 4, 1, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsL->yf, 1, 5, 1, 1);
+
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z2: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 6, 1, 1);
+
+  paramsL->zf = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsL->zf, 1, 6, 1, 1);
 
   GtkWidget* button = gtk_button_new_with_label("Add");
   g_signal_connect(button, "clicked", G_CALLBACK(addLine), (gpointer) paramsL);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 5, 2, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 7, 2, 2);
 
   gtk_widget_show_all(auxWindow);
 }
@@ -313,16 +340,23 @@ void GUI::addPolygonWindow(GtkWidget *widget, gpointer data) {
   params->y = gtk_entry_new();
   gtk_grid_attach(GTK_GRID(auxGrid), params->y, 1, 1, 1, 1);
 
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 2, 1, 1);
+
+  params->z = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), params->z, 1, 2, 1, 1);
+
 
   GtkWidget* button = gtk_button_new_with_label("Add More");
   g_signal_connect(button, "clicked", G_CALLBACK(buildPolygon), (gpointer) params);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 1, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 3, 1, 2);
 
   button = gtk_button_new_with_label("Finish");
   g_signal_connect(button, "clicked", G_CALLBACK(addPolygonWindowName), (gpointer) params);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 2, 1, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 3, 1, 2);
 
   gtk_widget_show_all(auxWindow);
 }
@@ -333,6 +367,8 @@ void GUI::buildPolygon(GtkWidget *widget, gpointer data) {
   float xi = atof(x);
   const char *y = gtk_entry_get_text((GtkEntry*)params->y);
   float yi = atof(y);
+  const char *z = gtk_entry_get_text((GtkEntry*)params->z);
+  float zi = atof(z);
 
   Point *p = new Point("polygonPoint",xi, yi);
   params->pointsList->push_back(p);
@@ -346,6 +382,8 @@ void GUI::addPolygonWindowName(GtkWidget *widget, gpointer data) {
   float xi = atof(x);
   const char* y = gtk_entry_get_text((GtkEntry*)params->y);
   float yi = atof(y);
+  const char *z = gtk_entry_get_text((GtkEntry*)params->z);
+  float zi = atof(z);
 
   Point *p = new Point("polygonPoint",xi, yi);
   params->pointsList->push_back(p);

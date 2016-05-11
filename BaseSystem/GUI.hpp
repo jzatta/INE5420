@@ -20,20 +20,24 @@ class GUI {
     GtkWidget *nome;
     GtkWidget *x;
     GtkWidget *y;
+    GtkWidget *z;
   };
   
   struct ParamsLinha {
     GtkWidget *nome;
     GtkWidget *xi;
     GtkWidget *yi;
+    GtkWidget *zi;
     GtkWidget *xf;
     GtkWidget *yf;
+    GtkWidget *zf;
   };
   
   struct ParamsPolygon{
     GtkWidget *nome;
     GtkWidget *x;
     GtkWidget *y;
+    GtkWidget *z;
     std::list<Point*> *pointsList;
   };
   

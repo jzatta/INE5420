@@ -20,11 +20,18 @@ float Point::getY() {
   return y;
 }
 
+float Point::getZ() {
+  return z;
+}
+
 void Point::setX(float _x) {
   x = _x;
 }
 void Point::setY(float _y) {
   y = _y;
+}
+void Point::setZ(float _z) {
+  z = _z;
 }
 
 Point::Point(const char *name, float _x, float _y) : Object(name) {
@@ -37,6 +44,18 @@ Point::Point(std::string *name, float _x, float _y) : Object(name) {
   y = _y;
 }
 
+Point::Point(std::string *name, float _x, float _y, float _z) : Object(name) {
+  x = _x;
+  y = _y;
+  z = _z;
+}
+
+Point::Point(const char *name, float _x, float _y, float _z) : Object(name) {
+  x = _x;
+  y = _y;
+  z = _z;
+}
+
 void Point::transform(Matrix *_m) {
   float tmpPoints[3] = {x, y, 1};
   _m->getTransPoint(tmpPoints);
@@ -47,6 +66,12 @@ void Point::transform(Matrix *_m) {
 void Point::setCords(float _x, float _y) {
   x = _x;
   y = _y;
+}
+
+void Point::setCords(float _x, float _y, float _z) {
+  x = _x;
+  y = _y;
+  z = _z;
 }
 
 Object* Point::clone() {
