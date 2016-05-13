@@ -11,18 +11,6 @@ void Line::draw(cairo_t *cr) {
   return;
 }
 
-Line::Line(const char *name, float xa, float ya, float xb, float yb) : Object(name) {
-  this->pointsList = new std::list<Point*>();
-  pointsList->push_back(new Point((const char*)NULL, xa, ya));
-  pointsList->push_back(new Point((const char*)NULL, xb, yb));
-}
-
-Line::Line(std::string *name, float xa, float ya, float xb, float yb) : Object(name) {
-  this->pointsList = new std::list<Point*>();
-  pointsList->push_back(new Point((const char*)NULL, xa, ya));
-  pointsList->push_back(new Point((const char*)NULL, xb, yb));
-}
-
 Line::Line(const char *name, Point *a, Point *b) : Object(name) {
   this->pointsList = new std::list<Point*>();
   pointsList->push_back(a);

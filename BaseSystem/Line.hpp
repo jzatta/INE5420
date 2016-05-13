@@ -14,8 +14,6 @@ class Line : public Object {
 private:
   std::list<Point*> *pointsList;
 public:
-  Line(const char *name, float xa, float ya, float xb, float yb);
-  Line(std::string *name, float xa, float ya, float xb, float yb);
   Line(const char *name, Point *a, Point *b);
   Line(std::string *name, Point *a, Point *b);
   float lenght();

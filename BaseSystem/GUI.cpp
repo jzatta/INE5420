@@ -226,10 +226,10 @@ void GUI::addLine(GtkWidget* widget, gpointer data) {
   //gtk_widget_show(label);
   GUI::addToListBox(*name);
 
-  Point * a = new Point(name, atof(xi), atof(yi)), atof(zi));
-  Point * b = new Point(name, atof(xf), atof(yf)), atof(zf));
+  Point * a = new Point(name, atof(xi), atof(yi), atof(zi));
+  Point * b = new Point(name, atof(xf), atof(yf), atof(zf));
   //segfault se usar o construtor de pontos
-  GUI::getDisplayFile()->addObject(new Line(name, atof(xi), atof(yi), atof(xf), atof(yf)));
+  GUI::getDisplayFile()->addObject(new Line(name, a, b));
 
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
@@ -619,6 +619,9 @@ void GUI::editWindow(GtkWidget *widget, gpointer data) {
 void GUI::deleteObject(GtkWidget *widget, gpointer data) {
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+  if (obj == NULL) {
+    return;
+  }
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
@@ -673,6 +676,9 @@ void GUI::transObject(GtkWidget *widget, gpointer data) {
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+  if (obj == NULL) {
+    return;
+  }
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
@@ -715,6 +721,9 @@ void GUI::escObject(GtkWidget *widget, gpointer data) {
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+  if (obj == NULL) {
+    return;
+  }
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
@@ -765,6 +774,9 @@ void GUI::rotObjectCenter(GtkWidget *widget, gpointer data) {
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+  if (obj == NULL) {
+    return;
+  }
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
@@ -781,6 +793,9 @@ void GUI::rotObjectOrigin(GtkWidget *widget, gpointer data) {
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+  if (obj == NULL) {
+    return;
+  }
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
@@ -837,6 +852,9 @@ void GUI::rotObjectPoint(GtkWidget *widget, gpointer data) {
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
+  if (obj == NULL) {
+    return;
+  }
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));

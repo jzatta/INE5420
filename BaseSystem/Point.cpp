@@ -37,11 +37,13 @@ void Point::setZ(float _z) {
 Point::Point(const char *name, float _x, float _y) : Object(name) {
   x = _x;
   y = _y;
+  z = 0;
 }
 
 Point::Point(std::string *name, float _x, float _y) : Object(name) {
   x = _x;
   y = _y;
+  z = 0;
 }
 
 Point::Point(std::string *name, float _x, float _y, float _z) : Object(name) {
