@@ -5,24 +5,28 @@ class Matrix;
 
 #include <utility>
 
+#define MSIZE 4
+
 class Matrix {
 private:
-  float matrix[3][3];
+  float matrix[MSIZE][MSIZE];
 public:
-  Matrix(float _m[3][3]);
+  Matrix(float _m[MSIZE][MSIZE]);
   Matrix();
-  void setMatrix(float _m[3][3]);
-  void getTransPoint(float _points[3]);
+  void setMatrix(float _m[MSIZE][MSIZE]);
+  void getTransPoint(float _points[MSIZE]);
   
   void multMatrix(Matrix *m);
   void multMatrixAndDelete(Matrix *m);
   
-  static void multMatrix(float a[3][3], float b[3][3]);
+  static void multMatrix(float a[MSIZE][MSIZE], float b[MSIZE][MSIZE]);
   
-  static Matrix *constructTranslateMatrix(float dx, float dy);
+  static Matrix *constructTranslateMatrix(float dx, float dy, float dz);
   static Matrix *constructScalonateMatrix(float scale);
-  static Matrix *constructScalonateMatrix(float scalex, float scaley);
-  static Matrix *constructRotateMatrix(float angle);
+  static Matrix *constructScalonateMatrix(float scalex, float scaley, float scalez);
+  static Matrix *constructRotateMatrixX(float angle);
+  static Matrix *constructRotateMatrixY(float angle);
+  static Matrix *constructRotateMatrixZ(float angle);
 };
 
 #endif
