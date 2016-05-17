@@ -49,15 +49,29 @@ Object* Polygon::clone() {
   return new Polygon(newName, newList);
 }
 
-std::pair<float,float> Polygon::getCenter() {
-  std::pair<float,float> center;
+std::pair<Point*,Point*> Polygon::getCenter() {
+  std::pair<Point*,Point*> center;
+  float x, y, z;
   std::list<Point*>::iterator it=pointsList->begin();
-  for (; it != pointsList->end(); ++it) {
-    center.first += (*it)->getX();
-    center.second += (*it)->getY();
+  if (pointsList->size() == 0) {
+    center.first = NULL;
+    center.second = NULL;
+    return center;
   }
-  center.first /= pointsList->size();
-  center.second /= pointsList->size();
+  x = (*it)->getX();
+  y = (*it)->getY();
+  z = (*it)->getZ();
+  it++;
+  center.second = new Point((std::string *)NULL, x, y, z);
+  for (; it != pointsList->end(); ++it) {
+    x += (*it)->getX();
+    y += (*it)->getY();
+    z += (*it)->getZ();
+  }
+  x /= pointsList->size();
+  y /= pointsList->size();
+  z /= pointsList->size();
+  center.first = new Point((std::string *)NULL, x, y, z);
   return center;
 }
 

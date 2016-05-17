@@ -12,7 +12,7 @@ vplexecution: $(OBJS)
 	gcc `pkg-config --cflags gtk+-3.0`-o $@ $^ `pkg-config --libs gtk+-3.0` -rdynamic -lstdc++ -std=c++11 -lm
 
 obj/%.o: %.cpp *.hpp | obj
-	gcc `pkg-config --cflags gtk+-3.0`-I$(INC) -o $@ -c `pkg-config --libs gtk+-3.0` -rdynamic -lstdc++ -std=c++11 -lm $<
+	gcc `pkg-config --cflags gtk+-3.0` -funroll-loops -I$(INC) -o $@ -c -rdynamic -lstdc++ -std=c++11 -lm $<
 
 obj: 
 	mkdir obj

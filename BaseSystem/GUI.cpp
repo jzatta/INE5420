@@ -659,6 +659,13 @@ void GUI::transObjectWindow(GtkWidget *widget, gpointer data) {
 
   paramsP->y = gtk_entry_new();
   gtk_grid_attach(GTK_GRID(auxGrid), paramsP->y, 1, 1, 1, 1);
+  
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 2, 1, 1);
+
+  paramsP->z = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsP->z, 1, 2, 1, 1);
 
   GtkWidget* button = gtk_button_new_with_label("Transladar");
   g_signal_connect(button, "clicked", G_CALLBACK(transObject), (gpointer) paramsP);
@@ -673,6 +680,7 @@ void GUI::transObject(GtkWidget *widget, gpointer data) {
   ParamsPonto * paramsP = (ParamsPonto*) data;
   float x = atof(gtk_entry_get_text((GtkEntry*)paramsP->x));
   float y = atof(gtk_entry_get_text((GtkEntry*)paramsP->y));
+  float z = atof(gtk_entry_get_text((GtkEntry*)paramsP->z));
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
@@ -682,7 +690,7 @@ void GUI::transObject(GtkWidget *widget, gpointer data) {
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
-  GUI::getDisplayFile()->translateObj(name, x, y);
+  GUI::getDisplayFile()->translateObj(name, x, y, z);
   delete name;
 
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));

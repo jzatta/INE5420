@@ -9,6 +9,7 @@ class Object;
 #include <iostream>
 #include "Drawable.hpp"
 #include "Matrix.hpp"
+class Point;
 
 class Object: public Drawable {
 private:
@@ -37,7 +38,7 @@ public:
 
   virtual void transform(Matrix *_m) = 0;
   virtual Object* clone() = 0;
-  virtual std::pair<float,float> getCenter() = 0;
+  virtual std::pair<Point*,Point*> getCenter() = 0;
   virtual void save(FILE *stream) = 0;
   virtual void clip(void) = 0;
 

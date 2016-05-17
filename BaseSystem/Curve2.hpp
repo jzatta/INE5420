@@ -24,7 +24,7 @@ public:
   virtual void transform(Matrix *_m);
   virtual void save(FILE *stream);
   virtual void clip(void);
-  virtual std::pair<float,float> getCenter();
+  virtual std::pair<Point*,Point*> getCenter();
   Point * getPoint(int index);
   int getSize();
   void calculateCurve();

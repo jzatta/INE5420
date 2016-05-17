@@ -84,10 +84,10 @@ Object* Point::clone() {
   return new Point(newName, this->getX(), this->getY());
 }
 
-std::pair<float,float> Point::getCenter() {
-  std::pair<float,float> center;
-  center.first = x;
-  center.second = y;
+std::pair<Point*,Point*> Point::getCenter() {
+  std::pair<Point*,Point*> center;
+  center.first = (Point*)this->clone();
+  center.second = new Point((const char *)NULL, 1,1,1);
   return center;
 }
 
@@ -102,4 +102,24 @@ void Point::clip(void) {
 }
 
 Point::~Point() {
+}
+
+float Point::scalarProd(Point *a, Point *b) {
+  float x, y, z;
+  x = a->getX() * b->getX();
+  y = a->getY() * b->getY();
+  z = a->getZ() * b->getZ();
+  return (x+y+z);
+}
+
+float Point::norm(Point *a) {
+  return sqrt(scalarProd(a, a));
+}
+
+float Point::vectorAngle(Point *a, Point *b) {
+  float angle;
+  angle = scalarProd(a, b);
+  angle /= (norm(a)*norm(b));
+  angle = acos(angle);
+  return angle*180/M_PI;
 }

@@ -42,10 +42,20 @@ Object* Line::clone() {
   return new Line(newName, (Point*)(pointsList->front()->clone()), (Point*)(pointsList->back()->clone()));
 }
 
-std::pair<float,float> Line::getCenter() {
-  std::pair<float,float> center;
-  center.first = (pointsList->front()->getX() + pointsList->back()->getX())/2;
-  center.second = (pointsList->front()->getY() + pointsList->back()->getY())/2;
+std::pair<Point*,Point*> Line::getCenter() {
+  std::pair<Point*,Point*> center;
+  float xi, yi, zi, xf, yf, zf;
+  yi = pointsList->front()->getY(); yf =  pointsList->back()->getY();
+  zi = pointsList->front()->getZ(); zf =  pointsList->back()->getZ();
+  xi = pointsList->front()->getX(); xf =  pointsList->back()->getX();
+  center.first  = new Point((std::string *)NULL,
+                            (yi + yf)/2,
+                            (zi + zf)/2,
+                            (xi + xf)/2);
+  center.second = new Point((std::string *)NULL,
+                            xf - xi,
+                            yf - yi,
+                            zf - zi);
   return center;
 }
 

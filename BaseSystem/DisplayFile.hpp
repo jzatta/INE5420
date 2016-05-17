@@ -31,7 +31,7 @@ public:
   void addObject(Object *_obj);
   void deleteObj(std::string *name);
   Object *getObjW(std::string *name);
-  void translateObj(std::string *name, float x, float y);
+  void translateObj(std::string *name, float x, float y, float z);
   void escalonateObj(std::string *name, float scalar);
   void rotateObjOrigin(std::string *name, float angle);
   void rotateObjPoint(std::string *name, float angle, Point *p);

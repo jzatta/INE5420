@@ -125,9 +125,9 @@ Object *DisplayFile::getObjW(std::string *name) {
   }
 }
 
-void DisplayFile::translateObj(std::string *name, float x, float y) {
+void DisplayFile::translateObj(std::string *name, float x, float y, float z) {
   Object* chObj = getObjW(name);
-  Matrix *mTrans = Matrix::constructTranslateMatrix(x, y);
+  Matrix *mTrans = Matrix::constructTranslateMatrix(x, y, z);
   chObj->transform(mTrans);
   delete mTrans;
   this->transform();
@@ -135,9 +135,16 @@ void DisplayFile::translateObj(std::string *name, float x, float y) {
 
 void DisplayFile::escalonateObj(std::string *name, float scalar) {
   Object* chObj = getObjW(name);
-  Matrix *mTrans = Matrix::constructTranslateMatrix(0-(chObj->getCenter().first), 0-(chObj->getCenter().second));
+  std::pair<Point*,Point*> center = chObj->getCenter();
+  Matrix *mTrans = Matrix::constructTranslateMatrix(0-(center.first->getX()),
+                                                    0-(center.first->getY()),
+                                                    0-(center.first->getZ())
+                                                   );
   mTrans->multMatrixAndDelete(Matrix::constructScalonateMatrix(scalar));
-  mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(chObj->getCenter().first, chObj->getCenter().second));
+  mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(center.first->getX(),
+                                                               center.first->getY(),
+                                                               center.first->getZ()
+                                                              ));
   chObj->transform(mTrans);
   delete mTrans;
   this->transform();
@@ -145,7 +152,7 @@ void DisplayFile::escalonateObj(std::string *name, float scalar) {
 
 void DisplayFile::rotateObjOrigin(std::string *name, float angle) {
   Object* chObj = getObjW(name);
-  Matrix *mTrans = Matrix::constructRotateMatrix(angle);
+  Matrix *mTrans = Matrix::constructRotateMatrixX(angle);
   chObj->transform(mTrans);
   delete mTrans;
   this->transform();
@@ -153,9 +160,17 @@ void DisplayFile::rotateObjOrigin(std::string *name, float angle) {
 
 void DisplayFile::rotateObjPoint(std::string *name, float angle, Point *p) {
   Object* chObj = getObjW(name);
-  Matrix *mTrans = Matrix::constructTranslateMatrix(0-(p->getX()), 0-(p->getY()));
-  mTrans->multMatrixAndDelete(Matrix::constructRotateMatrix(angle));
-  mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(p->getX(), p->getY()));
+  Matrix *mTrans = Matrix::constructTranslateMatrix(0-(p->getX()),
+                                                    0-(p->getY()),
+                                                    0-(p->getZ())
+                                                   );
+  
+  mTrans->multMatrixAndDelete(Matrix::constructRotateMatrixX(angle));
+  
+  mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(p->getX(),
+                                                               p->getY(),
+                                                               p->getZ()
+                                                              ));
   chObj->transform(mTrans);
   delete mTrans;
   this->transform();
@@ -163,10 +178,33 @@ void DisplayFile::rotateObjPoint(std::string *name, float angle, Point *p) {
 
 void DisplayFile::rotateObjCenter(std::string *name, float angle) {
   Object* chObj = getObjW(name);
-  Matrix *mTrans = Matrix::constructTranslateMatrix(0-(chObj->getCenter().first), 0-(chObj->getCenter().second));
-  mTrans->multMatrixAndDelete(Matrix::constructRotateMatrix(angle));
-  mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(chObj->getCenter().first, chObj->getCenter().second));
+  float objAngleXY, objAngleZY;
+  std::pair<Point*,Point*> center = chObj->getCenter();
+  Matrix *mTrans = Matrix::constructTranslateMatrix(0-(center.first->getX()),
+                                                    0-(center.first->getY()),
+                                                    0-(center.first->getZ())
+                                                   );
+  
+  // vectX to plan ZY
+  objAngleZY = 90 - Point::vectorAngle(center.second, Window::vectX);
+  // vectZ to plan XY
+  objAngleXY = 90 - Point::vectorAngle(center.second, Window::vectZ);
+  
+  mTrans->multMatrixAndDelete(Matrix::constructRotateMatrixZ(0-objAngleXY));
+  mTrans->multMatrixAndDelete(Matrix::constructRotateMatrixX(0-objAngleZY));
+  
+  mTrans->multMatrixAndDelete(Matrix::constructRotateMatrixY(angle));
+  
+  mTrans->multMatrixAndDelete(Matrix::constructRotateMatrixX(objAngleZY));
+  mTrans->multMatrixAndDelete(Matrix::constructRotateMatrixZ(objAngleXY));
+  
+  mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(center.first->getX(),
+                                                               center.first->getY(),
+                                                               center.first->getZ()
+                                                              ));
   chObj->transform(mTrans);
+  delete center.first;
+  delete center.second;
   delete mTrans;
   this->transform();
 }

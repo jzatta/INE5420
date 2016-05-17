@@ -29,8 +29,12 @@ public:
   virtual void transform(Matrix *_m);
   virtual void save(FILE *stream);
   virtual void clip(void);
-  virtual std::pair<float,float> getCenter();
+  virtual std::pair<Point*,Point*> getCenter();
   virtual ~Point();
+  
+  static float scalarProd(Point *a, Point *b);
+  static float norm(Point *a);
+  static float vectorAngle(Point *a, Point *b);
 };
 
 #endif

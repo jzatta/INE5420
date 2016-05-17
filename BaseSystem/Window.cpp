@@ -6,9 +6,15 @@
 #define PIXEL_AREA_MIN 1000
 #define HWSIZE 300
 
-Point *Window::wc = new Point("WindowCenter", 0, 0);
-Line *Window::vup = new Line("Vup", new Point((std::string*)NULL, -HWSIZE,  -HWSIZE), new Point((std::string*)NULL, -HWSIZE, HWSIZE));
-float Window::wAngle = 0;
+Point *Window::wc = new Point("WindowCenter", 0, 0, 0);
+Line *Window::vup = new Line("Vup", new Point((std::string*)NULL, -HWSIZE,  -HWSIZE, 0), new Point((std::string*)NULL, -HWSIZE, HWSIZE, 0));
+float Window::wAngleX = 0;
+float Window::wAngleY = 0;
+float Window::wAngleZ = 0;
+
+Point *vectX = new Point("Axis X", 1, 0, 0);
+Point *vectY = new Point("Axis Y", 0, 1, 0);
+Point *vectZ = new Point("Axis Z", 0, 0, 1);
 
 
 void Window::center() {

@@ -12,8 +12,13 @@ class Window {
 private:
   static Point *wc;
   static Line *vup;
-  static float wAngle;
+  static float wAngleX;
+  static float wAngleY;
+  static float wAngleZ;
 public:
+  static Point *vectX;
+  static Point *vectY;
+  static Point *vectZ;
   static void center();
   static void reset();
   

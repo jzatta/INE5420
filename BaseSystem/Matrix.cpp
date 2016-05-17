@@ -49,7 +49,8 @@ void Matrix::multMatrix(Matrix *m) {
     for (j = 0; j < MSIZE; j++) {
       ret[i][j] = 0;
       for (k = 0; k < MSIZE; k++) {
-        ret[i][j] += m[i][k]*this->matrix[k][j];
+        ret[i][j] += m->matrix[i][k]*this->matrix[k][j];
+      }
     }
   }
   memcpy(this->matrix, ret, MSIZE*MSIZE*sizeof(float));
@@ -68,6 +69,7 @@ void Matrix::multMatrix(float a[4][4], float b[4][4]) {
       ret[i][j] = 0;
       for (k = 0; k < MSIZE; k++) {
         ret[i][j] += a[i][k]*b[k][j];
+      }
     }
   }
   memcpy(a, ret, MSIZE*MSIZE*sizeof(float));
@@ -82,7 +84,7 @@ Matrix *Matrix::constructTranslateMatrix(float dx, float dy, float dz) {
 }
 
 Matrix *Matrix::constructScalonateMatrix(float scale) {
-  return Matrix::constructScalonateMatrix(scale, scale);
+  return Matrix::constructScalonateMatrix(scale, scale, scale);
 }
 
 Matrix *Matrix::constructScalonateMatrix(float scalex, float scaley, float scalez) {

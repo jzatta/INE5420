@@ -20,7 +20,7 @@ public:
   virtual void draw(cairo_t *cr);
   virtual Object* clone();
   virtual void transform(Matrix *_m);
-  virtual std::pair<float,float> getCenter();
+  virtual std::pair<Point*,Point*> getCenter();
   virtual void save(FILE *stream);
   virtual void clip(void);
   virtual ~Line();
