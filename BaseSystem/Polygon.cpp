@@ -79,7 +79,7 @@ void Polygon::save(FILE *stream) {
   std::list<Point*>::iterator it=pointsList->begin();
   fprintf(stream, "\n#Add polygon\ng %s\n", getName()->c_str());
   for (; it != pointsList->end(); ++it) {
-    fprintf(stream, "v %f %f 0.0 0.0\n", (*it)->getX(), (*it)->getY());
+    fprintf(stream, "v %f %f %f 0.0\n", (*it)->getX(), (*it)->getY(), (*it)->getZ());
     added++;
   }
   fprintf(stream, "f 1");
