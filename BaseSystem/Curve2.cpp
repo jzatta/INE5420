@@ -52,7 +52,7 @@ Object* Curve::clone() {
   return oClone;
 }
 
-std::pair<Point*,Point*> Polygon::getCenter() {
+std::pair<Point*,Point*> Curve::getCenter() {
   std::pair<Point*,Point*> center;
   float x, y, z;
   std::list<Point*>::iterator it=pointsList->begin();
@@ -164,22 +164,26 @@ void Curve::calculateCurve() {
   
   float gX[pointsList->size()];
   float gY[pointsList->size()];
+  float gZ[pointsList->size()];
   it=pointsList->begin();
   for (int i = 0; it!=pointsList->end(); i++) {
     gX[i] = (*it)->getX();
     gY[i] = (*it)->getY();
+    gZ[i] = (*it)->getZ();
     it++;
   }
   
   for (int m = 3; m < pointsList->size(); m++) {
     // calc curve coeficients C
-    float Cx[4], Cy[4];
+    float Cx[4], Cy[4], Cz[4];
     for (int j = 0; j < 4; j++) {
       Cx[j] = 0;
       Cy[j] = 0;
+      Cz[j] = 0;
       for (int i = 0; i < 4; i++) {
         Cx[j] += mBS[j][i] * gX[i+m-3];
         Cy[j] += mBS[j][i] * gY[i+m-3];
+        Cz[j] += mBS[j][i] * gZ[i+m-3];
       }
     }
     float t[4];
@@ -199,23 +203,25 @@ void Curve::calculateCurve() {
       {6*t[3],      0,    0,    0}
     };
     
-    float f_x[4], f_y[4];
+    float f_x[4], f_y[4], f_z[4];
     for (int j = 0; j < 4; j++) {
       f_x[j] = 0;
       f_y[j] = 0;
+      f_z[j] = 0;
       for (int i = 0; i < 4; i++) {
         f_x[j] += mD[j][i] * Cx[i];
         f_y[j] += mD[j][i] * Cy[i];
+        f_z[j] += mD[j][i] * Cz[i];
       }
     }
     int n = 1/step + 1;
-    drawFwdDiff(n, f_x, f_y);
+    drawFwdDiff(n, f_x, f_y, f_z);
   }
 }
 
-void Curve::drawFwdDiff(int n, float x[4], float y[4]) {
+void Curve::drawFwdDiff(int n, float x[4], float y[4], float z[4]) {
   // f(x) = x[0] ___ df(x)/dx = x[1] ___ d^2f(x)/dx = x[2] ___ d^3f(x)/dx = x[3]  
-  curvePoints->push_back(new Point((const char*)NULL, x[0], y[0]));
+  curvePoints->push_back(new Point((const char*)NULL, x[0], y[0], z[0]));
   for (int i = 0; i < n; i++) {
     x[0] += x[1];
     x[1] += x[2];
@@ -224,7 +230,11 @@ void Curve::drawFwdDiff(int n, float x[4], float y[4]) {
     y[0] += y[1];
     y[1] += y[2];
     y[2] += y[3];
-    curvePoints->push_back(new Point((const char*)NULL, x[0], y[0]));
+    
+    z[0] += z[1];
+    z[1] += z[2];
+    z[2] += z[3];
+    curvePoints->push_back(new Point((const char*)NULL, x[0], y[0], z[0]));
   }
 }
 

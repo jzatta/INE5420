@@ -5,7 +5,8 @@
 #include <iostream>
 
 void Point::draw(cairo_t *cr) {
-  if (show) {
+  this->clip();
+  if (this->show) {
     cairo_move_to(cr, Viewport::transformX(x), Viewport::transformY(y));
     cairo_arc(cr, Viewport::transformX(x), Viewport::transformY(y), 1, 0, 2*M_PI);
   }
@@ -38,12 +39,14 @@ Point::Point(const char *name, float _x, float _y) : Object(name) {
   x = _x;
   y = _y;
   z = 0;
+  std::cout << "This contructor is deprecated" << std::endl;
 }
 
 Point::Point(std::string *name, float _x, float _y) : Object(name) {
   x = _x;
   y = _y;
   z = 0;
+  std::cout << "This contructor is deprecated" << std::endl;
 }
 
 Point::Point(std::string *name, float _x, float _y, float _z) : Object(name) {
@@ -59,10 +62,11 @@ Point::Point(const char *name, float _x, float _y, float _z) : Object(name) {
 }
 
 void Point::transform(Matrix *_m) {
-  float tmpPoints[3] = {x, y, 1};
+  float tmpPoints[4] = {x, y, z, 1};
   _m->getTransPoint(tmpPoints);
   x = tmpPoints[0];
   y = tmpPoints[1];
+  z = tmpPoints[2];
 }
 
 void Point::setCords(float _x, float _y) {
@@ -81,7 +85,7 @@ Object* Point::clone() {
   if (newName != NULL) {
     newName = new std::string(*newName);
   }
-  return new Point(newName, this->getX(), this->getY());
+  return new Point(newName, this->getX(), this->getY(), this->getZ());
 }
 
 std::pair<Point*,Point*> Point::getCenter() {

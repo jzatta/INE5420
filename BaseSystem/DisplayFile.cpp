@@ -27,12 +27,12 @@ DisplayFile::DisplayFile(FILE *obj) {
       fscanf(obj, " %s\n", name);
     }
     if (ch == 'v') {
-      float x, y, nil;
-      fscanf(obj, " %f %f %f %f\n", &x, &y, &nil, &nil);
-      pointsList->push_back(new Point((std::string*) NULL, x, y));
+      float x, y, z, nil;
+      fscanf(obj, " %f %f %f %f\n", &x, &y, &z, &nil);
+      pointsList->push_back(new Point((std::string*) NULL, x, y, z));
     }
     if (ch == 'p') {
-      tmpObj = new Point(name, pointsList->front()->getX(), pointsList->front()->getY());
+      tmpObj = new Point(name, pointsList->front()->getX(), pointsList->front()->getY(), pointsList->front()->getZ());
       GUI::addToListBox(std::string(name));
       this->objectsWorld->push_back(tmpObj);
       tmpObj = tmpObj->clone();
@@ -231,7 +231,7 @@ void DisplayFile::transform() {
   for (; it != objectsWorld->end(); ++it) {
     tmpObj = (*it)->clone();
     tmpObj->transform(transformMatrix);
-    tmpObj->clip();
+//     tmpObj->clip();
     objectsTransformed->push_back(tmpObj);
   }
   return;

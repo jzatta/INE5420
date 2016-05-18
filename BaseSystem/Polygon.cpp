@@ -4,7 +4,8 @@
 
 void Polygon::draw(cairo_t *cr) {
   float xi, yi;
-  if (show == false) {
+  this->clip();
+  if (this->show == false) {
     return;
   }
   std::list<Point*>::iterator it=pointsList->begin();
@@ -29,8 +30,6 @@ Polygon::Polygon(std::string *name, std::list<Point*> *list) : Object(name) {
 
 void Polygon::transform(Matrix *_m) {
   std::list<Point*>::iterator it=pointsList->begin();
-  float x;
-  float y;
   for (; it != pointsList->end(); ++it) {
     (*it)->Point::transform(_m);
   }

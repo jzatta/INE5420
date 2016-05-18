@@ -27,6 +27,8 @@ public:
   static Matrix *constructRotateMatrixX(float angle);
   static Matrix *constructRotateMatrixY(float angle);
   static Matrix *constructRotateMatrixZ(float angle);
+  
+  void print();
 };
 
 #endif

@@ -49,7 +49,7 @@ void Matrix::multMatrix(Matrix *m) {
     for (j = 0; j < MSIZE; j++) {
       ret[i][j] = 0;
       for (k = 0; k < MSIZE; k++) {
-        ret[i][j] += m->matrix[i][k]*this->matrix[k][j];
+        ret[i][j] += this->matrix[i][k]*m->matrix[k][j];
       }
     }
   }
@@ -123,4 +123,16 @@ Matrix *Matrix::constructRotateMatrixZ(float angle) {
   ret->matrix[1][0] = -sinf(rad);
   ret->matrix[1][1] = cosf(rad);
   return ret;
+}
+
+void Matrix::print() {
+  printf("\033[2J\033[1;1H");
+  int i, j;
+  for (i = 0; i < MSIZE; i++) {
+    printf("{");
+    for (j = 0; j < MSIZE; j++) {
+      printf("%.6f,   ", this->matrix[i][j]);
+    }
+    printf("\b\b\b\b}\n");
+  }
 }

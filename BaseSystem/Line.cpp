@@ -4,7 +4,8 @@
 #include "Line.hpp"
 
 void Line::draw(cairo_t *cr) {
-  if (show) {
+  this->clip();
+  if (this->show) {
     cairo_move_to(cr, Viewport::transformX(pointsList->front()->getX()), Viewport::transformY(pointsList->front()->getY()));
     cairo_line_to(cr, Viewport::transformX(pointsList->back()->getX()), Viewport::transformY(pointsList->back()->getY()));
   }

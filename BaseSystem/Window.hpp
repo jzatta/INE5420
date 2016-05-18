@@ -11,7 +11,8 @@ class Window;
 class Window {
 private:
   static Point *wc;
-  static Line *vup;
+//   static Line *vup;
+  static float height;
   static float wAngleX;
   static float wAngleY;
   static float wAngleZ;
@@ -26,13 +27,17 @@ public:
   static float getHeight();
   static float getX();
   static float getY();
+  static float getZ();
   
   static Matrix *getTransform();
   
   static void zoom(float factor);
   static void moveHorizontal(float pixel);
   static void moveVertical(float pixel);
-  static void rotate(float angle);
+  static void moveLongitudinal(float pixel);
+  static void rotateX(float angle);
+  static void rotateY(float angle);
+  static void rotateZ(float angle);
 };
 
 

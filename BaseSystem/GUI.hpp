@@ -49,7 +49,7 @@ class GUI {
 
   struct ParamsCurveB {
     GtkWidget *nome;
-    GtkWidget *x1, *x2, *x3, *x4, *y1, *y2, *y3, *y4;
+    GtkWidget *x1, *x2, *x3, *x4, *y1, *y2, *y3, *y4, *z1, *z2, *z3, *z4;
     std::string *curveName;
     std::list<Point*> *pointsList;
   };
@@ -78,6 +78,12 @@ public:
   static void moveRight(GtkWidget *widget, gpointer data);
   static void moveLeft(GtkWidget *widget, gpointer data);
   static void moveUp(GtkWidget *widget, gpointer data);
+  static void moveForward(GtkWidget *widget, gpointer data);
+  static void moveBackward(GtkWidget *widget, gpointer data);
+  static void turnUp(GtkWidget *widget, gpointer data);
+  static void turnDown(GtkWidget *widget, gpointer data);
+  static void turnLeft(GtkWidget *widget, gpointer data);
+  static void turnRight(GtkWidget *widget, gpointer data);
   static void ZoomOut(GtkWidget *widget, gpointer data);
   static void ZoomIn(GtkWidget *widget, gpointer data);
   static void Center(GtkWidget *widget, gpointer data);

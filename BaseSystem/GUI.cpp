@@ -111,6 +111,16 @@ void GUI::moveUp(GtkWidget *widget, gpointer data) {
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
+void GUI::moveForward(GtkWidget *widget, gpointer data) {
+  Window::moveLongitudinal(-10);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::moveBackward(GtkWidget *widget, gpointer data) {
+  Window::moveLongitudinal(10);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
 void GUI::ZoomOut(GtkWidget *widget, gpointer data) {
   Window::zoom(1.25);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
@@ -126,13 +136,33 @@ void GUI::Center(GtkWidget *widget, gpointer data) {
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
+void GUI::turnUp(GtkWidget *widget, gpointer data) {
+  Window::rotateX(-15);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::turnDown(GtkWidget *widget, gpointer data) {
+  Window::rotateX(15);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::turnLeft(GtkWidget *widget, gpointer data) {
+  Window::rotateY(-15);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::turnRight(GtkWidget *widget, gpointer data) {
+  Window::rotateY(15);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
 void GUI::rotateLeft(GtkWidget *widget, gpointer data) {
-  Window::rotate(-15);
+  Window::rotateZ(-15);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::rotateRight(GtkWidget *widget, gpointer data) {
-  Window::rotate(15);
+  Window::rotateZ(15);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
@@ -370,7 +400,7 @@ void GUI::buildPolygon(GtkWidget *widget, gpointer data) {
   const char *z = gtk_entry_get_text((GtkEntry*)params->z);
   float zi = atof(z);
 
-  Point *p = new Point("polygonPoint",xi, yi);
+  Point *p = new Point("polygonPoint",xi, yi, zi);
   params->pointsList->push_back(p);
 
   addPolygonWindow(widget, (gpointer)params);
@@ -385,7 +415,7 @@ void GUI::addPolygonWindowName(GtkWidget *widget, gpointer data) {
   const char *z = gtk_entry_get_text((GtkEntry*)params->z);
   float zi = atof(z);
 
-  Point *p = new Point("polygonPoint",xi, yi);
+  Point *p = new Point("polygonPoint",xi, yi, zi);
   params->pointsList->push_back(p);
 
   GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -519,6 +549,10 @@ void GUI::init() {
   gtk_container_set_border_width(GTK_CONTAINER(inGrid), 5);
   gtk_container_add(GTK_CONTAINER(frame), inGrid);
 
+  button = gtk_button_new_with_label("RESET");
+  g_signal_connect(button, "clicked", G_CALLBACK(Reset), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 0, 1, 1, 1);
+
   button = gtk_button_new_with_label("Up");
   g_signal_connect(button, "clicked", G_CALLBACK(moveUp), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 1, 1, 1, 1);
@@ -527,37 +561,57 @@ void GUI::init() {
   g_signal_connect(button, "clicked", G_CALLBACK(moveLeft), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 0, 2, 1, 1);
 
+  button = gtk_button_new_with_label("Center");
+  g_signal_connect(button, "clicked", G_CALLBACK(Center), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 1, 2, 1, 1);
+
   button = gtk_button_new_with_label("Right");
   g_signal_connect(button, "clicked", G_CALLBACK(moveRight), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 2, 2, 1, 1);
+
+  button = gtk_button_new_with_label("Fwd");
+  g_signal_connect(button, "clicked", G_CALLBACK(moveForward), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 0, 3, 1, 1);
 
   button = gtk_button_new_with_label("Down");
   g_signal_connect(button, "clicked", G_CALLBACK(moveDown), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 1, 3, 1, 1);
 
+  button = gtk_button_new_with_label("Bwd");
+  g_signal_connect(button, "clicked", G_CALLBACK(moveBackward), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 2, 3, 1, 1);
+
   button = gtk_button_new_with_label("Zoom-");
   g_signal_connect(button, "clicked", G_CALLBACK(ZoomOut), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 0, 4, 1, 1);
+  
+  button = gtk_button_new_with_label("TurnU");
+  g_signal_connect(button, "clicked", G_CALLBACK(turnUp), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 1, 4, 1, 1);
 
   button = gtk_button_new_with_label("Zoom+");
   g_signal_connect(button, "clicked", G_CALLBACK(ZoomIn), da);
   gtk_grid_attach(GTK_GRID(inGrid), button, 2, 4, 1, 1);
+  
+  button = gtk_button_new_with_label("TurnL");
+  g_signal_connect(button, "clicked", G_CALLBACK(turnLeft), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 0, 5, 1, 1);
+  
+  button = gtk_button_new_with_label("TurnR");
+  g_signal_connect(button, "clicked", G_CALLBACK(turnRight), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 2, 5, 1, 1);
 
   button = gtk_button_new_with_label("RoL");
   g_signal_connect(button, "clicked", G_CALLBACK(rotateLeft), da);
-  gtk_grid_attach(GTK_GRID(inGrid), button, 0, 5, 1, 1);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 0, 6, 1, 1);
+  
+  button = gtk_button_new_with_label("TurnD");
+  g_signal_connect(button, "clicked", G_CALLBACK(turnDown), da);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 1, 6, 1, 1);
 
   button = gtk_button_new_with_label("RoR");
   g_signal_connect(button, "clicked", G_CALLBACK(rotateRight), da);
-  gtk_grid_attach(GTK_GRID(inGrid), button, 2, 5, 1, 1);
-
-  button = gtk_button_new_with_label("Center");
-  g_signal_connect(button, "clicked", G_CALLBACK(Center), da);
-  gtk_grid_attach(GTK_GRID(inGrid), button, 1, 2, 1, 1);
-
-  button = gtk_button_new_with_label("RESET");
-  g_signal_connect(button, "clicked", G_CALLBACK(Reset), da);
-  gtk_grid_attach(GTK_GRID(inGrid), button, 1, 6, 1, 1);
+  gtk_grid_attach(GTK_GRID(inGrid), button, 2, 6, 1, 1);
 
   frame = gtk_frame_new("File");
   gtk_grid_attach(GTK_GRID(grid), frame, 0,4,2,1);
@@ -927,7 +981,7 @@ void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
   gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
   
   paramsC->nome = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->nome, 1, 0, 3, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->nome, 1, 0, 5, 1);
 
   label = gtk_label_new(NULL);
   gtk_label_set_text(GTK_LABEL(label), "x1: ");
@@ -944,6 +998,13 @@ void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
   gtk_grid_attach(GTK_GRID(auxGrid), paramsC->y1, 3, 1, 1, 1);
 
   label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z1: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 4, 1, 1, 1);
+
+  paramsC->z1 = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->z1, 5, 1, 1, 1);
+
+  label = gtk_label_new(NULL);
   gtk_label_set_text(GTK_LABEL(label), " x2: ");
   gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 2, 1, 1);
 
@@ -956,6 +1017,13 @@ void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
 
   paramsC->y2 = gtk_entry_new();
   gtk_grid_attach(GTK_GRID(auxGrid), paramsC->y2, 3, 2, 1, 1);
+
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z2: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 4, 2, 1, 1);
+
+  paramsC->z2 = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->z2, 5, 2, 1, 1);
 
   label = gtk_label_new(NULL);
   gtk_label_set_text(GTK_LABEL(label), " x3: ");
@@ -972,6 +1040,13 @@ void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
   gtk_grid_attach(GTK_GRID(auxGrid), paramsC->y3, 3, 3, 1, 1);
 
   label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z3: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 4, 3, 1, 1);
+
+  paramsC->z3 = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->z3, 5, 3, 1, 1);
+
+  label = gtk_label_new(NULL);
   gtk_label_set_text(GTK_LABEL(label), " x4: ");
   gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 4, 1, 1);
 
@@ -985,6 +1060,13 @@ void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
   paramsC->y4 = gtk_entry_new();
   gtk_grid_attach(GTK_GRID(auxGrid), paramsC->y4, 3, 4, 1, 1);
 
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z4: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 4, 4, 1, 1);
+
+  paramsC->z4 = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->z4, 5, 4, 1, 1);
+
   GtkWidget* button = gtk_button_new_with_label("Add more");
   g_signal_connect(button, "clicked", G_CALLBACK(addCurveMore), (gpointer) paramsC);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
@@ -993,7 +1075,7 @@ void GUI::addCurveWindow(GtkWidget *widget, gpointer data) {
   button = gtk_button_new_with_label("Finish");
   g_signal_connect(button, "clicked", G_CALLBACK(addCurveFinish), (gpointer) paramsC);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 2, 5, 2, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 3, 5, 2, 2);
 
   gtk_widget_show_all(auxWindow);
 }
@@ -1027,16 +1109,23 @@ void GUI::addCurveMore(GtkWidget* widget, gpointer data) {
   paramsC->y1 = gtk_entry_new();
   gtk_grid_attach(GTK_GRID(auxGrid), paramsC->y1, 1, 1, 1, 1);
 
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 2, 1, 1);
+
+  paramsC->z1 = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsC->z1, 1, 2, 1, 1);
+
 
   GtkWidget* button = gtk_button_new_with_label("Add More");
   g_signal_connect(button, "clicked", G_CALLBACK(addCurveMore), (gpointer) paramsC);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 1, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 3, 1, 2);
 
   button = gtk_button_new_with_label("Finish");
   g_signal_connect(button, "clicked", G_CALLBACK(addCurveFinish), (gpointer) paramsC);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 2, 1, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 1, 3, 1, 2);
 
   gtk_widget_show_all(auxWindow);
 }
@@ -1058,20 +1147,24 @@ void GUI::addCurve(GtkWidget* widget, gpointer data) {
   
   const char *x1 = gtk_entry_get_text((GtkEntry*)paramsC->x1);
   const char *y1 = gtk_entry_get_text((GtkEntry*)paramsC->y1);
-  paramsC->pointsList->push_back(new Point((const char*)NULL, atof(x1), atof(y1)));
+  const char *z1 = gtk_entry_get_text((GtkEntry*)paramsC->z1);
+  paramsC->pointsList->push_back(new Point((const char*)NULL, atof(x1), atof(y1), atof(z1)));
   
   if (paramsC->curveName == NULL) {
     paramsC->curveName = new std::string(gtk_entry_get_text((GtkEntry*)paramsC->nome));
     
     const char *x2 = gtk_entry_get_text((GtkEntry*)paramsC->x2);
     const char *y2 = gtk_entry_get_text((GtkEntry*)paramsC->y2);
+    const char *z2 = gtk_entry_get_text((GtkEntry*)paramsC->z2);
     const char *x3 = gtk_entry_get_text((GtkEntry*)paramsC->x3);
     const char *y3 = gtk_entry_get_text((GtkEntry*)paramsC->y3);
+    const char *z3 = gtk_entry_get_text((GtkEntry*)paramsC->z3);
     const char *x4 = gtk_entry_get_text((GtkEntry*)paramsC->x4);
     const char *y4 = gtk_entry_get_text((GtkEntry*)paramsC->y4);
+    const char *z4 = gtk_entry_get_text((GtkEntry*)paramsC->z4);
     
-    paramsC->pointsList->push_back(new Point((const char*)NULL, atof(x2), atof(y2)));
-    paramsC->pointsList->push_back(new Point((const char*)NULL, atof(x3), atof(y3)));
-    paramsC->pointsList->push_back(new Point((const char*)NULL, atof(x4), atof(y4)));
+    paramsC->pointsList->push_back(new Point((const char*)NULL, atof(x2), atof(y2), atof(z2)));
+    paramsC->pointsList->push_back(new Point((const char*)NULL, atof(x3), atof(y3), atof(z3)));
+    paramsC->pointsList->push_back(new Point((const char*)NULL, atof(x4), atof(y4), atof(z4)));
   }
 }
