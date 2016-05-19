@@ -725,7 +725,7 @@ void GUI::transObjectWindow(GtkWidget *widget, gpointer data) {
   g_signal_connect(button, "clicked", G_CALLBACK(transObject), (gpointer) paramsP);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
 
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 2, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 3, 2, 2);
 
   gtk_widget_show_all(auxWindow);
 }
@@ -813,20 +813,27 @@ void GUI::rotObjectWindow(GtkWidget *widget, gpointer data) {
   GtkWidget* angulo = gtk_entry_new();
   gtk_grid_attach(GTK_GRID(auxGrid), angulo, 1, 0, 1, 1);
 
+  GtkWidget* radio1 = gtk_radio_button_new_with_label(NULL, "X");
+  GtkWidget* radio2 = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (radio1),"Y");
+  GtkWidget* radio3 = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (radio1),"Z");
+  gtk_grid_attach(GTK_GRID(auxGrid), radio1, 0, 1, 2, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), radio2, 0, 2, 2, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), radio3, 0, 3, 2, 1);
+
   GtkWidget* button = gtk_button_new_with_label("Rotacionar(Centro Objeto)");
   g_signal_connect(button, "clicked", G_CALLBACK(rotObjectCenter), (gpointer) angulo);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 1, 2, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 4, 2, 1);
 
   button = gtk_button_new_with_label("Rotacionar(Origem)");
   g_signal_connect(button, "clicked", G_CALLBACK(rotObjectOrigin), (gpointer) angulo);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 2, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 5, 2, 1);
 
   button = gtk_button_new_with_label("Rotacionar(Ponto)");
   g_signal_connect(button, "clicked", G_CALLBACK(rotObjectPointWindow), (gpointer) angulo);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 3, 2, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 6, 2, 1);
 
   gtk_widget_show_all(auxWindow);
 }
