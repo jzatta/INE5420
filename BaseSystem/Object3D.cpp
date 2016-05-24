@@ -122,6 +122,10 @@ Object3D::~Object3D() {
     delete *it;
   }
   pointsList->clear();
+  std::list<std::pair<int,int> *>::iterator itEdge=edgeList->begin();
+  for (; itEdge != edgeList->end(); ++itEdge) {
+    delete *itEdge;
+  }
   edgeList->clear();
   delete edgeList;
   delete pointsList;

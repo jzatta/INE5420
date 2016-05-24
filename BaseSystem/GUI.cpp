@@ -256,8 +256,8 @@ void GUI::addLine(GtkWidget* widget, gpointer data) {
   //gtk_widget_show(label);
   GUI::addToListBox(*name);
 
-  Point * a = new Point(name, atof(xi), atof(yi), atof(zi));
-  Point * b = new Point(name, atof(xf), atof(yf), atof(zf));
+  Point * a = new Point((const char*)NULL, atof(xi), atof(yi), atof(zi));
+  Point * b = new Point((const char*)NULL, atof(xf), atof(yf), atof(zf));
   //segfault se usar o construtor de pontos
   GUI::getDisplayFile()->addObject(new Line(name, a, b));
 
@@ -400,7 +400,7 @@ void GUI::buildPolygon(GtkWidget *widget, gpointer data) {
   const char *z = gtk_entry_get_text((GtkEntry*)params->z);
   float zi = atof(z);
 
-  Point *p = new Point("polygonPoint",xi, yi, zi);
+  Point *p = new Point((const char*)NULL,xi, yi, zi);
   params->pointsList->push_back(p);
 
   addPolygonWindow(widget, (gpointer)params);
@@ -415,7 +415,7 @@ void GUI::addPolygonWindowName(GtkWidget *widget, gpointer data) {
   const char *z = gtk_entry_get_text((GtkEntry*)params->z);
   float zi = atof(z);
 
-  Point *p = new Point("polygonPoint",xi, yi, zi);
+  Point *p = new Point((const char*)NULL,xi, yi, zi);
   params->pointsList->push_back(p);
 
   GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -951,7 +951,7 @@ void GUI::rotObjectPoint(GtkWidget *widget, gpointer data) {
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
-  Point *p = new Point((std::string *)NULL, x, y);
+  Point *p = new Point((const char*)NULL, x, y);
   GUI::getDisplayFile()->rotateObjPoint(name, paramsR->angulo, p);
   delete p;
   delete name;

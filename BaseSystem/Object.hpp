@@ -43,8 +43,9 @@ public:
   virtual void clip(void) = 0;
 
   virtual ~Object() {
-    if (name != NULL) {
-      delete name;
+    if (this->name != NULL) {
+      delete this->name;
+      this->name = NULL;
     }
   }
 };

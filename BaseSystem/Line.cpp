@@ -40,7 +40,9 @@ Object* Line::clone() {
   if (newName != NULL) {
     newName = new std::string(*newName);
   }
-  return new Line(newName, (Point*)(pointsList->front()->clone()), (Point*)(pointsList->back()->clone()));
+  Point *p1 = (Point*)pointsList->front()->clone();
+  Point *p2 = (Point*)pointsList->back()->clone();
+  return new Line(newName, p1, p2);
 }
 
 std::pair<Point*,Point*> Line::getCenter() {

@@ -81,7 +81,7 @@ void Point::setCords(float _x, float _y, float _z) {
 }
 
 Object* Point::clone() {
-  std::string *newName = getName();
+  std::string *newName = this->getName();
   if (newName != NULL) {
     newName = new std::string(*newName);
   }
@@ -123,6 +123,9 @@ float Point::norm(Point *a) {
 float Point::vectorAngle(Point *a, Point *b) {
   float angle;
   angle = scalarProd(a, b);
+  if (angle == 0.0) {
+    return 0.0;
+  }
   angle /= (norm(a)*norm(b));
   angle = acos(angle);
   return angle*180/M_PI;
