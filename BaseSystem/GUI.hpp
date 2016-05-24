@@ -45,6 +45,10 @@ class GUI {
     double angulo;
     GtkWidget *x;
     GtkWidget *y;
+    GtkWidget* radio1;
+    GtkWidget* radio2;
+    GtkWidget* radio3;
+    GtkWidget* anguloWidget;
   };
 
   struct ParamsCurveB {

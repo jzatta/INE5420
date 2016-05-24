@@ -796,6 +796,7 @@ void GUI::escObject(GtkWidget *widget, gpointer data) {
 }
 
 void GUI::rotObjectWindow(GtkWidget *widget, gpointer data) {
+  ParamsRotation * paramsR = new ParamsRotation();
   GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
   gtk_window_set_title(GTK_WINDOW(auxWindow), "Rotacionar");
@@ -810,28 +811,28 @@ void GUI::rotObjectWindow(GtkWidget *widget, gpointer data) {
   gtk_label_set_text(GTK_LABEL(label), "Angulo: ");
   gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
 
-  GtkWidget* angulo = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), angulo, 1, 0, 1, 1);
+  paramsR->anguloWidget = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsR->anguloWidget, 1, 0, 1, 1);
 
-  GtkWidget* radio1 = gtk_radio_button_new_with_label(NULL, "X");
-  GtkWidget* radio2 = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (radio1),"Y");
-  GtkWidget* radio3 = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (radio1),"Z");
-  gtk_grid_attach(GTK_GRID(auxGrid), radio1, 0, 1, 2, 1);
-  gtk_grid_attach(GTK_GRID(auxGrid), radio2, 0, 2, 2, 1);
-  gtk_grid_attach(GTK_GRID(auxGrid), radio3, 0, 3, 2, 1);
+  paramsR->radio1 = gtk_radio_button_new_with_label(NULL, "X");
+  paramsR->radio2 = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (paramsR->radio1),"Y");
+  paramsR->radio3 = gtk_radio_button_new_with_label_from_widget (GTK_RADIO_BUTTON (paramsR->radio1),"Z");
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsR->radio1, 0, 1, 2, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsR->radio2, 0, 2, 2, 1);
+  gtk_grid_attach(GTK_GRID(auxGrid), paramsR->radio3, 0, 3, 2, 1);
 
   GtkWidget* button = gtk_button_new_with_label("Rotacionar(Centro Objeto)");
-  g_signal_connect(button, "clicked", G_CALLBACK(rotObjectCenter), (gpointer) angulo);
+  g_signal_connect(button, "clicked", G_CALLBACK(rotObjectCenter), (gpointer) paramsR);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
   gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 4, 2, 1);
 
   button = gtk_button_new_with_label("Rotacionar(Origem)");
-  g_signal_connect(button, "clicked", G_CALLBACK(rotObjectOrigin), (gpointer) angulo);
+  g_signal_connect(button, "clicked", G_CALLBACK(rotObjectOrigin), (gpointer) paramsR);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
   gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 5, 2, 1);
 
   button = gtk_button_new_with_label("Rotacionar(Ponto)");
-  g_signal_connect(button, "clicked", G_CALLBACK(rotObjectPointWindow), (gpointer) angulo);
+  g_signal_connect(button, "clicked", G_CALLBACK(rotObjectPointWindow), (gpointer) paramsR);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
   gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 6, 2, 1);
 
@@ -839,7 +840,27 @@ void GUI::rotObjectWindow(GtkWidget *widget, gpointer data) {
 }
 
 void GUI::rotObjectCenter(GtkWidget *widget, gpointer data) {
-  float angle = atof(gtk_entry_get_text((GtkEntry*)data));
+  //float angle = atof(gtk_entry_get_text((GtkEntry*)data));
+  ParamsRotation * params = (ParamsRotation*) data;
+  float angle = atof(gtk_entry_get_text((GtkEntry*)params->anguloWidget));
+
+  GSList * tmp_list = gtk_radio_button_get_group ((GtkRadioButton*)params->radio1);
+  GtkToggleButton *tmp_button = NULL;
+
+  int cont = 0;
+  while (tmp_list)
+  {
+    tmp_button = (GtkToggleButton*)tmp_list->data;
+    tmp_list = tmp_list->next;
+
+    if (gtk_toggle_button_get_active(tmp_button))
+      break;
+
+    cont++;
+    tmp_button = NULL;
+  }
+
+  std::cout << cont << std::endl;
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
@@ -858,7 +879,9 @@ void GUI::rotObjectCenter(GtkWidget *widget, gpointer data) {
 
 void GUI::rotObjectOrigin(GtkWidget *widget, gpointer data) {
   //TODO juntar com o de cima
-  float angle = atof(gtk_entry_get_text((GtkEntry*)data));
+  //float angle = atof(gtk_entry_get_text((GtkEntry*)data));
+  ParamsRotation * params = (ParamsRotation*) data;
+  float angle = atof(gtk_entry_get_text((GtkEntry*)params->anguloWidget));
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
@@ -877,8 +900,9 @@ void GUI::rotObjectOrigin(GtkWidget *widget, gpointer data) {
 
 void GUI::rotObjectPointWindow(GtkWidget *widget, gpointer data) {
   //juntar com janela de transladar
-  ParamsRotation * paramsR = new ParamsRotation();
-  paramsR->angulo = atof(gtk_entry_get_text((GtkEntry*)data));
+  ParamsRotation * params = (ParamsRotation*) data;
+  //float angle = atof(gtk_entry_get_text((GtkEntry*)params->anguloWidget));
+  params->angulo = atof(gtk_entry_get_text((GtkEntry*)params->anguloWidget));
 
   GtkWidget * auxWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size(GTK_WINDOW(auxWindow), 150, 100);
@@ -894,18 +918,18 @@ void GUI::rotObjectPointWindow(GtkWidget *widget, gpointer data) {
   gtk_label_set_text(GTK_LABEL(label), "x: ");
   gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 0, 1, 1);
 
-  paramsR->x = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), paramsR->x, 1, 0, 1, 1);
+  params->x = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), params->x, 1, 0, 1, 1);
 
   label = gtk_label_new(NULL);
   gtk_label_set_text(GTK_LABEL(label), " y: ");
   gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 1, 1, 1);
 
-  paramsR->y = gtk_entry_new();
-  gtk_grid_attach(GTK_GRID(auxGrid), paramsR->y, 1, 1, 1, 1);
+  params->y = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), params->y, 1, 1, 1, 1);
 
   GtkWidget* button = gtk_button_new_with_label("Rotacionar");
-  g_signal_connect(button, "clicked", G_CALLBACK(rotObjectPoint), (gpointer) paramsR);
+  g_signal_connect(button, "clicked", G_CALLBACK(rotObjectPoint), (gpointer) params);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
 
   gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 2, 2);
