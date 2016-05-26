@@ -860,8 +860,6 @@ void GUI::rotObjectCenter(GtkWidget *widget, gpointer data) {
     tmp_button = NULL;
   }
 
-  std::cout << cont << std::endl;
-
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
   if (obj == NULL) {
@@ -870,7 +868,7 @@ void GUI::rotObjectCenter(GtkWidget *widget, gpointer data) {
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
-  GUI::getDisplayFile()->rotateObjCenter(name, angle);
+  GUI::getDisplayFile()->rotateObjCenter(name, angle, cont);
   delete name;
 
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
@@ -883,6 +881,22 @@ void GUI::rotObjectOrigin(GtkWidget *widget, gpointer data) {
   ParamsRotation * params = (ParamsRotation*) data;
   float angle = atof(gtk_entry_get_text((GtkEntry*)params->anguloWidget));
 
+  GSList * tmp_list = gtk_radio_button_get_group ((GtkRadioButton*)params->radio1);
+  GtkToggleButton *tmp_button = NULL;
+
+  int cont = 0;
+  while (tmp_list)
+  {
+    tmp_button = (GtkToggleButton*)tmp_list->data;
+    tmp_list = tmp_list->next;
+
+    if (gtk_toggle_button_get_active(tmp_button))
+      break;
+
+    cont++;
+    tmp_button = NULL;
+  }
+
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
   if (obj == NULL) {
@@ -891,7 +905,7 @@ void GUI::rotObjectOrigin(GtkWidget *widget, gpointer data) {
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
-  GUI::getDisplayFile()->rotateObjOrigin(name, angle);
+  GUI::getDisplayFile()->rotateObjOrigin(name, angle, cont);
   delete name;
 
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
@@ -928,11 +942,36 @@ void GUI::rotObjectPointWindow(GtkWidget *widget, gpointer data) {
   params->y = gtk_entry_new();
   gtk_grid_attach(GTK_GRID(auxGrid), params->y, 1, 1, 1, 1);
 
+  label = gtk_label_new(NULL);
+  gtk_label_set_text(GTK_LABEL(label), " z: ");
+  gtk_grid_attach(GTK_GRID(auxGrid), label, 0, 2, 1, 1);
+
+  params->z = gtk_entry_new();
+  gtk_grid_attach(GTK_GRID(auxGrid), params->z, 1, 2, 1, 1);
+
+  GSList * tmp_list = gtk_radio_button_get_group ((GtkRadioButton*)params->radio1);
+  GtkToggleButton *tmp_button = NULL;
+
+  int cont = 0;
+  while (tmp_list)
+  {
+    tmp_button = (GtkToggleButton*)tmp_list->data;
+    tmp_list = tmp_list->next;
+
+    if (gtk_toggle_button_get_active(tmp_button))
+      break;
+
+    cont++;
+    tmp_button = NULL;
+  }
+
+  params->ctrl = cont;
+
   GtkWidget* button = gtk_button_new_with_label("Rotacionar");
   g_signal_connect(button, "clicked", G_CALLBACK(rotObjectPoint), (gpointer) params);
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy), auxWindow);
 
-  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 2, 2, 2);
+  gtk_grid_attach(GTK_GRID(auxGrid), button, 0, 3, 2, 2);
 
   gtk_widget_show_all(auxWindow);
 }
@@ -942,6 +981,7 @@ void GUI::rotObjectPoint(GtkWidget *widget, gpointer data) {
 
   float x = atof(gtk_entry_get_text((GtkEntry*)paramsR->x));
   float y = atof(gtk_entry_get_text((GtkEntry*)paramsR->y));
+  float z = atof(gtk_entry_get_text((GtkEntry*)paramsR->z));
 
   GtkListBoxRow * obj;
   obj = gtk_list_box_get_selected_row ((GtkListBox *)oList);
@@ -952,7 +992,7 @@ void GUI::rotObjectPoint(GtkWidget *widget, gpointer data) {
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
   Point *p = new Point((const char*)NULL, x, y);
-  GUI::getDisplayFile()->rotateObjPoint(name, paramsR->angulo, p);
+  GUI::getDisplayFile()->rotateObjPoint(name, paramsR->angulo, p, paramsR->ctrl);
   delete p;
   delete name;
 

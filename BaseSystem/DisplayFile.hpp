@@ -33,9 +33,9 @@ public:
   Object *getObjW(std::string *name);
   void translateObj(std::string *name, float x, float y, float z);
   void escalonateObj(std::string *name, float scalar);
-  void rotateObjOrigin(std::string *name, float angle);
-  void rotateObjPoint(std::string *name, float angle, Point *p);
-  void rotateObjCenter(std::string *name, float angle);
+  void rotateObjOrigin(std::string *name, float angle, int ctrl);
+  void rotateObjPoint(std::string *name, float angle, Point *p, int ctrl);
+  void rotateObjCenter(std::string *name, float angle, int ctrl);
   
   virtual void draw(cairo_t *cr);
   virtual void transform();
