@@ -991,7 +991,7 @@ void GUI::rotObjectPoint(GtkWidget *widget, gpointer data) {
   GtkWidget* test = gtk_bin_get_child(GTK_BIN(obj));
 
   std::string *name = new std::string(gtk_label_get_text ((GtkLabel*)test));
-  Point *p = new Point((const char*)NULL, x, y);
+  Point *p = new Point((const char*)NULL, x, y, z);
   GUI::getDisplayFile()->rotateObjPoint(name, paramsR->angulo, p, paramsR->ctrl);
   delete p;
   delete name;
