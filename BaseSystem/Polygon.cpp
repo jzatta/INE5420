@@ -90,7 +90,18 @@ void Polygon::save(FILE *stream) {
 }
 
 void Polygon::clip(void) {
+#if 0
+  Point *p;
+  std::list<Point*>::iterator it=pointsList->begin();
+  p = *it;
+  ++it;
+  for (; it != pointsList->end(); ++it) {
+    this->show = Clipping::clipLineLB(p, *it);
+    p = *it;
+  }
+#else
   this->show = Clipping::clipPolygon(this);
+#endif
 }
 
 Point * Polygon::getPoint(int index) {

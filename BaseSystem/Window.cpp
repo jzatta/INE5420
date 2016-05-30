@@ -69,6 +69,7 @@ void Window::moveHorizontal(float pixel) {
   float radX = (wAngleX*M_PI)/180;
   float radY = (wAngleY*M_PI)/180;
   float radZ = (wAngleZ*M_PI)/180;
+  pixel *= 0.1*height;
   Matrix *mTrans;
   mTrans = Matrix::constructTranslateMatrix(pixel * cosf(radY) * cosf(radZ),
                                             pixel * (sinf(radX) * sinf(radY) * cosf(radZ) - cosf(radX) * sinf(radZ) ),
@@ -82,6 +83,7 @@ void Window::moveVertical(float pixel) {
   float radX = (wAngleX*M_PI)/180;
   float radY = (wAngleY*M_PI)/180;
   float radZ = (wAngleZ*M_PI)/180;
+  pixel *= 0.1*height;
   Matrix *mTrans;
   mTrans = Matrix::constructTranslateMatrix(pixel * cosf(radY) * sinf(radZ),
                                             pixel * (sinf(radX) * sinf(radY) * sinf(radZ) + cosf(radX) * cosf(radZ) ),
@@ -95,6 +97,7 @@ void Window::moveLongitudinal(float pixel) {
   float radX = (wAngleX*M_PI)/180;
   float radY = (wAngleY*M_PI)/180;
   float radZ = (wAngleZ*M_PI)/180;
+  pixel *= 0.1*height;
   Matrix *mTrans;
   mTrans = Matrix::constructTranslateMatrix(-1 * pixel * sinf(radY),
                                             pixel * sinf(radX) * cosf(radY),

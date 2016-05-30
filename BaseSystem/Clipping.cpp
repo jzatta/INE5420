@@ -255,7 +255,10 @@ bool Clipping::clipPolygon(Polygon * polygon) {
     }
     polygon->setList(newList);
   }
-  return true;
+  if (newList->size() > 1) {
+    return true;
+  }
+  return false;
 }
 
 Point* Clipping::intersection(Point * p1, Point * p2, int index){

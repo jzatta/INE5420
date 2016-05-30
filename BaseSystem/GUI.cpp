@@ -91,32 +91,32 @@ GtkWidget * GUI::getOlist() {
 
 // Navigation routines
 void GUI::moveDown(GtkWidget *widget, gpointer data) {
-  Window::moveVertical(-10);
+  Window::moveVertical(-1);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveRight(GtkWidget *widget, gpointer data) {
-  Window::moveHorizontal(10);
+  Window::moveHorizontal(1);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveLeft(GtkWidget *widget, gpointer data) {
-  Window::moveHorizontal(-10);
+  Window::moveHorizontal(-1);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveUp(GtkWidget *widget, gpointer data) {
-  Window::moveVertical(10);
+  Window::moveVertical(1);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveForward(GtkWidget *widget, gpointer data) {
-  Window::moveLongitudinal(-10);
+  Window::moveLongitudinal(-1);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveBackward(GtkWidget *widget, gpointer data) {
-  Window::moveLongitudinal(10);
+  Window::moveLongitudinal(1);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
