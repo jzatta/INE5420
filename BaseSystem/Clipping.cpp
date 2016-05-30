@@ -290,7 +290,7 @@ float y;
           break;
   }
 
-  Point * intersec = new Point("", x, y);
+  Point * intersec = new Point("", x, y, 0);
   return intersec;
 }
 

@@ -8,7 +8,7 @@
 
 Point *Window::wc = new Point("WindowCenter", 0, 0, 0);
 // Line *Window::vup = new Line("Vup", new Point((std::string*)NULL, -HWSIZE,  -HWSIZE, 0), new Point((std::string*)NULL, -HWSIZE, HWSIZE, 0));
-float Window::height = 600;
+float Window::height = 50;
 float Window::wAngleX = 0;
 float Window::wAngleY = 0;
 float Window::wAngleZ = 0;
@@ -25,7 +25,7 @@ void Window::center() {
 
 void Window::reset() {
   Window::center();
-  height = 600;
+  height = 50;
   wAngleX = 0;
   wAngleY = 0;
   wAngleZ = 0;

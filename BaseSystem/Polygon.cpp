@@ -77,12 +77,12 @@ std::pair<Point*,Point*> Polygon::getCenter() {
 void Polygon::save(FILE *stream) {
   int added = 0;
   std::list<Point*>::iterator it=pointsList->begin();
-  fprintf(stream, "\n#Add polygon\ng %s\n", getName()->c_str());
+  fprintf(stream, "\n#Add polygon\no %s\n", getName()->c_str());
   for (; it != pointsList->end(); ++it) {
     fprintf(stream, "v %f %f %f 0.0\n", (*it)->getX(), (*it)->getY(), (*it)->getZ());
     added++;
   }
-  fprintf(stream, "f 1");
+  fprintf(stream, "f");
   for (; added > 0; added--) {
     fprintf(stream, " %d", added);
   }

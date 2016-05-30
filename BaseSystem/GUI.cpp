@@ -76,7 +76,6 @@ gboolean GUI::draw_cb (GtkWidget *widget,
 // GUI getters -----------------------------------------------------------------
 DisplayFile *GUI::getDisplayFile() {
   if (GUI::displayFile == NULL) {
-    //GUI::displayFile = DescriptorOBJ::load();
     GUI::displayFile = new DisplayFile();
   }
   return GUI::displayFile;
@@ -465,6 +464,7 @@ void GUI::init() {
   GtkWidget* frame;
   GtkWidget* inGrid;
   GtkWidget* button;
+  GtkWidget* fileNameEntry;
   GtkWidget* label;
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -620,14 +620,17 @@ void GUI::init() {
   gtk_container_set_border_width(GTK_CONTAINER(fileGrid), 5);
   gtk_container_add(GTK_CONTAINER(frame), fileGrid);
 
+  fileNameEntry = gtk_entry_new();
+  gtk_entry_set_text (GTK_ENTRY (fileNameEntry), "teste.obj");
+  gtk_grid_attach(GTK_GRID(fileGrid), fileNameEntry, 4, 0, 2, 1);
+
   button = gtk_button_new_with_label("Save");
-  g_signal_connect(button, "clicked", G_CALLBACK(saveFile), da);
+  g_signal_connect(button, "clicked", G_CALLBACK(saveFile), fileNameEntry);
   gtk_grid_attach(GTK_GRID(fileGrid), button, 0, 0, 2, 1);
 
   button = gtk_button_new_with_label("Load");
-  g_signal_connect(button, "clicked", G_CALLBACK(loadFile), da);
+  g_signal_connect(button, "clicked", G_CALLBACK(loadFile), fileNameEntry);
   gtk_grid_attach(GTK_GRID(fileGrid), button, 2, 0, 2, 1);
-
 
 
   gtk_widget_show_all(window);
@@ -1000,11 +1003,16 @@ void GUI::rotObjectPoint(GtkWidget *widget, gpointer data) {
 }
 
 void GUI::saveFile(GtkWidget *widget, gpointer data) {
-  DescriptorOBJ::save(GUI::getDisplayFile());
+  GtkWidget* fileNameEntry = (GtkWidget*)data;
+  const char *fileName;
+  fileName = gtk_entry_get_text(GTK_ENTRY(fileNameEntry));
+  DescriptorOBJ::save(GUI::getDisplayFile(), fileName);
 }
 
 void GUI::loadFile(GtkWidget *widget, gpointer data) {
   GList *children, *iter;
+  GtkWidget* fileNameEntry = (GtkWidget*)data;
+  const char *fileName;
 
   children = gtk_container_get_children(GTK_CONTAINER(oList));
   for(iter = children; iter != NULL; iter = g_list_next(iter)){
@@ -1012,7 +1020,8 @@ void GUI::loadFile(GtkWidget *widget, gpointer data) {
   }
   g_list_free(children);
 
-  DisplayFile * auxDisplay = DescriptorOBJ::load();
+  fileName = gtk_entry_get_text(GTK_ENTRY(fileNameEntry));
+  DisplayFile *auxDisplay = new DisplayFile(fileName);
 
   if (auxDisplay) {
     GUI::displayFile = auxDisplay;

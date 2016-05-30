@@ -15,6 +15,7 @@ class DisplayFile;
 #include "Polygon.hpp"
 #include "Viewport.hpp"
 #include "Window.hpp"
+#include "DescriptorOBJ.hpp"
 
 class DisplayFile: public Drawable {
 private:
@@ -26,7 +27,7 @@ private:
 
 public:
   DisplayFile();
-  DisplayFile(FILE *obj);
+  DisplayFile(const char *fileName);
   
   void addObject(Object *_obj);
   void deleteObj(std::string *name);

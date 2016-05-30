@@ -81,7 +81,7 @@ std::pair<Point*,Point*> Curve::getCenter() {
 void Curve::save(FILE *stream) {
   int added = 0;
   std::list<Point*>::iterator it=pointsList->begin();
-  fprintf(stream, "\n#Add Curve\ng %s\n", getName()->c_str());
+  fprintf(stream, "\n#Add Curve\no %s\n", getName()->c_str());
   for (; it != pointsList->end(); ++it) {
     fprintf(stream, "v %f %f %f 0.0\n", (*it)->getX(), (*it)->getY(), (*it)->getZ());
     added++;

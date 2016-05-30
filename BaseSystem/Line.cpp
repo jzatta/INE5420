@@ -63,7 +63,7 @@ std::pair<Point*,Point*> Line::getCenter() {
 }
 
 void Line::save(FILE *stream) {
-  fprintf(stream, "\n#Add Line\ng %s\n", getName()->c_str());
+  fprintf(stream, "\n#Add Line\no %s\n", getName()->c_str());
   fprintf(stream, "v %f %f %f 0.0\n",  pointsList->front()->getX(),
                                        pointsList->front()->getY(),
                                        pointsList->front()->getZ());

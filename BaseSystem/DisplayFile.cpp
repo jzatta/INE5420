@@ -1,3 +1,4 @@
+
 #include "DisplayFile.hpp"
 
 DisplayFile::DisplayFile() {
@@ -6,83 +7,11 @@ DisplayFile::DisplayFile() {
   transformMatrix = new Matrix();
 }
 
-DisplayFile::DisplayFile(FILE *obj) {
-  this->objectsWorld = new std::list<Object*>;
+DisplayFile::DisplayFile(const char *fileName) {
+  this->objectsWorld = DescriptorOBJ::load(fileName);
   this->objectsTransformed = new std::list<Object*>;
-  std::list<Point*> *pointsList= new std::list<Point*>;
-  Object *tmpObj;
-  char name[150];
-  int ch;
   transformMatrix = new Matrix();
-  while ( (ch = fgetc(obj) ) != EOF) {
-    if (ch == '#') {
-      while (ch != '\n') {
-        ch = fgetc(obj);
-        if (ch == EOF) {
-          break;
-        }
-      }
-    }
-    if (ch == 'g') {
-      fscanf(obj, " %s\n", name);
-    }
-    if (ch == 'v') {
-      float x, y, z, nil;
-      fscanf(obj, " %f %f %f %f\n", &x, &y, &z, &nil);
-      pointsList->push_back(new Point((std::string*) NULL, x, y, z));
-    }
-    if (ch == 'p') {
-      tmpObj = new Point(name, pointsList->front()->getX(), pointsList->front()->getY(), pointsList->front()->getZ());
-      GUI::addToListBox(std::string(name));
-      this->objectsWorld->push_back(tmpObj);
-      tmpObj = tmpObj->clone();
-      tmpObj->transform(transformMatrix);
-      this->objectsTransformed->push_back(tmpObj);
-      std::list<Point*>::iterator it=pointsList->begin();
-      for (; it != pointsList->end(); ++it) {
-        delete *it;
-      }
-      pointsList->clear();
-      ch = fgetc(obj);
-    }
-    if (ch == 'l') {
-      tmpObj = new Line(name, pointsList->front(), pointsList->back());
-      GUI::addToListBox(std::string(name));
-      pointsList->pop_back();
-      pointsList->pop_front();
-      this->objectsWorld->push_back(tmpObj);
-      tmpObj = tmpObj->clone();
-      tmpObj->transform(transformMatrix);
-      this->objectsTransformed->push_back(tmpObj);
-      std::list<Point*>::iterator it=pointsList->begin();
-      for (; it != pointsList->end(); ++it) {
-        delete *it;
-      }
-      pointsList->clear();
-      ch = fgetc(obj);
-    }
-    if (ch  == 'f') {
-      tmpObj = new Polygon(name, pointsList);
-      GUI::addToListBox(std::string(name));
-      this->objectsWorld->push_back(tmpObj);
-      tmpObj = tmpObj->clone();
-      tmpObj->transform(transformMatrix);
-      this->objectsTransformed->push_back(tmpObj);
-      pointsList = new std::list<Point*>;
-      ch = fgetc(obj);
-    }
-    if (ch  == 'c') {
-      tmpObj = new Curve(name, pointsList);
-      GUI::addToListBox(std::string(name));
-      this->objectsWorld->push_back(tmpObj);
-      tmpObj = tmpObj->clone();
-      tmpObj->transform(transformMatrix);
-      this->objectsTransformed->push_back(tmpObj);
-      pointsList = new std::list<Point*>;
-      ch = fgetc(obj);
-    }
-  }
-  delete pointsList;
+  this->transform();
 }
 
 std::list<Object*>::iterator DisplayFile::getObjIt(std::string *name) {

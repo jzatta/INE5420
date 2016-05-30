@@ -86,7 +86,7 @@ void Object3D::save(FILE *stream) {
   // REVER
   int added = 0;
   std::vector<Point*>::iterator it=pointsList->begin();
-  fprintf(stream, "\n#Add Object3D\ng %s\n", getName()->c_str());
+  fprintf(stream, "\n#Add Object3D\no %s\n", getName()->c_str());
   for (; it != pointsList->end(); ++it) {
     fprintf(stream, "v %f %f %f 0.0\n", (*it)->getX(), (*it)->getY(), (*it)->getZ());
     added++;
