@@ -16,6 +16,7 @@ class DescriptorOBJ;
 class DescriptorOBJ {
 private:
   static std::list<Point*> *readPoints(const std::vector<Point*> *points, const char *line);
+  static std::list<int> *readPointsNumber(const char *line);
 public:
   static void save(DisplayFile *df, const char *fileName);
   static std::list<Object*> *load(const char *fileName);

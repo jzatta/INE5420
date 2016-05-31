@@ -7,25 +7,25 @@ void Object3D::draw(cairo_t *cr) {
   if (this->show == false) {
     return;
   }
-  std::list<std::pair<int,int> *>::iterator it=edgeList->begin();
+  std::list<std::pair<int,int>>::iterator it=edgeList->begin();
   for (; it != edgeList->end(); ++it) {
     float xi, yi, xf, yf;
-    xi = pointsList->at((*it)->first)->getX();
-    yi = pointsList->at((*it)->first)->getY();
-    xf = pointsList->at((*it)->second)->getX();
-    yf = pointsList->at((*it)->second)->getY();
+    xi = pointsList->at((*it).first)->getX();
+    yi = pointsList->at((*it).first)->getY();
+    xf = pointsList->at((*it).second)->getX();
+    yf = pointsList->at((*it).second)->getY();
     cairo_move_to(cr, Viewport::transformX(xi), Viewport::transformY(yi));
     cairo_line_to(cr, Viewport::transformX(xf), Viewport::transformY(yf));
   }
   return;
 }
 
-Object3D::Object3D(const char *name, std::vector<Point*> *_pointsList, std::list<std::pair<int,int> *> *_edgeList): Object(name) {
+Object3D::Object3D(const char *name, std::vector<Point*> *_pointsList, std::list<std::pair<int,int>> *_edgeList): Object(name) {
   pointsList = _pointsList;
   edgeList = _edgeList;
 }
 
-Object3D::Object3D(std::string *name, std::vector<Point*> *_pointsList, std::list<std::pair<int,int> *> *_edgeList): Object(name) {
+Object3D::Object3D(std::string *name, std::vector<Point*> *_pointsList, std::list<std::pair<int,int>> *_edgeList): Object(name) {
   pointsList = _pointsList;
   edgeList = _edgeList;
 }
@@ -39,7 +39,7 @@ void Object3D::transform(Matrix *_m) {
 
 Object* Object3D::clone() {
   std::vector<Point*> *newPointList = new std::vector<Point*>();
-  std::list<std::pair<int,int> *> *newEdgeList = new std::list<std::pair<int,int> *>();
+  std::list<std::pair<int,int>> *newEdgeList = new std::list<std::pair<int,int>>();
   std::string *newName = getName();
   if (newName != NULL) {
     newName = new std::string(*newName);
@@ -48,10 +48,9 @@ Object* Object3D::clone() {
   for (; it != pointsList->end(); ++it) {
     newPointList->push_back((Point*)((*it)->clone()));
   }
-  std::list<std::pair<int,int> *>::iterator itEdge=edgeList->begin();
+  std::list<std::pair<int,int>>::iterator itEdge=edgeList->begin();
   for (; itEdge != edgeList->end(); ++itEdge) {
-    std::pair<int,int> *newPair = new std::pair<int,int>(**itEdge);
-    newEdgeList->push_back(newPair);
+    newEdgeList->push_back(*itEdge);
   }
   return new Object3D(newName, newPointList, newEdgeList);
 }
@@ -100,9 +99,9 @@ void Object3D::save(FILE *stream) {
 
 void Object3D::clip(void) {
   this->show = false;
-  std::list<std::pair<int,int> *>::iterator it=edgeList->begin();
+  std::list<std::pair<int,int>>::iterator it=edgeList->begin();
   for (; it != edgeList->end(); ++it) {
-    if (Clipping::clipLineCS(pointsList->at((*it)->first), pointsList->at((*it)->second))) {
+    if (Clipping::clipLineCS(pointsList->at((*it).first), pointsList->at((*it).second))) {
       this->show = true;
     }
   }
@@ -112,7 +111,7 @@ void Object3D::setPointsList(std::vector<Point*>* _list) {
   pointsList = _list;
 }
 
-void Object3D::setEdgeList(std::list<std::pair<int,int> *> *_list) {
+void Object3D::setEdgeList(std::list<std::pair<int,int>> *_list) {
   edgeList = _list;
 }
 
@@ -122,10 +121,6 @@ Object3D::~Object3D() {
     delete *it;
   }
   pointsList->clear();
-  std::list<std::pair<int,int> *>::iterator itEdge=edgeList->begin();
-  for (; itEdge != edgeList->end(); ++itEdge) {
-    delete *itEdge;
-  }
   edgeList->clear();
   delete edgeList;
   delete pointsList;
