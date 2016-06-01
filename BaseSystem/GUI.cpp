@@ -111,12 +111,12 @@ void GUI::moveUp(GtkWidget *widget, gpointer data) {
 }
 
 void GUI::moveForward(GtkWidget *widget, gpointer data) {
-  Window::moveLongitudinal(-1);
+  Window::moveLongitudinal(1);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::moveBackward(GtkWidget *widget, gpointer data) {
-  Window::moveLongitudinal(1);
+  Window::moveLongitudinal(-1);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
@@ -136,31 +136,31 @@ void GUI::Center(GtkWidget *widget, gpointer data) {
 }
 
 void GUI::turnUp(GtkWidget *widget, gpointer data) {
-  Window::rotateX(-15);
-  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
-}
-
-void GUI::turnDown(GtkWidget *widget, gpointer data) {
   Window::rotateX(15);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void GUI::turnLeft(GtkWidget *widget, gpointer data) {
-  Window::rotateY(-15);
+void GUI::turnDown(GtkWidget *widget, gpointer data) {
+  Window::rotateX(-15);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
 void GUI::turnRight(GtkWidget *widget, gpointer data) {
+  Window::rotateY(-15);
+  gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
+}
+
+void GUI::turnLeft(GtkWidget *widget, gpointer data) {
   Window::rotateY(15);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void GUI::rotateLeft(GtkWidget *widget, gpointer data) {
+void GUI::rotateRight(GtkWidget *widget, gpointer data) {
   Window::rotateZ(-15);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }
 
-void GUI::rotateRight(GtkWidget *widget, gpointer data) {
+void GUI::rotateLeft(GtkWidget *widget, gpointer data) {
   Window::rotateZ(15);
   gtk_widget_queue_draw(GTK_WIDGET(GUI::getDA()));
 }

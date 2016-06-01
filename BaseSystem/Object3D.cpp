@@ -98,10 +98,13 @@ void Object3D::save(FILE *stream) {
 }
 
 void Object3D::clip(void) {
+  // NAO FUNCIONA!!11!!!1ONZE
   this->show = false;
   std::list<std::pair<int,int>>::iterator it=edgeList->begin();
   for (; it != edgeList->end(); ++it) {
-    if (Clipping::clipLineCS(pointsList->at((*it).first), pointsList->at((*it).second))) {
+    pointsList->at((*it).first)->project();
+    pointsList->at((*it).second)->project();
+    if (Clipping::clipLineLB(pointsList->at((*it).first), pointsList->at((*it).second))) {
       this->show = true;
     }
   }
@@ -116,12 +119,12 @@ void Object3D::setEdgeList(std::list<std::pair<int,int>> *_list) {
 }
 
 Object3D::~Object3D() {
-  std::vector<Point*>::iterator it=pointsList->begin();
-  for (; it != pointsList->end(); ++it) {
-    delete *it;
-  }
-  pointsList->clear();
+//   std::vector<Point*>::iterator it=pointsList->begin();
+//   for (; it != pointsList->end(); ++it) {
+//     delete *it;
+//   }
+//   pointsList->clear();
   edgeList->clear();
   delete edgeList;
-  delete pointsList;
+//   delete pointsList;
 }

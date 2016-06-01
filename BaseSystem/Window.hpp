@@ -11,6 +11,7 @@ class Window;
 class Window {
 private:
   static Point *wc;
+  static float distance;
 //   static Line *vup;
   static float height;
   static float wAngleX;
@@ -38,6 +39,8 @@ public:
   static void rotateX(float angle);
   static void rotateY(float angle);
   static void rotateZ(float angle);
+  
+  static float getDistance();
 };
 
 

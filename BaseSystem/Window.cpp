@@ -6,9 +6,13 @@
 #define PIXEL_AREA_MIN 1000
 #define HWSIZE 300
 
-Point *Window::wc = new Point("WindowCenter", 0, 0, 0);
+#define DISTANCE 5
+#define HEIGHT 2
+
+Point *Window::wc  = new Point("WindowCenter", 0, 0, 0);
 // Line *Window::vup = new Line("Vup", new Point((std::string*)NULL, -HWSIZE,  -HWSIZE, 0), new Point((std::string*)NULL, -HWSIZE, HWSIZE, 0));
-float Window::height = 50;
+float Window::distance = DISTANCE;
+float Window::height = HEIGHT;
 float Window::wAngleX = 0;
 float Window::wAngleY = 0;
 float Window::wAngleZ = 0;
@@ -25,10 +29,11 @@ void Window::center() {
 
 void Window::reset() {
   Window::center();
-  height = 50;
+  height = HEIGHT;
   wAngleX = 0;
   wAngleY = 0;
   wAngleZ = 0;
+  distance = DISTANCE;
 }
 
 float Window::getWidth() {
@@ -58,6 +63,7 @@ Matrix *Window::getTransform() {
   mTrans->multMatrixAndDelete(Matrix::constructRotateMatrixY(wAngleY));
   mTrans->multMatrixAndDelete(Matrix::constructRotateMatrixZ(wAngleZ));
   mTrans->multMatrixAndDelete(Matrix::constructScalonateMatrix(1.0/getWidth(), 1.0/getHeight(), 1.0/getHeight()));
+  mTrans->multMatrixAndDelete(Matrix::constructTranslateMatrix(0, 0, distance));
   return mTrans;
 }
 
@@ -135,4 +141,8 @@ void Window::rotateZ(float angle) {
   if (wAngleZ < 0) {
     wAngleZ += 360;
   }
+}
+
+float Window::getDistance() {
+  return distance;
 }

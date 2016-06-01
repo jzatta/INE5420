@@ -136,3 +136,11 @@ void Matrix::print() {
     printf("\b\b\b\b}\n");
   }
 }
+
+
+Matrix *Matrix::constructPerspectiveMatriz(float distance) {
+  Matrix *ret = new Matrix(); // constrct ID matrix
+  ret->matrix[3][3] = 0;
+  ret->matrix[3][2] = 1.0/distance;
+  return ret;
+}

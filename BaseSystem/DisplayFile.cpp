@@ -11,7 +11,6 @@ DisplayFile::DisplayFile(const char *fileName) {
   this->objectsWorld = DescriptorOBJ::load(fileName);
   this->objectsTransformed = new std::list<Object*>;
   transformMatrix = new Matrix();
-  this->transform();
 }
 
 std::list<Object*>::iterator DisplayFile::getObjIt(std::string *name) {
@@ -19,9 +18,6 @@ std::list<Object*>::iterator DisplayFile::getObjIt(std::string *name) {
 
 void DisplayFile::addObject(Object *_obj) {
   this->objectsWorld->push_back(_obj);
-  _obj = _obj->clone();
-  _obj->transform(transformMatrix);
-  this->objectsTransformed->push_back(_obj);
   return;
 }
 
@@ -59,7 +55,6 @@ void DisplayFile::translateObj(std::string *name, float x, float y, float z) {
   Matrix *mTrans = Matrix::constructTranslateMatrix(x, y, z);
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform();
 }
 
 void DisplayFile::escalonateObj(std::string *name, float scalar) {
@@ -76,7 +71,6 @@ void DisplayFile::escalonateObj(std::string *name, float scalar) {
                                                               ));
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform();
 }
 
 void DisplayFile::rotateObjOrigin(std::string *name, float angle, int ctrl) {
@@ -91,7 +85,6 @@ void DisplayFile::rotateObjOrigin(std::string *name, float angle, int ctrl) {
   }
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform();
 }
 
 void DisplayFile::rotateObjPoint(std::string *name, float angle, Point *p, int ctrl) {
@@ -117,7 +110,6 @@ void DisplayFile::rotateObjPoint(std::string *name, float angle, Point *p, int c
                                                               ));
   chObj->transform(mTrans);
   delete mTrans;
-  this->transform();
 }
 
 void DisplayFile::rotateObjCenter(std::string *name, float angle, int ctrl) {
@@ -158,7 +150,6 @@ void DisplayFile::rotateObjCenter(std::string *name, float angle, int ctrl) {
   delete center.first;
   delete center.second;
   delete mTrans;
-  this->transform();
 }
 
 void DisplayFile::draw(cairo_t *cr) {
@@ -167,6 +158,7 @@ void DisplayFile::draw(cairo_t *cr) {
   for (; it != this->objectsTransformed->end(); ++it) {
     (*it)->draw(cr);
   }
+  std::cout << std::endl << std::endl << std::endl;
 }
 
 void DisplayFile::transform() {
@@ -183,7 +175,6 @@ void DisplayFile::transform() {
   for (; it != objectsWorld->end(); ++it) {
     tmpObj = (*it)->clone();
     tmpObj->transform(transformMatrix);
-//     tmpObj->clip();
     objectsTransformed->push_back(tmpObj);
   }
   return;

@@ -74,6 +74,8 @@ void Line::save(FILE *stream) {
 }
 
 void Line::clip(void) {
+  pointsList->front()->project();
+  pointsList->back()->project();
   this->show = Clipping::clipLineLB(pointsList->front(), pointsList->back());
 }
 

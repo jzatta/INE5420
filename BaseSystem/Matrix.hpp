@@ -28,6 +28,8 @@ public:
   static Matrix *constructRotateMatrixY(float angle);
   static Matrix *constructRotateMatrixZ(float angle);
   
+  static Matrix *constructPerspectiveMatriz(float distance);
+  
   void print();
 };
 

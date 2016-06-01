@@ -39,6 +39,7 @@ Point::Point(const char *name, float _x, float _y) : Object(name) {
   x = _x;
   y = _y;
   z = 0;
+  projected = false;
   std::cout << "This contructor is deprecated" << std::endl;
 }
 
@@ -46,6 +47,7 @@ Point::Point(std::string *name, float _x, float _y) : Object(name) {
   x = _x;
   y = _y;
   z = 0;
+  projected = false;
   std::cout << "This contructor is deprecated" << std::endl;
 }
 
@@ -53,12 +55,14 @@ Point::Point(std::string *name, float _x, float _y, float _z) : Object(name) {
   x = _x;
   y = _y;
   z = _z;
+  projected = false;
 }
 
 Point::Point(const char *name, float _x, float _y, float _z) : Object(name) {
   x = _x;
   y = _y;
   z = _z;
+  projected = false;
 }
 
 void Point::transform(Matrix *_m) {
@@ -102,6 +106,7 @@ void Point::save(FILE *stream) {
 }
 
 void Point::clip(void) {
+  this->project();
   this->show = Clipping::clipPoint(x, y);
 }
 
@@ -129,4 +134,18 @@ float Point::vectorAngle(Point *a, Point *b) {
   angle /= (norm(a)*norm(b));
   angle = acos(angle);
   return angle*180/M_PI;
+}
+
+void Point::project() {
+#if 1
+  if (projected)
+    return;
+  float distance = Window::getDistance();
+  float dZ = z/distance;
+  x /= dZ;
+  y /= dZ;
+  z = distance;
+  std::cout << "X: " << x << "    ---  Y: " << y << "    ---  Z: " << z << std::endl;
+  projected = true;
+#endif
 }

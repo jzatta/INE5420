@@ -239,7 +239,10 @@ bool Clipping::clipPolygon(Polygon * polygon) {
       
       Point * p1 = polygon->getPoint(i);
       Point * p2 = polygon->getPoint((i+1)%(polygon->getSize()));
-      
+
+      p1->project();
+      p2->project();
+
       if (verifyPoint(p1->getX(), p1->getY(), j)) {
         if (verifyPoint(p2->getX(), p2->getY(), j)){
           newList->push_back(p2);

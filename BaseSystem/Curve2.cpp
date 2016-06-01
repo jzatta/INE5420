@@ -96,6 +96,7 @@ void Curve::clip(void) {
   std::list<Point*>::iterator it=curvePoints->begin();
   this->show = true;
   for (; it != curvePoints->end();) {
+    (*it)->project();
     if (!Clipping::clipPoint((*it)->getX(), (*it)->getY())) {
       delete *it;
       it = curvePoints->erase(it);

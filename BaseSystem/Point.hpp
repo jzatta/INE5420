@@ -11,6 +11,7 @@ class Point;
 class Point : public Object {
 private:
   float x, y, z;
+  bool projected;
 public:
   Point(const char *name, float _x, float _y);
   Point(const char *name, float _x, float _y, float _z);
@@ -35,6 +36,8 @@ public:
   static float scalarProd(Point *a, Point *b);
   static float norm(Point *a);
   static float vectorAngle(Point *a, Point *b);
+  
+  void project();
 };
 
 #endif
