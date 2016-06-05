@@ -23,6 +23,7 @@ public:
   virtual std::pair<Point*,Point*> getCenter();
   virtual void save(FILE *stream);
   virtual void clip(void);
+  virtual void project();
   virtual ~Line();
 };
 

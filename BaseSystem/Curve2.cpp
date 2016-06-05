@@ -239,6 +239,11 @@ void Curve::drawFwdDiff(int n, float x[4], float y[4], float z[4]) {
   }
 }
 
+void Curve::project() {
+  //NOT IMPLEMENTED
+  return;
+}
+
 Curve::~Curve() {
   std::list<Point*>::iterator it=pointsList->begin();
   for (; it != pointsList->end(); ++it) {
