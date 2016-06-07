@@ -118,7 +118,7 @@ std::list<Object*> *DescriptorOBJ::load(const char *fileName) {
     // if vertex get points
     if (tmpLine[0] == 'v' && tmpLine[1] == ' ') {
       float x, y, z, nil;
-      sscanf(tmpLine, "v %,f %,f %,f %,f", &x, &y, &z, &nil);
+      sscanf(tmpLine, "v %f %f %f %f", &x, &y, &z, &nil);
       pointsList->push_back(new Point((std::string*) NULL, x, y, z));
     }
     if (tmpLine[0] == 'p' && tmpLine[1] == ' ') {
