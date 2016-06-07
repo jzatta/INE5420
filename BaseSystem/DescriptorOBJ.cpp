@@ -99,14 +99,14 @@ std::list<Object*> *DescriptorOBJ::load(const char *fileName) {
         }
         break;
       }
-      if (ch == ',')
-        ch = '.';
+      if (ch == '.')
+        ch = ',';
       tmpLine[i++] = ch;
     }
     tmpLine[i] = '\0';
     // if object name use it
     if (tmpLine[0] == 'o') {
-      if (objTempList == NULL) {
+      if (objTempList != NULL) {
         tmpObj = new Object3D(name, objTempList);
         GUI::addToListBox(std::string(name));
         objects->push_back(tmpObj);
@@ -118,13 +118,13 @@ std::list<Object*> *DescriptorOBJ::load(const char *fileName) {
     // if vertex get points
     if (tmpLine[0] == 'v' && tmpLine[1] == ' ') {
       float x, y, z, nil;
-      sscanf(tmpLine, "v %f %f %f %f", &x, &y, &z, &nil);
+      sscanf(tmpLine, "v %,f %,f %,f %,f", &x, &y, &z, &nil);
       pointsList->push_back(new Point((std::string*) NULL, x, y, z));
     }
     if (tmpLine[0] == 'p' && tmpLine[1] == ' ') {
       std::list<Point*> *points;
       points = readPoints(pointsList, tmpLine);
-      tmpObj = points->front()->clone();
+      tmpObj = points->front();
       GUI::addToListBox(std::string(name));
       objTempList->push_back(tmpObj);
       tmpObj = NULL;
@@ -133,41 +133,30 @@ std::list<Object*> *DescriptorOBJ::load(const char *fileName) {
     if (tmpLine[0] == 'l' && tmpLine[1] == ' ') {
       std::list<Point*> *linePoints;
       linePoints = readPoints(pointsList, tmpLine);
-      tmpObj = new Line(name, (Point*)linePoints->front()->clone(), (Point*)linePoints->back()->clone());
+      tmpObj = new Line(name, (Point*)linePoints->front(), (Point*)linePoints->back());
       GUI::addToListBox(std::string(name));
       objTempList->push_back(tmpObj);
       tmpObj = NULL;
       delete linePoints;
     }
     if (tmpLine[0] == 'f' && tmpLine[1] == ' ') {
-      std::list<Point*> *points, *clonedPts;
-      clonedPts = new std::list<Point*>;
+      std::list<Point*> *points;
       points = readPoints(pointsList, tmpLine);
-      std::list<Point*>::iterator it = points->begin();
-      it++;
-      for (; it != points->end(); it++) {
-        clonedPts->push_back((Point*)(*it)->clone());
-      }
-      objTempList->push_back(new Polygon((const char *)NULL, clonedPts));
-      delete points;
+      objTempList->push_back(new Polygon((const char *)NULL, points));
     }
     if (tmpLine[0]  == 'c' && tmpLine[1] == ' ') {
-      std::list<Point*> *points, *clonedPts;
-      clonedPts = new std::list<Point*>;
+      std::list<Point*> *points;
       points = readPoints(pointsList, tmpLine);
-      std::list<Point*>::iterator it = points->begin();
-      it++;
-      for (; it != points->end(); it++) {
-        clonedPts->push_back((Point*)(*it)->clone());
-      }
-      objTempList->push_back(new Curve((const char *)NULL, clonedPts));
+      objTempList->push_back(new Curve((const char *)NULL, points));
       tmpObj = NULL;
     }
   }
-  tmpObj = new Object3D(name, objTempList);
-  GUI::addToListBox(std::string(name));
-  objects->push_back(tmpObj);
-  tmpObj = NULL;
+  if (objTempList != NULL) {
+    tmpObj = new Object3D(name, objTempList);
+    GUI::addToListBox(std::string(name));
+    objects->push_back(tmpObj);
+    tmpObj = NULL;
+  }
 #if 0
   std::vector<Point*>::iterator it=pointsList->begin();
   for (; it != pointsList->end(); ++it) {

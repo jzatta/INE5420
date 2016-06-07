@@ -158,7 +158,7 @@ void DisplayFile::draw(cairo_t *cr) {
   for (; it != this->objectsTransformed->end(); ++it) {
     (*it)->draw(cr);
   }
-  std::cout << std::endl << std::endl << std::endl;
+//   std::cout << std::endl << std::endl << std::endl;
 }
 
 void DisplayFile::transform() {

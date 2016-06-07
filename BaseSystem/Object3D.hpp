@@ -22,6 +22,7 @@ public:
   Object3D(const char *name, std::vector<Point*> *_pointsList, std::list<std::pair<int,int>> *_edgeList);
   Object3D(std::string *name, std::vector<Point*> *_pointsList, std::list<std::pair<int,int>> *_edgeList);
   Object3D(std::string *name, std::list<Object*> *_objectList);
+  Object3D(const char *name, std::list<Object*> *_objectList);
   virtual void draw(cairo_t *cr);
   virtual Object* clone();
   virtual void transform(Matrix *_m);

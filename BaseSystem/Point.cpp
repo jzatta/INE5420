@@ -145,7 +145,7 @@ void Point::project() {
   x /= dZ;
   y /= dZ;
   z = distance;
-  std::cout << "X: " << x << "    ---  Y: " << y << "    ---  Z: " << z << std::endl;
+//   std::cout << "X: " << x << "    ---  Y: " << y << "    ---  Z: " << z << std::endl;
   projected = true;
 #endif
 }
