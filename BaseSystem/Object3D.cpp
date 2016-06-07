@@ -40,6 +40,10 @@ Object3D::Object3D(std::string *name, std::vector<Point*> *_pointsList, std::lis
   std::cout << "Deprecated constructor" << std::endl;
 }
 
+Object3D::Object3D(const char *name, std::list<Object*> *_objectList): Object(name) {
+  objectList = _objectList;
+}
+
 Object3D::Object3D(std::string *name, std::list<Object*> *_objectList): Object(name) {
   objectList = _objectList;
 }
@@ -97,7 +101,7 @@ std::pair<Point*,Point*> Object3D::getCenter() {
   y = (*it)->getY();
   z = (*it)->getZ();
   it++;
-  center.second = new Point((std::string *)NULL, x, y, z);
+  center.second = new Point((std::string *)NULL, 0,0,0);
   for (; it != pointsList->end(); ++it) {
     x += (*it)->getX();
     y += (*it)->getY();
@@ -106,7 +110,7 @@ std::pair<Point*,Point*> Object3D::getCenter() {
   x /= pointsList->size();
   y /= pointsList->size();
   z /= pointsList->size();
-  center.first = new Point((std::string *)NULL, x, y, z);
+  center.first = new Point((std::string *)NULL, 0,1,0);
   return center;
 }
 
@@ -172,7 +176,7 @@ Object3D::~Object3D() {
 //     delete *it;
 //   }
 //   pointsList->clear();
-  edgeList->clear();
-  delete edgeList;
+//  edgeList->clear();
+//  delete edgeList;
 //   delete pointsList;
 }
