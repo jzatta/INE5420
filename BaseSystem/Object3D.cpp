@@ -171,12 +171,9 @@ void Object3D::project() {
 }
 
 Object3D::~Object3D() {
-//   std::vector<Point*>::iterator it=pointsList->begin();
-//   for (; it != pointsList->end(); ++it) {
-//     delete *it;
-//   }
-//   pointsList->clear();
-//  edgeList->clear();
-//  delete edgeList;
-//   delete pointsList;
+std::list<Object*>::iterator it = objectList->begin();
+  for (; it != objectList->end(); ++it) {
+    delete *it;
+  }
+  delete objectList;
 }
