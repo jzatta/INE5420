@@ -138,22 +138,32 @@ void Surface::save(FILE *stream) {
 }
 
 void Surface::clip(void) {
-#if 0
-  std::list<Point*>::iterator it=curvePoints->begin();
+  std::vector<std::vector<Point*>*>::iterator vectorsIt;
+  std::vector<Point*>::iterator pointsIt;
   this->show = true;
-  for (; it != curvePoints->end();) {
-    (*it)->project();
-    if (!Clipping::clipPoint((*it)->getX(), (*it)->getY())) {
-      delete *it;
-      it = curvePoints->erase(it);
+  // delete curve generated points
+  vectorsIt = curveMatrix->begin();
+  for (; vectorsIt != curveMatrix->end();) {
+    pointsIt = (*vectorsIt)->begin();
+    for (; pointsIt != (*vectorsIt)->end();) {
+      (*pointsIt)->project();
+      if (!Clipping::clipPoint((*pointsIt)->getX(), (*pointsIt)->getY())){
+        delete *pointsIt;
+        pointsIt = (*vectorsIt)->erase(pointsIt);
+        continue;
+      }
+      ++pointsIt;
+    }
+    if ((*vectorsIt)->empty()) {
+      delete *vectorsIt;
+      vectorsIt = curveMatrix->erase(vectorsIt);
       continue;
     }
-    ++it;
+    ++vectorsIt;
   }
-  if (curvePoints->empty()) {
+  if (curveMatrix->empty()) {
     this->show = false;
   }
-#endif
 }
 
 int Surface::getSize() {
@@ -180,6 +190,15 @@ void Surface::calculateCurve() {
   curveMatrix->clear();
 #endif
   
+#if 0
+  //matriz invertida de hermite
+  float mBS[4][4] = {
+    { 2.0, -2.0,  1.0,  1.0},
+    {-3.0,  3.0, -2.0,  1.0},
+    { 0.0,  0.0,  1.0,  0.0},
+    { 1.0,  0.0,  0.0,  0.0}
+  };
+#else
   //matriz invertida da B-spline
   float mBS[4][4] = {
     {-1.0/6,  3.0/6, -3.0/6, 1.0/6},
@@ -187,6 +206,7 @@ void Surface::calculateCurve() {
     {-3.0/6,  0.0/6,  3.0/6, 0.0/6},
     { 1.0/6,  4.0/6,  1.0/6, 0.0/6}
   };
+#endif
   
   int lines = pointsMatrix->size();
   int columns = pointsMatrix->at(0)->size();
