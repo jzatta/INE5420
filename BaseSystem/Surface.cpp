@@ -191,11 +191,11 @@ void Surface::calculateCurve() {
 #endif
   
 #if 0
-  //matriz invertida de hermite
+  //matriz invertida de bezier
   float mBS[4][4] = {
-    { 2.0, -2.0,  1.0,  1.0},
-    {-3.0,  3.0, -2.0,  1.0},
-    { 0.0,  0.0,  1.0,  0.0},
+    {-1.0,  3.0, -3.0,  1.0},
+    { 3.0, -6.0,  3.0,  0.0},
+    {-3.0,  3.0,  0.0,  0.0},
     { 1.0,  0.0,  0.0,  0.0}
   };
 #else
@@ -238,9 +238,6 @@ void Surface::calculateCurve() {
           tmpy[i][j] += mBS[i][k] * gY[k+m-3][j+m-3];
           tmpz[i][j] += mBS[i][k] * gZ[k+m-3][j+m-3];
         }
-        memcpy(Cx, tmpx, sizeof(Cx));
-        memcpy(Cy, tmpy, sizeof(Cy));
-        memcpy(Cz, tmpz, sizeof(Cz));
       }
     }
     
@@ -263,91 +260,119 @@ void Surface::calculateCurve() {
     if (fineStep < (0.01/6000)) {
       fineStep = 0.01;
     }
-    const float croaseStep = 0.1;
     
-    float tmpCx[4], tmpCy[4], tmpCz[4];
-    float x, y, z;
-    std::vector<Point*> *tmpVector;
-    
-    // Um sentido
-    t[3] = 1.0;
-    s[3] = 1.0;
-    for (float f = 0.0; f <= 1.001; f+=croaseStep) {
-      t[2] = f;
-      t[1] = t[2] * t[2];
-      t[0] = t[1] * t[2];
+    const float croaseStep = 0.2;
+    for (int a = 0; a < 2; a++) {
+      float tStep, sStep;
+      if (!a) {
+        tStep = fineStep;
+        sStep = croaseStep;
+      } else {
+        tStep = croaseStep;
+        sStep = fineStep;
+      }
+      
+      t[0] = 1.0;
+      t[1] = t[0] * tStep;
+      t[2] = t[1] * tStep;
+      t[3] = t[2] * tStep;
+      
+      s[0] = 1.0;
+      s[1] = s[0] * sStep;
+      s[2] = s[1] * sStep;
+      s[3] = s[2] * sStep;
+      
+      float mEt[4][4] = {
+        {     0,      0,    0, t[0]},
+        {1*t[3], 1*t[2], t[1],    0},
+        {6*t[3], 2*t[2],    0,    0},
+        {6*t[3],      0,    0,    0}
+      };
+      
+      float mEs[4][4] = {
+        {     0,      0,    0, s[0]},
+        {1*s[3], 1*s[2], s[1],    0},
+        {6*s[3], 2*s[2],    0,    0},
+        {6*s[3],      0,    0,    0}
+      };
+      
+      float mDDx[4][4], mDDy[4][4], mDDz[4][4];
+      for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+          tmpx[i][j] = 0;
+          tmpy[i][j] = 0;
+          tmpz[i][j] = 0;
+          for (int k = 0; k < 4; k++) {
+            tmpx[i][j] += mEs[i][k] * Cx[k][j];
+            tmpy[i][j] += mEs[i][k] * Cy[k][j];
+            tmpz[i][j] += mEs[i][k] * Cz[k][j];
+          }
+        }
+      }
       
       for (int i = 0; i < 4; i++) {
-        tmpCx[i] = 0;
-        tmpCy[i] = 0;
-        tmpCz[i] = 0;
         for (int j = 0; j < 4; j++) {
-          tmpCx[i] += Cx[i][j] * t[j];
-          tmpCy[i] += Cy[i][j] * t[j];
-          tmpCz[i] += Cz[i][j] * t[j];
+          mDDx[i][j] = 0;
+          mDDy[i][j] = 0;
+          mDDz[i][j] = 0;
+          for (int k = 0; k < 4; k++) {
+            mDDx[i][j] += tmpx[i][k] * mEt[j][k];
+            mDDy[i][j] += tmpy[i][k] * mEt[j][k];
+            mDDz[i][j] += tmpz[i][k] * mEt[j][k];
+          }
         }
       }
-      tmpVector = new std::vector<Point*>;
-      for (float g = 0.0; g <= 1.001; g+=fineStep) {
-        s[2] = g;
-        s[1] = s[2] * s[2];
-        s[0] = s[1] * s[2];
-        
-        x = 0;
-        y = 0;
-        z = 0;
-        for (int i = 0; i < 4; i++) {
-          x += s[i] * tmpCx[i];
-          y += s[i] * tmpCy[i];
-          z += s[i] * tmpCz[i];
-        }
-        Point *p = new Point((const char *)NULL, x, y, z);
-        tmpVector->push_back(p);
-      }
-      curveMatrix->push_back(tmpVector);
-    }
-    
-    // Outro sentido
-    for (float f = 0.0; f <= 1.001; f+=croaseStep) {
-      t[2] = f;
-      t[1] = t[2] * t[2];
-      t[0] = t[1] * t[2];
       
-      for (int i = 0; i < 4; i++) {
-        tmpCx[i] = 0;
-        tmpCy[i] = 0;
-        tmpCz[i] = 0;
-        for (int j = 0; j < 4; j++) {
-          tmpCx[i] += t[j] * Cx[j][i];
-          tmpCy[i] += t[j] * Cy[j][i];
-          tmpCz[i] += t[j] * Cz[j][i];
-        }
-      }
-      tmpVector = new std::vector<Point*>;
-      for (float g = 0.0; g <= 1.001; g+=fineStep) {
-        s[2] = g;
-        s[1] = s[2] * s[2];
-        s[0] = s[1] * s[2];
-        
-        x = 0;
-        y = 0;
-        z = 0;
+      if (a == 1) {
         for (int i = 0; i < 4; i++) {
-          x += tmpCx[i] * s[i];
-          y += tmpCy[i] * s[i];
-          z += tmpCz[i] * s[i];
+          for (int j = i; j < 4; j++) {
+            float tmp;
+            tmp = mDDx[i][j];
+            mDDx[i][j] = mDDx[j][i];
+            mDDx[j][i] = tmp;
+            tmp = mDDy[i][j];
+            mDDy[i][j] = mDDy[j][i];
+            mDDy[j][i] = tmp;
+            tmp = mDDz[i][j];
+            mDDz[i][j] = mDDz[j][i];
+            mDDz[j][i] = tmp;
+          }
         }
-        Point *p = new Point((const char *)NULL, x, y, z);
-        tmpVector->push_back(p);
       }
-      curveMatrix->push_back(tmpVector);
+      
+      std::vector<Point*> *tmpVect;
+      int nt, ns;
+      if (a) {
+        nt = 1/sStep + 1;
+        ns = 1/tStep + 1;
+      } else {
+        nt = 1/tStep + 1;
+        ns = 1/sStep + 1;
+      }
+      for (int i = 0; i < ns; i++) {
+        tmpVect = drawFwdDiff(nt, mDDx[0], mDDy[0], mDDz[0]);
+        curveMatrix->push_back(tmpVect);
+        for (int j = 0; j < 3; j++) {
+          for (int k = 0; k < 3; k++) {
+            mDDx[j][k] = mDDx[j][k] + mDDx[j+1][k];
+            mDDy[j][k] = mDDy[j][k] + mDDy[j+1][k];
+            mDDz[j][k] = mDDz[j][k] + mDDz[j+1][k];
+          }
+        }
+      }
     }
   }
 }
 
-#if 0
-void Surface::drawFwdDiff(int n, float x[4], float y[4], float z[4]) {
-  // f(x) = x[0] ___ df(x)/dx = x[1] ___ d^2f(x)/dx = x[2] ___ d^3f(x)/dx = x[3]  
+std::vector<Point*> *Surface::drawFwdDiff(int n, const float c_x[4], const float c_y[4], const float c_z[4]) {
+  // f(x) = x[0] ___ df(x)/dx = x[1] ___ d^2f(x)/dx = x[2] ___ d^3f(x)/dx = x[3]
+  std::vector<Point*> *curvePoints = new std::vector<Point*>();
+  float x[4], y[4], z[4];
+  for (int k = 0; k < 4; k++) {
+    x[k] = c_x[k];
+    y[k] = c_y[k];
+    z[k] = c_z[k];
+  }
   curvePoints->push_back(new Point((const char*)NULL, x[0], y[0], z[0]));
   for (int i = 0; i < n; i++) {
     x[0] += x[1];
@@ -363,8 +388,8 @@ void Surface::drawFwdDiff(int n, float x[4], float y[4], float z[4]) {
     z[2] += z[3];
     curvePoints->push_back(new Point((const char*)NULL, x[0], y[0], z[0]));
   }
+  return curvePoints;
 }
-#endif
 
 Surface::~Surface() {
 #if 1

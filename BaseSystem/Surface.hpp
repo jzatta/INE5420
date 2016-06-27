@@ -17,6 +17,7 @@ class Surface : public Object {
 private:
   std::vector<std::vector<Point*>*> *pointsMatrix;
   std::vector<std::vector<Point*>*> *curveMatrix;
+  std::vector<Point*> *drawFwdDiff(int n, const float c_x[4], const float c_y[4], const float c_z[4]);
 public:
   Surface (const char *name,  std::vector<std::vector<Point*>*> *matrix);
   Surface (std::string *name, std::vector<std::vector<Point*>*> *matrix);
@@ -29,7 +30,6 @@ public:
   virtual std::pair<Point*,Point*> getCenter();
   int getSize();
   void calculateSurface();
-//   void drawFwdDiff(int n, float x[4], float y[4], float z[4]);
 
   void setList(std::vector<std::vector<Point*>*> *matrix);
   virtual ~Surface();
