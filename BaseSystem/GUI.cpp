@@ -5,7 +5,9 @@
 #include <algorithm>
 #include "Matrix.hpp"
 #include "DescriptorOBJ.hpp"
+#include "Surface.hpp"
 #include <utility>
+#include <vector>
 
 DisplayFile *GUI::displayFile;
 GtkWidget* GUI::da;
@@ -634,6 +636,45 @@ void GUI::init() {
 
 
   gtk_widget_show_all(window);
+  
+#if 1
+  std::vector<std::vector<Point*>*> *matrix;
+  std::vector<Point*> *vector;
+  Point *point;
+  float mX[4][4] = {
+  {-1.5, -0.5,  0.5,  1.5},
+  {-1.5, -0.5,  0.5,  1.5},
+  {-1.5, -0.5,  0.5,  1.5},
+  {-1.5, -0.5,  0.5,  1.5}
+  };
+  float mY[4][4] = {
+  {-2.0, -2.0, -2.0, -2.0},
+  {-2.0,  2.0,  2.0, -2.0},
+  {-2.0,  2.0,  2.0, -2.0},
+  {-2.0, -2.0, -2.0, -2.0}
+  };
+  float mZ[4][4] = {
+  {-1.5, -1.5, -1.5, -1.5},
+  {-0.5, -0.5, -0.5, -0.5},
+  { 0.5,  0.5,  0.5,  0.5},
+  { 1.5,  1.5,  1.5,  1.5}
+  };
+  
+  matrix = new std::vector<std::vector<Point*>*>;
+  for (int i = 0; i < 4; i++) {
+    vector = new std::vector<Point*>;
+    for (int j = 0; j < 4; j++) {
+      point = new Point((const char *)NULL, mX[i][j], mY[i][j], mZ[i][j]);
+      GUI::getDisplayFile()->addObject(point->clone());
+      vector->push_back(point);
+    }
+    matrix->push_back(vector);
+  }
+  
+  Surface *s = new Surface("kkk", matrix);
+  
+  GUI::getDisplayFile()->addObject(s);
+#endif
 
 }
 
