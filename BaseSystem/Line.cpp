@@ -79,6 +79,13 @@ void Line::clip(void) {
   this->show = Clipping::clipLineLB(pointsList->front(), pointsList->back());
 }
 
+void Line::project() {
+  std::list<Point*>::iterator it=pointsList->begin();
+  for (; it != pointsList->end(); ++it) {
+    (*it)->project();
+  }
+}
+
 
 Line::~Line() {
   std::list<Point*>::iterator it=pointsList->begin();

@@ -56,6 +56,7 @@ void DescriptorOBJ::save(DisplayFile *df, const char *fileName) {
 
 std::list<Object*> *DescriptorOBJ::load(const char *fileName) {
   std::list<Object*> *objects = new std::list<Object*>;
+  std::list<Object*> *objTempList = NULL;
   if (fileName == NULL) {
     return objects;
   }
@@ -105,14 +106,13 @@ std::list<Object*> *DescriptorOBJ::load(const char *fileName) {
     tmpLine[i] = '\0';
     // if object name use it
     if (tmpLine[0] == 'o') {
-      if (tmpObj != NULL || has3D) {
-        edgeList->unique();
-        tmpObj = new Object3D(name, pointsList, edgeList);
+      if (objTempList != NULL) {
+        tmpObj = new Object3D(name, objTempList);
         GUI::addToListBox(std::string(name));
         objects->push_back(tmpObj);
-        edgeList = new std::list<std::pair<int,int>>;
         tmpObj = NULL;
       }
+      objTempList = new std::list<Object*>;
       sscanf(tmpLine, "o %s", name);
     }
     // if vertex get points
@@ -126,49 +126,33 @@ std::list<Object*> *DescriptorOBJ::load(const char *fileName) {
       points = readPoints(pointsList, tmpLine);
       tmpObj = points->front();
       GUI::addToListBox(std::string(name));
-      objects->push_back(tmpObj);
+      objTempList->push_back(tmpObj);
       tmpObj = NULL;
       delete points;
     }
     if (tmpLine[0] == 'l' && tmpLine[1] == ' ') {
       std::list<Point*> *linePoints;
       linePoints = readPoints(pointsList, tmpLine);
-      tmpObj = new Line(name, linePoints->front(), linePoints->back());
+      tmpObj = new Line(name, (Point*)linePoints->front(), (Point*)linePoints->back());
       GUI::addToListBox(std::string(name));
-      objects->push_back(tmpObj);
+      objTempList->push_back(tmpObj);
       tmpObj = NULL;
       delete linePoints;
     }
     if (tmpLine[0] == 'f' && tmpLine[1] == ' ') {
-      int first, prev;
-      std::pair<int,int> edge;
-      std::list<int> *readedPointsNumber = readPointsNumber(tmpLine);
-      std::list<int>::iterator it = readedPointsNumber->begin();
-      first = prev = *it;
-      it++;
-      for (; it != readedPointsNumber->end(); it++) {
-        edge = std::pair<int, int>(prev, *it);
-        edgeList->push_back(edge);
-        prev = *it;
-      }
-      edge = std::pair<int, int>(prev, first);
-      edgeList->push_back(edge);
-      readedPointsNumber->clear();
-      delete readedPointsNumber;
-      has3D = true;
+      std::list<Point*> *points;
+      points = readPoints(pointsList, tmpLine);
+      objTempList->push_back(new Polygon((const char *)NULL, points));
     }
     if (tmpLine[0]  == 'c' && tmpLine[1] == ' ') {
-      std::list<Point*> *curvePoints;
-      curvePoints = readPoints(pointsList, tmpLine);
-      tmpObj = new Curve(name, curvePoints);
-      GUI::addToListBox(std::string(name));
-      objects->push_back(tmpObj);
+      std::list<Point*> *points;
+      points = readPoints(pointsList, tmpLine);
+      objTempList->push_back(new Curve((const char *)NULL, points));
       tmpObj = NULL;
     }
   }
-  if (tmpObj != NULL || has3D) {
-    edgeList->unique();
-    tmpObj = new Object3D(name, pointsList, edgeList);
+  if (objTempList != NULL) {
+    tmpObj = new Object3D(name, objTempList);
     GUI::addToListBox(std::string(name));
     objects->push_back(tmpObj);
     tmpObj = NULL;

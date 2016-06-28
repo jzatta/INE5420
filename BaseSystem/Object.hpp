@@ -41,6 +41,7 @@ public:
   virtual std::pair<Point*,Point*> getCenter() = 0;
   virtual void save(FILE *stream) = 0;
   virtual void clip(void) = 0;
+  virtual void project() = 0;
 
   virtual ~Object() {
     if (this->name != NULL) {

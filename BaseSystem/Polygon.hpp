@@ -23,6 +23,7 @@ public:
   virtual void save(FILE *stream);
   virtual void clip(void);
   virtual std::pair<Point*,Point*> getCenter();
+  virtual void project();
   Point * getPoint(int index);
   int getSize();
 

@@ -113,6 +113,13 @@ void Polygon::setList(std::list<Point*>* list) {
   pointsList = list;
 }
 
+void Polygon::project() {
+  std::list<Point*>::iterator it=pointsList->begin();
+  for (; it != pointsList->end(); ++it) {
+    (*it)->project();
+  }
+}
+
 Polygon::~Polygon() {
   std::list<Point*>::iterator it=pointsList->begin();
   for (; it != pointsList->end(); ++it) {
