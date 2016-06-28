@@ -166,6 +166,10 @@ void Surface::clip(void) {
   }
 }
 
+void Surface::project() {
+  
+}
+
 int Surface::getSize() {
   return pointsMatrix->size();
 }

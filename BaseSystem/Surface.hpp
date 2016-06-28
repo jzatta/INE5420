@@ -27,6 +27,7 @@ public:
   virtual void transform(Matrix *_m);
   virtual void save(FILE *stream);
   virtual void clip(void);
+  void project();
   virtual std::pair<Point*,Point*> getCenter();
   int getSize();
   void calculateSurface();
