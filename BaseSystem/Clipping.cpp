@@ -296,7 +296,7 @@ float y;
           break;
   }
 
-  Point * intersec = new Point("", x, y, 0);
+  Point * intersec = new Point("", x, y, p1->getZ());
   return intersec;
 }
 
